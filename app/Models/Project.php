@@ -10,6 +10,7 @@ class Project extends Model
         'client_id',
         'title',
         'status',
+        'demo_url',
         'feedback_deadline',
     ];
 
@@ -43,5 +44,15 @@ class Project extends Model
     public function credential()
     {
         return $this->hasOne(ProjectCredential::class);
+    }
+
+    public function feedbacks()
+    {
+        return $this->hasMany(Feedback::class);
+    }
+
+    public function tickets()
+    {
+        return $this->hasMany(Ticket::class);
     }
 }

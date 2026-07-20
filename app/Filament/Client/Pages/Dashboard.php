@@ -8,6 +8,9 @@ use App\Models\Contract;
 use App\Models\Payment;
 use App\Models\BriefAnswer;
 use App\Models\ProjectCredential;
+use App\Models\Feedback;
+use App\Models\Ticket;
+use App\Models\TicketMessage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Carbon;
 use Livewire\WithFileUploads;
@@ -46,6 +49,16 @@ class Dashboard extends Page implements HasForms
     // Payment upload properties
     public ?int $paymentAmount = null;
     public $bankSlipFile;
+
+    // Feedback properties
+    public ?string $feedbackNotes = '';
+
+    // Ticket properties
+    public $tickets = [];
+    public ?string $newTicketSubject = '';
+    public ?string $newTicketMessage = '';
+    public ?int $activeTicketId = null;
+    public ?string $newChatMessage = '';
 
     public array $statuses = [
         'draft' => ['label' => 'پیش‌نویس اولیه', 'percent' => 10],
@@ -259,11 +272,32 @@ class Dashboard extends Page implements HasForms
     protected function loadProject(): void
     {
         $this->project = Project::where('client_id', Auth::id())
-            ->with(['contract', 'payments'])
+            ->with(['contract', 'payments', 'feedbacks'])
             ->latest()
             ->first();
 
         if ($this->project) {
+            // Check feedback deadline auto-approval
+            if ($this->project->status === 'review' && $this->project->feedback_deadline && Carbon::now()->gt($this->project->feedback_deadline)) {
+                $this->project->update([
+                    'status' => 'ready_handover',
+                ]);
+                $this->project->feedbacks()->create([
+                    'notes' => 'تایید خودکار پروژه به دلیل به پایان رسیدن مهلت زمانی ارسال فیدبک.',
+                    'status' => 'approved',
+                ]);
+                
+                Notification::make()
+                    ->title('تایید خودکار دمو')
+                    ->body('مهلت فیدبک به پایان رسیده است؛ دمو به طور خودکار تایید شد.')
+                    ->success()
+                    ->send();
+
+                // Reload project
+                $this->loadProject();
+                return;
+            }
+
             $statusKey = $this->project->status;
             $statusInfo = $this->statuses[$statusKey] ?? ['label' => 'نامشخص', 'percent' => 0];
             $this->progressPercent = $statusInfo['percent'];
@@ -276,6 +310,12 @@ class Dashboard extends Page implements HasForms
                     $this->project->contract->content
                 );
             }
+
+            // Load tickets
+            $this->tickets = Ticket::where('project_id', $this->project->id)
+                ->with(['messages.sender'])
+                ->latest()
+                ->get();
         }
     }
 
@@ -340,6 +380,109 @@ class Dashboard extends Page implements HasForms
             ->success()
             ->send();
 
+        $this->loadProject();
+    }
+
+    public function submitFeedback(string $status): void
+    {
+        $this->validate([
+            'feedbackNotes' => $status === 'needs_changes' ? 'required|string|min:5' : 'nullable|string',
+        ], [
+            'feedbackNotes.required' => 'وارد کردن توضیحات جهت اصلاحات الزامی است.',
+            'feedbackNotes.min' => 'توضیحات اصلاحات باید حداقل ۵ کاراکتر باشد.',
+        ]);
+
+        if (!$this->project) return;
+
+        $this->project->feedbacks()->create([
+            'notes' => $this->feedbackNotes ?: ($status === 'approved' ? 'تایید دمو بدون اصلاحات.' : ''),
+            'status' => $status,
+        ]);
+
+        if ($status === 'approved') {
+            $this->project->update([
+                'status' => 'ready_handover',
+            ]);
+            Notification::make()
+                ->title('دموی پروژه تایید شد')
+                ->body('پروژه شما وارد مرحله آماده‌سازی بسته تحویل گردید.')
+                ->success()
+                ->send();
+        } else {
+            Notification::make()
+                ->title('نظرات شما ثبت شد')
+                ->body('تیم پشتیبانی نظرات شما را بررسی خواهد کرد.')
+                ->success()
+                ->send();
+        }
+
+        $this->feedbackNotes = '';
+        $this->loadProject();
+    }
+
+    public function createTicket(): void
+    {
+        $this->validate([
+            'newTicketSubject' => 'required|string|min:3',
+            'newTicketMessage' => 'required|string|min:5',
+        ], [
+            'newTicketSubject.required' => 'موضوع تیکت الزامی است.',
+            'newTicketSubject.min' => 'موضوع باید حداقل ۳ کاراکتر باشد.',
+            'newTicketMessage.required' => 'متن پیام الزامی است.',
+            'newTicketMessage.min' => 'پیام باید حداقل ۵ کاراکتر باشد.',
+        ]);
+
+        if (!$this->project) return;
+
+        $ticket = Ticket::create([
+            'project_id' => $this->project->id,
+            'client_id' => Auth::id(),
+            'subject' => $this->newTicketSubject,
+            'status' => 'open',
+        ]);
+
+        $ticket->messages()->create([
+            'sender_id' => Auth::id(),
+            'message' => $this->newTicketMessage,
+        ]);
+
+        $this->newTicketSubject = '';
+        $this->newTicketMessage = '';
+        $this->activeTicketId = $ticket->id;
+
+        Notification::make()
+            ->title('تیکت جدید ثبت شد')
+            ->body('تیکت شما با موفقیت ثبت شد و به زودی پاسخ داده می‌شود.')
+            ->success()
+            ->send();
+
+        $this->loadProject();
+    }
+
+    public function selectTicket(int $ticketId): void
+    {
+        $this->activeTicketId = $ticketId;
+    }
+
+    public function sendChatMessage(): void
+    {
+        $this->validate([
+            'newChatMessage' => 'required|string|min:1',
+        ], [
+            'newChatMessage.required' => 'نمی‌توانید پیام خالی ارسال کنید.',
+        ]);
+
+        $ticket = Ticket::where('client_id', Auth::id())->find($this->activeTicketId);
+        if (!$ticket) return;
+
+        $ticket->messages()->create([
+            'sender_id' => Auth::id(),
+            'message' => $this->newChatMessage,
+        ]);
+
+        $ticket->update(['status' => 'open']); // Return status to open when user sends a new message
+
+        $this->newChatMessage = '';
         $this->loadProject();
     }
 }

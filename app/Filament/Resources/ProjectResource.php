@@ -58,6 +58,10 @@ class ProjectResource extends Resource
                             Forms\Components\DateTimePicker::make('feedback_deadline')
                                 ->label('مهلت ارسال بازنگری و فیدبک')
                                 ->nullable(),
+                            Forms\Components\TextInput::make('demo_url')
+                                ->label('لینک دمو (پیش‌نمایش پروژه)')
+                                ->url()
+                                ->nullable(),
                         ])
                     ]),
 
@@ -245,6 +249,8 @@ class ProjectResource extends Resource
         return [
             RelationManagers\ContractRelationManager::class,
             RelationManagers\PaymentsRelationManager::class,
+            RelationManagers\FeedbacksRelationManager::class,
+            RelationManagers\TicketsRelationManager::class,
         ];
     }
 
