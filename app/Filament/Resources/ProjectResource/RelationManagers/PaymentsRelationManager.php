@@ -3,10 +3,11 @@
 namespace App\Filament\Resources\ProjectResource\RelationManagers;
 
 use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Actions;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
@@ -18,9 +19,9 @@ class PaymentsRelationManager extends RelationManager
     protected static ?string $modelLabel = 'پرداخت';
     protected static ?string $pluralModelLabel = 'پرداخت‌ها';
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->schema([
                 Forms\Components\TextInput::make('amount')
                     ->label('مبلغ (تومان)')
@@ -85,18 +86,18 @@ class PaymentsRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+                Actions\CreateAction::make(),
             ])
             ->actions([
-                Tables\Actions\EditAction::make()
+                Actions\EditAction::make()
                     ->mutateRecordDataUsing(fn (array $data) => array_merge($data, [
                         'verified_at' => $data['status'] !== 'pending' && !$data['verified_at'] ? now() : $data['verified_at'],
                     ])),
-                Tables\Actions\DeleteAction::make(),
+                Actions\DeleteAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                Actions\BulkActionGroup::make([
+                    Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }

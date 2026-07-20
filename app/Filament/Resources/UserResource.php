@@ -6,10 +6,11 @@ use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
 use App\Models\User;
 use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Actions;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
@@ -20,11 +21,13 @@ class UserResource extends Resource
     protected static ?string $navigationLabel = 'کاربران';
     protected static ?string $pluralModelLabel = 'کاربران';
     protected static ?string $modelLabel = 'کاربر';
-    protected static ?string $navigationIcon = 'heroicon-o-users';
+    protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-users';
+    protected static \UnitEnum|string|null $navigationGroup = 'مدیریت سیستم';
+    protected static ?int $navigationSort = 3;
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->schema([
                 Forms\Components\TextInput::make('name')
                     ->label('نام و نام خانوادگی')
@@ -83,11 +86,30 @@ class UserResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Actions\Action::make('sendSms')
+                    ->label('ارسال پیامک')
+                    ->icon('heroicon-o-chat-bubble-left-right')
+                    ->color('warning')
+                    ->form([
+                        Forms\Components\Textarea::make('message')
+                            ->label('متن پیامک')
+                            ->required()
+                            ->rows(4),
+                    ])
+                    ->action(function (User $record, array $data) {
+                        \Illuminate\Support\Facades\Log::info("SMS manually sent to {$record->phone} ({$record->name}): {$data['message']}");
+                        
+                        \Filament\Notifications\Notification::make()
+                            ->title('پیامک با موفقیت ارسال شد')
+                            ->body("پیام با موفقیت به شماره {$record->phone} شبیه‌سازی و ارسال گردید.")
+                            ->success()
+                            ->send();
+                    }),
+                Actions\EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                Actions\BulkActionGroup::make([
+                    Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }

@@ -2,11 +2,11 @@
 
 namespace App\Filament\Pages\Auth;
 
-use Filament\Pages\Auth\Login as BaseLogin;
-use Filament\Forms\Form;
+use Filament\Auth\Pages\Login as BaseLogin;
+use Filament\Schemas\Schema;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Component;
-use Filament\Http\Responses\Auth\Contracts\LoginResponse;
+use Filament\Schemas\Components\Component;
+use Filament\Auth\Http\Responses\Contracts\LoginResponse;
 use Filament\Notifications\Notification;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -27,9 +27,9 @@ class CustomLogin extends BaseLogin
         }
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->schema([
                 $this->getPhoneFormComponent(),
                 $this->getOtpFormComponent(),

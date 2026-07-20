@@ -3,10 +3,11 @@
 namespace App\Filament\Resources\ProjectResource\RelationManagers;
 
 use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Actions;
 
 class FeedbacksRelationManager extends RelationManager
 {
@@ -16,9 +17,9 @@ class FeedbacksRelationManager extends RelationManager
     protected static ?string $modelLabel = 'بازخورد';
     protected static ?string $pluralModelLabel = 'بازخوردها';
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->schema([
                 Forms\Components\Textarea::make('notes')
                     ->label('نظرات و بازخورد')
@@ -66,15 +67,15 @@ class FeedbacksRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+                Actions\CreateAction::make(),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Actions\EditAction::make(),
+                Actions\DeleteAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                Actions\BulkActionGroup::make([
+                    Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }

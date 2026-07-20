@@ -6,10 +6,14 @@ use App\Filament\Resources\ProjectResource\Pages;
 use App\Filament\Resources\ProjectResource\RelationManagers;
 use App\Models\Project;
 use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Tabs;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Actions;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
@@ -20,15 +24,16 @@ class ProjectResource extends Resource
     protected static ?string $navigationLabel = 'پروژه‌ها';
     protected static ?string $pluralModelLabel = 'پروژه‌ها';
     protected static ?string $modelLabel = 'پروژه';
-    protected static ?string $navigationIcon = 'heroicon-o-folder-open';
+    protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-folder-open';
+    protected static ?int $navigationSort = 1;
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->schema([
-                Forms\Components\Section::make('اطلاعات اصلی پروژه')
+                Section::make('اطلاعات اصلی پروژه')
                     ->schema([
-                        Forms\Components\Grid::make(2)->schema([
+                        Grid::make(2)->schema([
                             Forms\Components\TextInput::make('title')
                                 ->label('عنوان پروژه')
                                 ->required(),
@@ -55,6 +60,10 @@ class ProjectResource extends Resource
                                 ])
                                 ->default('draft')
                                 ->required(),
+                            Forms\Components\Toggle::make('is_settled')
+                                ->label('تسویه حساب کامل مالی')
+                                ->default(false)
+                                ->required(),
                             Forms\Components\DateTimePicker::make('feedback_deadline')
                                 ->label('مهلت ارسال بازنگری و فیدبک')
                                 ->nullable(),
@@ -65,13 +74,13 @@ class ProjectResource extends Resource
                         ])
                     ]),
 
-                Forms\Components\Section::make('بریف مشتری')
+                Section::make('بریف مشتری')
                     ->description('اطلاعات و بریف ثبت‌شده توسط مشتری برای این پروژه')
                     ->collapsible()
                     ->collapsed()
                     ->relationship('briefAnswer')
                     ->schema([
-                        Forms\Components\Grid::make(2)->schema([
+                        Grid::make(2)->schema([
                             Forms\Components\TextInput::make('business_name')
                                 ->label('نام برند / کسب‌وکار')
                                 ->disabled(),
@@ -113,18 +122,18 @@ class ProjectResource extends Resource
                         ])
                     ]),
 
-                Forms\Components\Section::make('اطلاعات دسترسی و دارایی‌ها')
+                Section::make('اطلاعات دسترسی و دارایی‌ها')
                     ->description('اطلاعات محرمانه و دسترسی‌های ثبت‌شده توسط مشتری (رمزنگاری شده در دیتابیس)')
                     ->collapsible()
                     ->collapsed()
                     ->relationship('credential')
                     ->schema([
-                        Forms\Components\Tabs::make('CredentialsTabs')
+                        Tabs::make('CredentialsTabs')
                             ->tabs([
-                                Forms\Components\Tabs\Tab::make('host_tab')
+                                Tabs\Tab::make('host_tab')
                                     ->label('دسترسی هاست')
                                     ->schema([
-                                        Forms\Components\Grid::make(2)->schema([
+                                        Grid::make(2)->schema([
                                             Forms\Components\TextInput::make('host_provider')
                                                 ->label('ارائه‌دهنده هاست')
                                                 ->disabled(),
@@ -141,10 +150,10 @@ class ProjectResource extends Resource
                                                 ->disabled(),
                                         ])
                                     ]),
-                                Forms\Components\Tabs\Tab::make('domain_tab')
+                                Tabs\Tab::make('domain_tab')
                                     ->label('دسترسی دامنه')
                                     ->schema([
-                                        Forms\Components\Grid::make(2)->schema([
+                                        Grid::make(2)->schema([
                                             Forms\Components\TextInput::make('domain_provider')
                                                 ->label('ثبت‌کننده دامنه')
                                                 ->disabled(),
@@ -161,10 +170,10 @@ class ProjectResource extends Resource
                                                 ->disabled(),
                                         ])
                                     ]),
-                                Forms\Components\Tabs\Tab::make('admin_tab')
+                                Tabs\Tab::make('admin_tab')
                                     ->label('دسترسی مدیریت سایت')
                                     ->schema([
-                                        Forms\Components\Grid::make(3)->schema([
+                                        Grid::make(3)->schema([
                                             Forms\Components\TextInput::make('admin_panel_url')
                                                 ->label('آدرس پنل مدیریت')
                                                 ->disabled(),
@@ -178,7 +187,7 @@ class ProjectResource extends Resource
                                                 ->disabled(),
                                         ])
                                     ]),
-                                Forms\Components\Tabs\Tab::make('other_tab')
+                                Tabs\Tab::make('other_tab')
                                     ->label('سایر اطلاعات دسترسی')
                                     ->schema([
                                         Forms\Components\Textarea::make('other_credentials')
@@ -187,6 +196,36 @@ class ProjectResource extends Resource
                                     ]),
                             ])
                             ->columnSpanFull()
+                    ]),
+
+                Section::make('بسته تحویل نهایی پروژه')
+                    ->description('اطلاعات تحویل پروژه، مستندات آموزشی و اطلاعات دسترسی نهایی')
+                    ->collapsible()
+                    ->collapsed()
+                    ->relationship('handover')
+                    ->schema([
+                        Forms\Components\RichEditor::make('congratulations_message')
+                            ->label('پیام تبریک و توضیحات نهایی')
+                            ->required()
+                            ->columnSpanFull(),
+                        Forms\Components\Repeater::make('training_videos')
+                            ->label('ویدیوهای آموزشی استفاده از سایت')
+                            ->schema([
+                                Forms\Components\TextInput::make('title')
+                                    ->label('عنوان ویدیو')
+                                    ->required(),
+                                Forms\Components\TextInput::make('url')
+                                    ->label('لینک ویدیو (مثال: آپارات/یوتیوب)')
+                                    ->url()
+                                    ->required(),
+                            ])
+                            ->columns(2)
+                            ->columnSpanFull(),
+                        Forms\Components\Textarea::make('final_credentials')
+                            ->label('اطلاعات نهایی دسترسی‌ها (رمزنگاری شده در دیتابیس)')
+                            ->placeholder("مثال:\nلینک مدیریت: https://site.com/wp-admin\nنام کاربری: admin\nکلمه عبور: 123456")
+                            ->rows(5)
+                            ->columnSpanFull(),
                     ])
             ]);
     }
@@ -222,6 +261,10 @@ class ProjectResource extends Resource
                         'ready_handover' => 'آماده‌سازی بسته تحویل',
                         'completed' => 'تحویل نهایی و خاتمه',
                     }),
+                Tables\Columns\IconColumn::make('is_settled')
+                    ->label('تسویه حساب مالی')
+                    ->boolean()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('feedback_deadline')
                     ->label('مهلت فیدبک')
                     ->dateTime('Y/m/d H:i')
@@ -235,11 +278,40 @@ class ProjectResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Actions\Action::make('sendSms')
+                    ->label('ارسال پیامک')
+                    ->icon('heroicon-o-chat-bubble-left-right')
+                    ->color('warning')
+                    ->form([
+                        Forms\Components\Textarea::make('message')
+                            ->label('متن پیامک')
+                            ->required()
+                            ->rows(4),
+                    ])
+                    ->action(function (Project $record, array $data) {
+                        $client = $record->client;
+                        if (!$client || !$client->phone) {
+                            \Filament\Notifications\Notification::make()
+                                ->title('خطا')
+                                ->body('شماره موبایلی برای این مشتری یافت نشد.')
+                                ->danger()
+                                ->send();
+                            return;
+                        }
+                        
+                        \Illuminate\Support\Facades\Log::info("SMS manually sent to {$client->phone} ({$client->name}) for Project {$record->title}: {$data['message']}");
+                        
+                        \Filament\Notifications\Notification::make()
+                            ->title('پیامک با موفقیت ارسال شد')
+                            ->body("پیام با موفقیت به شماره {$client->phone} شبیه‌سازی و ارسال گردید.")
+                            ->success()
+                            ->send();
+                    }),
+                Actions\EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                Actions\BulkActionGroup::make([
+                    Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }

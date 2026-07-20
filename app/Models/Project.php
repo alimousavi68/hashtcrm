@@ -10,6 +10,7 @@ class Project extends Model
         'client_id',
         'title',
         'status',
+        'is_settled',
         'demo_url',
         'feedback_deadline',
     ];
@@ -18,6 +19,7 @@ class Project extends Model
     {
         return [
             'feedback_deadline' => 'datetime',
+            'is_settled' => 'boolean',
         ];
     }
 
@@ -54,5 +56,10 @@ class Project extends Model
     public function tickets()
     {
         return $this->hasMany(Ticket::class);
+    }
+
+    public function handover()
+    {
+        return $this->hasOne(Handover::class);
     }
 }

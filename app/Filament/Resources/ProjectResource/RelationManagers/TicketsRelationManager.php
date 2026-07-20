@@ -3,10 +3,11 @@
 namespace App\Filament\Resources\ProjectResource\RelationManagers;
 
 use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Actions;
 
 class TicketsRelationManager extends RelationManager
 {
@@ -16,9 +17,9 @@ class TicketsRelationManager extends RelationManager
     protected static ?string $modelLabel = 'تیکت';
     protected static ?string $pluralModelLabel = 'تیکت‌ها';
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->schema([
                 Forms\Components\TextInput::make('subject')
                     ->label('موضوع تیکت')
@@ -81,7 +82,7 @@ class TicketsRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make()
+                Actions\CreateAction::make()
                     ->mutateFormDataUsing(fn (array $data) => array_merge($data, [
                         'client_id' => $this->getOwnerRecord()->client_id,
                     ]))
@@ -91,7 +92,7 @@ class TicketsRelationManager extends RelationManager
                     ])),
             ])
             ->actions([
-                Tables\Actions\EditAction::make()
+                Actions\EditAction::make()
                     ->after(function ($record, array $data) {
                         if (!empty($data['new_reply'])) {
                             $record->messages()->create([
@@ -101,11 +102,11 @@ class TicketsRelationManager extends RelationManager
                             $record->update(['status' => 'replied']);
                         }
                     }),
-                Tables\Actions\DeleteAction::make(),
+                Actions\DeleteAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                Actions\BulkActionGroup::make([
+                    Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }

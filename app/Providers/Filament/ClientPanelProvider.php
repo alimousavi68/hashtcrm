@@ -29,12 +29,58 @@ class ClientPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Amber,
             ])
-            ->font('Vazirmatn')
+            ->font(
+                'PeydaWebVF',
+                url: asset('fonts/peyda/fontiran.css'),
+                provider: \Filament\FontProviders\LocalFontProvider::class,
+            )
+            ->plugin(
+                \Filament\Launchpad\LaunchpadPlugin::make()
+                    ->spaces([
+                        \Filament\Launchpad\Launchpad\LaunchpadSpace::make('داشبورد')
+                            ->icon('heroicon-o-home')
+                            ->pages([
+                                \Filament\Launchpad\Launchpad\LaunchpadPage::make('خلاصه وضعیت')
+                                    ->icon('heroicon-o-home')
+                                    ->sections([
+                                        \Filament\Launchpad\Launchpad\TileGroup::make('آمار پروژه‌ها و تیکت‌ها')
+                                            ->tiles([
+                                                \Filament\Launchpad\Launchpad\Tile::make('پروژه‌های فعال')
+                                                    ->kpi(fn () => \App\Models\Project::where('client_id', auth()->id())->where('status', '!=', 'completed')->count())
+                                                    ->icon('heroicon-o-folder-open')
+                                                    ->subtitle('تعداد کل: ' . \App\Models\Project::where('client_id', auth()->id())->count())
+                                                    ->page(\App\Filament\Client\Pages\Projects::class),
+                                                \Filament\Launchpad\Launchpad\Tile::make('پروژه‌های پایان‌یافته')
+                                                    ->kpi(fn () => \App\Models\Project::where('client_id', auth()->id())->where('status', 'completed')->count())
+                                                    ->icon('heroicon-o-folder')
+                                                    ->page(\App\Filament\Client\Pages\Projects::class),
+                                                \Filament\Launchpad\Launchpad\Tile::make('تیکت‌های باز پشتیبانی')
+                                                    ->kpi(fn () => \App\Models\Ticket::where('client_id', auth()->id())->where('status', 'open')->count())
+                                                    ->icon('heroicon-o-chat-bubble-left-right')
+                                                    ->trend(
+                                                        \App\Models\Ticket::where('client_id', auth()->id())->where('status', 'open')->count() > 0 ? 'نیاز به پیگیری' : 'همه پاسخ داده شده',
+                                                        \App\Models\Ticket::where('client_id', auth()->id())->where('status', 'open')->count() > 0 ? 'warning' : 'success'
+                                                    )
+                                                    ->page(\App\Filament\Client\Pages\Tickets::class),
+                                            ]),
+                                        \Filament\Launchpad\Launchpad\TileGroup::make('دسترسی سریع')
+                                            ->tiles([
+                                                \Filament\Launchpad\Launchpad\Tile::make('پروژه‌های من')
+                                                    ->subtitle('پیگیری و مدیریت فازهای پروژه')
+                                                    ->icon('heroicon-o-folder')
+                                                    ->page(\App\Filament\Client\Pages\Projects::class),
+                                                \Filament\Launchpad\Launchpad\Tile::make('پشتیبانی و تیکت‌ها')
+                                                    ->subtitle('ارتباط مستقیم با کارشناسان فنی')
+                                                    ->icon('heroicon-o-chat-bubble-left-right')
+                                                    ->page(\App\Filament\Client\Pages\Tickets::class),
+                                            ]),
+                                    ]),
+                            ]),
+                    ])
+            )
             ->discoverResources(in: app_path('Filament/Client/Resources'), for: 'App\\Filament\\Client\\Resources')
             ->discoverPages(in: app_path('Filament/Client/Pages'), for: 'App\\Filament\\Client\\Pages')
-            ->pages([
-                \App\Filament\Client\Pages\Dashboard::class,
-            ])
+            ->pages([])
             ->discoverWidgets(in: app_path('Filament/Client/Widgets'), for: 'App\\Filament\\Client\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,

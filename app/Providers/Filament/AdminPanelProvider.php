@@ -30,7 +30,11 @@ class AdminPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Amber,
             ])
-            ->font('Vazirmatn')
+            ->font(
+                'PeydaWebVF',
+                url: asset('fonts/peyda/fontiran.css'),
+                provider: \Filament\FontProviders\LocalFontProvider::class,
+            )
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
