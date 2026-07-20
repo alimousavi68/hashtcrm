@@ -114,7 +114,8 @@ class ProjectResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\ContractRelationManager::class,
+            RelationManagers\PaymentsRelationManager::class,
         ];
     }
 

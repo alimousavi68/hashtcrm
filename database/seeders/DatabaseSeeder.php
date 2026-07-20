@@ -31,11 +31,17 @@ class DatabaseSeeder extends Seeder
             'role' => 'client',
         ]);
 
-        \App\Models\Project::create([
+        $project = \App\Models\Project::create([
             'client_id' => $client->id,
             'title' => 'پلتفرم تجارت الکترونیک هشت',
-            'status' => 'brief',
+            'status' => 'contract',
             'feedback_deadline' => now()->addDays(7),
+        ]);
+
+        \App\Models\Contract::create([
+            'project_id' => $project->id,
+            'title' => 'قرارداد همکاری طراحی و توسعه وب‌سایت هشت',
+            'content' => '<p>این قرارداد بین شرکت هشت و جناب آقای/سرکار خانم <strong>:client_name</strong> جهت اجرای پروژه <strong>:project_title</strong> در تاریخ <strong>:date</strong> منعقد می‌گردد.</p><p>مبلغ پیش‌پرداخت معادل ۵۰٪ کل مبلغ توافق شده می‌باشد.</p>',
         ]);
     }
 }

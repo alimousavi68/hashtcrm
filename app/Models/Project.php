@@ -24,4 +24,14 @@ class Project extends Model
     {
         return $this->belongsTo(User::class, 'client_id');
     }
+
+    public function contract()
+    {
+        return $this->hasOne(Contract::class);
+    }
+
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
+    }
 }
