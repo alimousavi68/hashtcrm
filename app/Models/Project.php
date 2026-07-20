@@ -34,4 +34,14 @@ class Project extends Model
     {
         return $this->hasMany(Payment::class);
     }
+
+    public function briefAnswer()
+    {
+        return $this->hasOne(BriefAnswer::class);
+    }
+
+    public function credential()
+    {
+        return $this->hasOne(ProjectCredential::class);
+    }
 }

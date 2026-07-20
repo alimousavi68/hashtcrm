@@ -84,16 +84,17 @@
 
 ---
 
-### فاز ۳: بریف تدریجی و دارایی‌ها (Wizard & Credentials)
+### فاز ۳: بریف تدریجی و دارایی‌ها (Wizard & Credentials) - [✓] انجام شده (تاریخ: ۲۰۲۶-۰۷-۲۰)
 *هدف: دریافت اطلاعات تفصیلی پروژه در قالب ویزارد و دریافت اطلاعات محرمانه (هاست/دامنه).*
 
 * **نیازمندی‌ها:**
-  - ساخت فرم بریف با کامپوننت `Filament\Forms\Components\Wizard`.
-  - ذخیره پاسخ‌ها در جدول `brief_answers` با فیلدهای متناظر.
-  - ساخت جدول `project_credentials` جهت دریافت اطلاعات دسترسی هاست، دامنه، پنل‌ها و رمزنگاری دوطرفه فیلد پسورد به وسیله `Crypt::encryptString`.
+  - [x] ساخت فرم بریف با کامپوننت `Filament\Forms\Components\Wizard`.
+  - [x] ذخیره پاسخ‌ها در جدول `brief_answers` با فیلدهای متناظر.
+  - [x] ساخت جدول `project_credentials` جهت دریافت اطلاعات دسترسی هاست، دامنه، پنل‌ها و رمزنگاری دوطرفه فیلد پسورد به وسیله `Crypt::encryptString`.
 * **فایل‌های کلیدی:**
-  - `database/migrations/xxxx_create_brief_answers_table.php`
-  - `database/migrations/xxxx_create_project_credentials_table.php`
+  - `database/migrations/2026_07_20_195500_create_brief_answers_table.php`
+  - `database/migrations/2026_07_20_195501_create_project_credentials_table.php`
+  - `app/Models/BriefAnswer.php`
   - `app/Models/ProjectCredential.php`
 * **بایدها و نبایدها:**
   - **باید:** فیلد پسورد دسترسی‌ها در مدل به صورت `encrypted` کست شود تا از ذخیره متن خام در دیتابیس جلوگیری شود.

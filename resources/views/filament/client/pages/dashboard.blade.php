@@ -25,6 +25,20 @@
                 </div>
             </div>
 
+            @if($project->status === 'brief')
+                <!-- Brief Wizard Form Card -->
+                <div class="p-6 bg-white rounded-xl shadow-sm dark:bg-gray-800 border border-gray-100 dark:border-gray-700">
+                    <h3 class="text-lg font-bold text-gray-950 dark:text-white mb-2">تکمیل بریف پروژه و اطلاعات دسترسی</h3>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">
+                        لطفاً مشخصات کسب‌وکار و اطلاعات دسترسی سرور/دامنه خود را با دقت تکمیل کنید تا فرآیند طراحی و توسعه آغاز شود.
+                    </p>
+                    
+                    <form wire:submit.prevent="saveBrief" class="space-y-6">
+                        {{ $this->form }}
+                    </form>
+                </div>
+            @endif
+
             <!-- Timeline Steps Card -->
             <div class="p-6 bg-white rounded-xl shadow-sm dark:bg-gray-800 border border-gray-100 dark:border-gray-700">
                 <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-6">مراحل اجرای پروژه</h3>
