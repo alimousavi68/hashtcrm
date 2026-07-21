@@ -199,12 +199,8 @@
             background-color: #1e293b;
             color: #f8fafc;
         }
-        .dark .brief-input-text:focus, .dark .brief-textarea:focus, .dark .brief-select:focus {
-            border-color: #60a5fa;
-            background-color: #0f172a;
-        }
 
-        /* Radio grid */
+        /* Radio & Checkbox grid */
         .brief-radio-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -232,27 +228,6 @@
             border-color: #2563eb;
             background-color: #eff6ff;
             color: #1e40af;
-        }
-        .dark .brief-radio-option.selected {
-            border-color: #60a5fa;
-            background-color: rgba(30, 58, 138, 0.35);
-            color: #bfdbfe;
-        }
-
-        .brief-radio-dot {
-            width: 1.15rem;
-            height: 1.15rem;
-            border-radius: 9999px;
-            border: 2px solid #cbd5e1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s ease;
-        }
-        .brief-radio-option.selected .brief-radio-dot {
-            border-color: #2563eb;
-            background-color: #2563eb;
-            color: #ffffff;
         }
 
         /* Upload zone */
@@ -297,9 +272,6 @@
             background-color: #f1f5f9;
             color: #334155;
         }
-        .brief-btn-secondary:hover {
-            background-color: #e2e8f0;
-        }
         .dark .brief-btn-secondary {
             background-color: #1e293b;
             color: #e2e8f0;
@@ -309,16 +281,10 @@
             color: #ffffff;
             box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
         }
-        .brief-btn-primary:hover {
-            background-color: #1d4ed8;
-        }
         .brief-btn-success {
             background-color: #059669;
             color: #ffffff;
             box-shadow: 0 2px 8px rgba(5, 150, 105, 0.3);
-        }
-        .brief-btn-success:hover {
-            background-color: #047857;
         }
 
         /* Help accordion */
@@ -376,7 +342,7 @@
         <div>
             @if($record->wizard_mode)
                 <span class="brief-badge-purple">
-                    ⚡ حالت تک‌سوال (Typeform Slider)
+                    ⚡ حالت ویزاردی دسته‌بندی‌شده ۶‌گانه
                 </span>
             @else
                 <span class="brief-badge-blue">
@@ -389,7 +355,7 @@
     @if(empty($record->schema) || count($record->schema) === 0)
         <div style="text-align: center; padding: 3rem 1rem; color: #64748b;">
             <x-heroicon-o-document-magnifying-glass style="width: 3rem !important; height: 3rem !important; margin: 0 auto 0.75rem auto; opacity: 0.5;" />
-            <p style="font-weight: 700; margin: 0;">هیچ فیلدی در این الگوی بریف تعریف نشده است.</p>
+            <p style="font-weight: 700; margin: 0;">هیچ فیلدی در این الگوی پرسشنامه تعریف نشده است.</p>
         </div>
     @else
         @php
@@ -397,290 +363,147 @@
             $totalBlocks = count($blocks);
         @endphp
 
-        @if($record->wizard_mode)
-            {{-- ─── حالت تک‌سوال مدرن (Typeform Style Slider) ─────────────────────── --}}
-            <div x-data="{ 
-                currentStep: 0, 
-                totalSteps: {{ $totalBlocks }},
-                answers: {},
-                radioSelections: {},
-                isSubmitted: false
-            }">
+        <div>
+            @foreach($blocks as $index => $block)
+                @php
+                    $type = $block['type'] ?? '';
+                    $data = $block['data'] ?? [];
+                    $label = $data['label'] ?? $data['title'] ?? 'بدون عنوان';
+                    $stepTitle = $data['step_title'] ?? null;
+                    $isRequired = !empty($data['required']);
+                    $isEssential = !empty($data['is_essential']);
+                    $placeholder = $data['placeholder'] ?? '';
+                    $helpContent = $data['help_content'] ?? '';
+                    $helpDefaultOpen = !empty($data['help_default_open']);
+                    $options = array_filter(array_map('trim', explode(',', $data['options'] ?? '')));
+                    $subfields = array_filter(array_map('trim', explode(',', $data['subfields'] ?? 'نام فارسی, نام انگلیسی')));
+                @endphp
 
-                {{-- Progress Bar --}}
-                <div class="brief-progress-container">
-                    <div class="brief-progress-header">
-                        <span>سوال <span x-text="currentStep + 1"></span> از {{ $totalBlocks }}</span>
-                        <span x-text="Math.round(((currentStep + 1) / totalSteps) * 100) + '% تکمیل شده'"></span>
+                @if($type === 'instruction_block')
+                    <div style="padding: 1.25rem; border-radius: 0.85rem; background-color: #fffbeb; border: 1px solid #fde68a; color: #78350f; margin-bottom: 1.25rem;">
+                        @if(filled($data['title'] ?? null))
+                            <h4 style="font-weight: 800; font-size: 1.05rem; margin: 0 0 0.5rem 0; display: flex; align-items: center; gap: 0.5rem; color: #b45309;">
+                                <x-heroicon-o-sparkles style="color: #d97706;" />
+                                {{ $data['title'] }}
+                            </h4>
+                        @endif
+                        @if(filled($data['content'] ?? null))
+                            <div style="font-size: 0.875rem; line-height: 1.6;">
+                                {!! $data['content'] !!}
+                            </div>
+                        @endif
                     </div>
-                    <div class="brief-progress-track">
-                        <div class="brief-progress-fill" :style="'width: ' + Math.round(((currentStep + 1) / totalSteps) * 100) + '%'"></div>
-                    </div>
-                </div>
-
-                {{-- Question Cards --}}
-                <div>
-                    @foreach($blocks as $index => $block)
-                        @php
-                            $type = $block['type'] ?? '';
-                            $data = $block['data'] ?? [];
-                            $label = $data['label'] ?? $data['title'] ?? 'بدون عنوان';
-                            $isRequired = !empty($data['required']);
-                            $isEssential = !empty($data['is_essential']);
-                            $placeholder = $data['placeholder'] ?? '';
-                            $helpContent = $data['help_content'] ?? '';
-                            $helpDefaultOpen = !empty($data['help_default_open']);
-                            $options = array_filter(array_map('trim', explode(',', $data['options'] ?? '')));
-                        @endphp
-
-                        <div x-show="currentStep === {{ $index }}" 
-                             x-transition:enter="transition ease-out duration-300 transform"
-                             x-transition:enter-start="opacity-0 translate-y-4 scale-98"
-                             x-transition:enter-end="opacity-100 translate-y-0 scale-100"
-                             class="brief-card">
-                            
-                            @if($type === 'instruction_block')
-                                <div style="padding: 1.25rem; border-radius: 0.85rem; background-color: #fffbeb; border: 1px solid #fde68a; color: #78350f;">
-                                    @if(filled($data['title'] ?? null))
-                                        <h4 style="font-weight: 800; font-size: 1.1rem; margin: 0 0 0.5rem 0; display: flex; align-items: center; gap: 0.5rem; color: #b45309;">
-                                            <x-heroicon-o-sparkles style="color: #d97706;" />
-                                            {{ $data['title'] }}
-                                        </h4>
-                                    @endif
-                                    @if(filled($data['content'] ?? null))
-                                        <div style="font-size: 0.875rem; line-height: 1.6;">
-                                            {!! $data['content'] !!}
-                                        </div>
-                                    @endif
-                                </div>
-                            @else
-                                <div class="brief-card-header">
-                                    <div>
-                                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem;">
-                                            <span style="padding: 0.15rem 0.5rem; border-radius: 0.375rem; background-color: #dbeafe; color: #1e40af; font-size: 0.75rem; font-weight: 700;">
-                                                سوال {{ $index + 1 }}
-                                            </span>
-                                            @if($isRequired)
-                                                <span style="font-size: 0.75rem; color: #e11d48; font-weight: 700;">* پاسخ الزامی است</span>
-                                            @endif
-                                        </div>
-                                        <h3 class="brief-question-title">
-                                            {{ $label }}
-                                        </h3>
-                                    </div>
-
-                                    @if($isEssential)
-                                        <span class="brief-badge-rose">
-                                            🚨 مدرک ضروری پروژه
-                                        </span>
-                                    @endif
-                                </div>
-
-                                {{-- Field Inputs --}}
-                                <div style="margin-top: 1rem;">
-                                    @if($type === 'text_input')
-                                        <input type="text" 
-                                               x-model="answers['field_{{ $index }}']"
-                                               placeholder="{{ $placeholder ?: 'پاسخ خود را بنویسید...' }}" 
-                                               class="brief-input-text" />
-
-                                    @elseif($type === 'textarea')
-                                        <textarea rows="4" 
-                                                  x-model="answers['field_{{ $index }}']"
-                                                  placeholder="{{ $placeholder ?: 'توضیحات کامل خود را بفرمایید...' }}" 
-                                                  class="brief-textarea"></textarea>
-
-                                    @elseif($type === 'select')
-                                        <select x-model="answers['field_{{ $index }}']" class="brief-select">
-                                            <option value="">یک گزینه را انتخاب نمایید...</option>
-                                            @foreach($options as $opt)
-                                                <option value="{{ $opt }}">{{ $opt }}</option>
-                                            @endforeach
-                                        </select>
-
-                                    @elseif($type === 'radio_choice')
-                                        <div class="brief-radio-grid">
-                                            @foreach($options as $optIndex => $opt)
-                                                <div x-on:click="radioSelections['field_{{ $index }}'] = '{{ $opt }}'"
-                                                     :class="radioSelections['field_{{ $index }}'] === '{{ $opt }}' ? 'selected' : ''"
-                                                     class="brief-radio-option">
-                                                    <span>{{ $opt }}</span>
-                                                    <div class="brief-radio-dot">
-                                                        <template x-if="radioSelections['field_{{ $index }}'] === '{{ $opt }}'">
-                                                            <x-heroicon-o-check style="width: 0.75rem !important; height: 0.75rem !important; color: white;" />
-                                                        </template>
-                                                    </div>
-                                                </div>
-                                            @endforeach
-                                        </div>
-
-                                    @elseif($type === 'file_upload')
-                                        <div class="brief-upload-zone" onclick="document.getElementById('preview_file_{{ $index }}').click()">
-                                            <x-heroicon-o-cloud-arrow-up style="width: 2.5rem !important; height: 2.5rem !important; color: #3b82f6; margin-bottom: 0.5rem;" />
-                                            <p style="font-size: 0.875rem; font-weight: 700; margin: 0 0 0.25rem 0;">فایل را جهت آپلود انتخاب کنید یا اینجا بکشید</p>
-                                            <p style="font-size: 0.75rem; color: #64748b; margin: 0;">فرمت‌های مجاز: PDF, ZIP, PNG, JPG (حداکثر ۲۰ مگابایت)</p>
-                                            <input type="file" class="hidden" id="preview_file_{{ $index }}" style="display:none;" />
-                                        </div>
-                                    @endif
-                                </div>
-
-                                {{-- Help Section Accordion --}}
-                                @if(filled($helpContent))
-                                    <details class="brief-help-accordion" @if($helpDefaultOpen) open @endif>
-                                        <summary class="brief-help-summary">
-                                            <x-heroicon-o-light-bulb style="color: #f59e0b;" />
-                                            <span>مشاهده راهنما و توضیحات فیلد</span>
-                                        </summary>
-                                        <div class="brief-help-content">
-                                            {!! $helpContent !!}
-                                        </div>
-                                    </details>
-                                @endif
-                            @endif
-                        </div>
-                    @endforeach
-                </div>
-
-                {{-- Action Bar --}}
-                <div class="brief-nav-bar">
-                    <button type="button" 
-                            x-on:click="if(currentStep > 0) currentStep--"
-                            :disabled="currentStep === 0"
-                            :style="currentStep === 0 ? 'opacity: 0.4; cursor: not-allowed;' : ''"
-                            class="brief-btn brief-btn-secondary">
-                        <x-heroicon-o-arrow-right />
-                        <span>سوال قبلی</span>
-                    </button>
-
-                    <template x-if="currentStep < totalSteps - 1">
-                        <button type="button" 
-                                x-on:click="currentStep++"
-                                class="brief-btn brief-btn-primary">
-                            <span>سوال بعدی</span>
-                            <x-heroicon-o-arrow-left />
-                        </button>
-                    </template>
-
-                    <template x-if="currentStep === totalSteps - 1">
-                        <button type="button" 
-                                x-on:click="isSubmitted = true"
-                                class="brief-btn brief-btn-success">
-                            <x-heroicon-o-check-circle />
-                            <span>ثبت اطلاعات (حالت تست)</span>
-                        </button>
-                    </template>
-                </div>
-
-                <div x-show="isSubmitted" x-cloak style="margin-top: 1rem; padding: 0.85rem; border-radius: 0.75rem; background-color: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46; font-size: 0.825rem; font-weight: 700; text-align: center;">
-                    ✨ تست ارسال موفقیت‌آمیز بود! پاسخ‌ها در حالت پیش‌نمایش به صورت پویا ثبت گردیدند.
-                </div>
-            </div>
-
-        @else
-            {{-- ─── حالت فرم یکپارچه (Single Page All Questions) ───────────────────── --}}
-            <div>
-                @foreach($blocks as $index => $block)
-                    @php
-                        $type = $block['type'] ?? '';
-                        $data = $block['data'] ?? [];
-                        $label = $data['label'] ?? $data['title'] ?? 'بدون عنوان';
-                        $isRequired = !empty($data['required']);
-                        $isEssential = !empty($data['is_essential']);
-                        $placeholder = $data['placeholder'] ?? '';
-                        $helpContent = $data['help_content'] ?? '';
-                        $helpDefaultOpen = !empty($data['help_default_open']);
-                        $options = array_filter(array_map('trim', explode(',', $data['options'] ?? '')));
-                    @endphp
-
-                    @if($type === 'instruction_block')
-                        <div style="padding: 1.25rem; border-radius: 0.85rem; background-color: #fffbeb; border: 1px solid #fde68a; color: #78350f; margin-bottom: 1.25rem;">
-                            @if(filled($data['title'] ?? null))
-                                <h4 style="font-weight: 800; font-size: 1.05rem; margin: 0 0 0.5rem 0; display: flex; align-items: center; gap: 0.5rem; color: #b45309;">
-                                    <x-heroicon-o-sparkles style="color: #d97706;" />
-                                    {{ $data['title'] }}
-                                </h4>
-                            @endif
-                            @if(filled($data['content'] ?? null))
-                                <div style="font-size: 0.875rem; line-height: 1.6;">
-                                    {!! $data['content'] !!}
-                                </div>
-                            @endif
-                        </div>
-                    @else
-                        <div class="brief-card">
-                            <div class="brief-card-header">
-                                <div>
-                                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem;">
-                                        <span style="padding: 0.15rem 0.5rem; border-radius: 0.375rem; background-color: #dbeafe; color: #1e40af; font-size: 0.75rem; font-weight: 700;">
-                                            سوال {{ $index + 1 }}
-                                        </span>
-                                        @if($isRequired)
-                                            <span style="font-size: 0.75rem; color: #e11d48; font-weight: 700;">* اجباری</span>
-                                        @endif
-                                    </div>
-                                    <h3 class="brief-question-title">
-                                        {{ $label }}
-                                    </h3>
-                                </div>
-
-                                @if($isEssential)
-                                    <span class="brief-badge-rose">
-                                        🚨 مدرک ضروری پروژه
+                @else
+                    <div class="brief-card">
+                        <div class="brief-card-header">
+                            <div>
+                                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem; flex-wrap: wrap;">
+                                    <span style="padding: 0.15rem 0.5rem; border-radius: 0.375rem; background-color: #dbeafe; color: #1e40af; font-size: 0.75rem; font-weight: 700;">
+                                        سوال {{ $index + 1 }}
                                     </span>
-                                @endif
+                                    @if(filled($stepTitle))
+                                        <span class="brief-badge-purple">
+                                            📌 {{ $stepTitle }}
+                                        </span>
+                                    @endif
+                                    @if($isRequired)
+                                        <span style="font-size: 0.75rem; color: #e11d48; font-weight: 700;">* اجباری</span>
+                                    @endif
+                                </div>
+                                <h3 class="brief-question-title">
+                                    {{ $label }}
+                                </h3>
                             </div>
 
-                            <div style="margin-top: 1rem;">
-                                @if($type === 'text_input')
-                                    <input type="text" placeholder="{{ $placeholder ?: 'پاسخ شما...' }}" class="brief-input-text" />
-                                @elseif($type === 'textarea')
-                                    <textarea rows="3" placeholder="{{ $placeholder ?: 'توضیحات شما...' }}" class="brief-textarea"></textarea>
-                                @elseif($type === 'select')
-                                    <select class="brief-select">
-                                        <option value="">یک گزینه را انتخاب کنید...</option>
-                                        @foreach($options as $opt)
-                                            <option value="{{ $opt }}">{{ $opt }}</option>
-                                        @endforeach
-                                    </select>
-                                @elseif($type === 'radio_choice')
-                                    <div class="brief-radio-grid">
-                                        @foreach($options as $optIndex => $opt)
-                                            <label class="brief-radio-option">
-                                                <span>{{ $opt }}</span>
-                                                <input type="radio" name="preview_radio_{{ $index }}" style="width: 1.15rem; height: 1.15rem;" />
-                                            </label>
-                                        @endforeach
-                                    </div>
-                                @elseif($type === 'file_upload')
-                                    <div class="brief-upload-zone" onclick="document.getElementById('preview_file_{{ $index }}').click()">
-                                        <x-heroicon-o-cloud-arrow-up style="width: 2rem !important; height: 2rem !important; color: #3b82f6; margin-bottom: 0.35rem;" />
-                                        <p style="font-size: 0.85rem; font-weight: 700; margin: 0;">محل آپلود فایل (کلیک کنید)</p>
-                                    </div>
-                                @endif
+                            @if($isEssential)
+                                <span class="brief-badge-rose">
+                                    🚨 مدرک ضروری پروژه
+                                </span>
+                            @endif
+                        </div>
 
-                                @if(filled($helpContent))
-                                    <details class="brief-help-accordion" @if($helpDefaultOpen) open @endif>
-                                        <summary class="brief-help-summary">
-                                            <x-heroicon-o-light-bulb style="color: #f59e0b;" />
-                                            <span>مشاهده راهنما و توضیحات این فیلد</span>
-                                        </summary>
-                                        <div class="brief-help-content">
-                                            {!! $helpContent !!}
+                        <div style="margin-top: 1rem;">
+                            @if($type === 'text_input')
+                                <input type="text" placeholder="{{ $placeholder ?: 'پاسخ شما...' }}" class="brief-input-text" />
+
+                            @elseif($type === 'url_input')
+                                <div style="position: relative;">
+                                    <input type="url" placeholder="{{ $placeholder ?: 'https://example.com' }}" class="brief-input-text" style="padding-left: 5rem;" />
+                                    <span style="position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); font-size: 0.75rem; color: #3b82f6; font-weight: 700;">https://</span>
+                                </div>
+
+                            @elseif($type === 'textarea')
+                                <textarea rows="3" placeholder="{{ $placeholder ?: 'توضیحات شما...' }}" class="brief-textarea"></textarea>
+
+                            @elseif($type === 'select')
+                                <select class="brief-select">
+                                    <option value="">یک گزینه را انتخاب کنید...</option>
+                                    @foreach($options as $opt)
+                                        <option value="{{ $opt }}">{{ $opt }}</option>
+                                    @endforeach
+                                </select>
+
+                            @elseif($type === 'radio_choice')
+                                <div class="brief-radio-grid">
+                                    @foreach($options as $optIndex => $opt)
+                                        <label class="brief-radio-option">
+                                            <span>{{ $opt }}</span>
+                                            <input type="radio" name="preview_radio_{{ $index }}" style="width: 1.15rem; height: 1.15rem;" />
+                                        </label>
+                                    @endforeach
+                                </div>
+
+                            @elseif($type === 'checkboxes')
+                                <div class="brief-radio-grid">
+                                    @foreach($options as $optIndex => $opt)
+                                        <label class="brief-radio-option">
+                                            <span>{{ $opt }}</span>
+                                            <input type="checkbox" name="preview_check_{{ $index }}[]" style="width: 1.15rem; height: 1.15rem;" />
+                                        </label>
+                                    @endforeach
+                                </div>
+
+                            @elseif($type === 'repeater')
+                                <div style="border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1rem; background-color: #f8fafc;">
+                                    <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                        <input type="text" placeholder="{{ $placeholder ?: 'آیتم ۱...' }}" class="brief-input-text" />
+                                    </div>
+                                    <button type="button" class="brief-btn brief-btn-secondary" style="font-size: 0.75rem; padding: 0.4rem 0.85rem;">
+                                        + افزودن آیتم جدید
+                                    </button>
+                                </div>
+
+                            @elseif($type === 'input_group')
+                                <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.75rem;">
+                                    @foreach($subfields as $sub)
+                                        <div>
+                                            <label style="font-size: 0.75rem; font-weight: 700; color: #475569; display: block; margin-bottom: 0.25rem;">{{ $sub }}</label>
+                                            <input type="text" placeholder="{{ $sub }}..." class="brief-input-text" />
                                         </div>
-                                    </details>
-                                @endif
-                            </div>
+                                    @endforeach
+                                </div>
+
+                            @elseif($type === 'file_upload')
+                                <div class="brief-upload-zone" onclick="document.getElementById('preview_file_{{ $index }}').click()">
+                                    <x-heroicon-o-cloud-arrow-up style="width: 2rem !important; height: 2rem !important; color: #3b82f6; margin-bottom: 0.35rem;" />
+                                    <p style="font-size: 0.85rem; font-weight: 700; margin: 0;">محل آپلود فایل (کلیک کنید)</p>
+                                </div>
+                            @endif
+
+                            @if(filled($helpContent))
+                                <details class="brief-help-accordion" @if($helpDefaultOpen) open @endif>
+                                    <summary class="brief-help-summary">
+                                        <x-heroicon-o-light-bulb style="color: #f59e0b;" />
+                                        <span>مشاهده راهنما و توضیحات این فیلد</span>
+                                    </summary>
+                                    <div class="brief-help-content">
+                                        {!! $helpContent !!}
+                                    </div>
+                                </details>
+                            @endif
                         </div>
                     @endif
                 @endforeach
-
-                <div style="margin-top: 1.5rem;">
-                    <button type="button" class="brief-btn brief-btn-success" style="width: 100%; justify-content: center; padding: 0.85rem;">
-                        <x-heroicon-o-check-circle />
-                        <span>ثبت نهایی فرم بریف (حالت آزمایشی)</span>
-                    </button>
-                </div>
             </div>
         @endif
-    @endif
 </div>

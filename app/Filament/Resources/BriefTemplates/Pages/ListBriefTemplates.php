@@ -82,7 +82,12 @@ class ListBriefTemplates extends ListRecords
 
     public function previewTemplate(int $id): void
     {
-        $this->replaceMountedAction('previewModal', ['record' => $id]);
+        $template = BriefTemplate::find($id);
+        if ($template) {
+            $template->increment('views_count');
+        }
+
+        $this->mountAction('previewModal', ['record' => $id]);
     }
 
     public function previewModalAction(): Action

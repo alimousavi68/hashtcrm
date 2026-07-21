@@ -17,18 +17,6 @@ use Filament\Schemas\Components\Text;
 class BriefTemplateForm
 {
     /**
-     * اسامی کوتاه نوع بلوک برای نمایش در هدر آیتم Builder
-     */
-    private static array $blockTypeLabels = [
-        'text_input'        => 'متن کوتاه',
-        'textarea'          => 'متن بلند',
-        'select'            => 'انتخابی',
-        'radio_choice'      => 'تک‌انتخابی',
-        'file_upload'       => 'فایل',
-        'instruction_block' => 'راهنما',
-    ];
-
-    /**
      * ساخت بخش راهنمای غنی (مشترک بین همه بلوک‌ها)
      */
     private static function helpSection(): Section
@@ -63,6 +51,17 @@ class BriefTemplateForm
             ]);
     }
 
+    /**
+     * فیلد تعیین عنوان گام / دسته‌بندی ویزارد (مشترک در تمام بلوک‌ها)
+     */
+    private static function stepCategoryInput(): TextInput
+    {
+        return TextInput::make('step_title')
+            ->label('عنوان گام / دسته‌بندی ویزارد (اختیاری)')
+            ->placeholder('مثال: گام اول: آشنایی اولیه و دامنه پروژه')
+            ->helperText('سوالاتی که عنوان گام یکسان دارند، در ویزارد کارفرما در یک مرحله دسته‌بندی می‌شوند.');
+    }
+
     public static function configure(Schema $schema): Schema
     {
         return $schema
@@ -82,10 +81,10 @@ class BriefTemplateForm
                                         Grid::make(2)->schema([
                                             TextInput::make('name')
                                                 ->label('نام الگو')
-                                                ->placeholder('مثال: قالب بریف اختصاصی طراحی وب‌سایت')
+                                                ->placeholder('مثال: پرسشنامه جامع و استاندارد طراحی وب‌سایت')
                                                 ->required()
                                                 ->maxLength(255)
-                                                ->helperText('عنوانی مشخص برای شناسایی الگوی بریف انتخاب کنید.'),
+                                                ->helperText('عنوانی مشخص برای شناسایی الگوی پرسشنامه انتخاب کنید.'),
                                             Toggle::make('is_active')
                                                 ->label('وضعیت انتشار الگو')
                                                 ->default(true)
@@ -94,19 +93,19 @@ class BriefTemplateForm
                                     ]),
 
                                 Section::make('تنظیمات نمایش فرم به مشتری')
-                                    ->description('رفتار کلی فرم بریف در پورتال مشتری را مشخص کنید.')
+                                    ->description('رفتار کلی فرم پرسشنامه در پورتال مشتری را مشخص کنید.')
                                     ->icon('heroicon-o-presentation-chart-bar')
                                     ->schema([
                                         Grid::make(2)->schema([
                                             Toggle::make('wizard_mode')
-                                                ->label('حالت ویزاردی (یک سوال در هر صفحه)')
-                                                ->helperText('در صورت فعال بودن، مشتری فیلدها را به صورت مرحله‌ای و یکی‌یکی مشاهده و تکمیل می‌کند.')
-                                                ->default(false),
+                                                ->label('حالت ویزاردی دسته‌بندی شده')
+                                                ->helperText('در صورت فعال بودن، سوالات بر اساس گام‌ها/دسته‌ها تفکیک شده و به صورت مرحله‌ای نمایش داده می‌شوند.')
+                                                ->default(true),
                                         ]),
                                         TextInput::make('guide_notice')
-                                            ->label('پیام راهنمای کلی بالای فرم بریف (برای کارفرما)')
+                                            ->label('پیام راهنمای کلی بالای فرم پرسشنامه (برای کارفرما)')
                                             ->placeholder('لطفاً فرم زیر را با دقت تکمیل فرمایید تا فرایند طراحی سریع‌تر آغاز گردد.')
-                                            ->helperText('این متن در بالای پورتال مشتری هنگام تکمیل بریف نمایش داده می‌شود.')
+                                            ->helperText('این متن در بالای پورتال مشتری هنگام تکمیل پرسشنامه نمایش داده می‌شود.')
                                             ->columnSpanFull(),
                                     ]),
                             ]),
@@ -116,7 +115,7 @@ class BriefTemplateForm
                             ->label('طراح فیلدها و نیازمندی‌ها')
                             ->icon('heroicon-o-adjustments-horizontal')
                             ->schema([
-                                Section::make('ساختار فیلدهای بریف')
+                                Section::make('ساختار فیلدهای پرسشنامه')
                                     ->description('فیلدها، پرسش‌ها و فایل‌های مورد نیاز مشتری را با استفاده از بلوک‌های زیر طراحی کنید.')
                                     ->icon('heroicon-o-swatch')
                                     ->schema([
@@ -147,6 +146,7 @@ class BriefTemplateForm
                                                                 ->live(debounce: 500)
                                                                 ->placeholder('نام برند یا شرکت'),
                                                         ]),
+                                                        static::stepCategoryInput(),
                                                         Grid::make(2)->schema([
                                                             TextInput::make('placeholder')
                                                                 ->label('متن راهنمای درون ورودی')
@@ -179,6 +179,7 @@ class BriefTemplateForm
                                                                 ->live(debounce: 500)
                                                                 ->placeholder('اهداف کلیدی پروژه'),
                                                         ]),
+                                                        static::stepCategoryInput(),
                                                         Grid::make(2)->schema([
                                                             TextInput::make('placeholder')
                                                                 ->label('متن راهنمای درون ورودی')
@@ -190,35 +191,35 @@ class BriefTemplateForm
                                                         static::helpSection(),
                                                     ]),
 
-                                                // ─────── ۳. لیست کشویی ───────────────────────────────
-                                                Block::make('select')
+                                                // ─────── ۳. چندانتخابی با چک‌باکس ────────────────────
+                                                Block::make('checkboxes')
                                                     ->label(fn (?array $state): string =>
                                                         filled($state['label'] ?? null)
-                                                            ? $state['label'] . ' — انتخابی'
-                                                            : 'لیست کشویی'
+                                                            ? $state['label'] . ' — چندانتخابی (چک‌باکس)'
+                                                            : 'چندانتخابی (چک‌باکس)'
                                                     )
-                                                    ->icon('heroicon-o-chevron-down')
+                                                    ->icon('heroicon-o-queue-list')
                                                     ->schema([
                                                         Grid::make(2)->schema([
                                                             TextInput::make('name')
                                                                 ->label('نام فیلد (شناسه انگلیسی)')
                                                                 ->required()
                                                                 ->alphaDash()
-                                                                ->placeholder('business_type'),
+                                                                ->placeholder('required_features'),
                                                             TextInput::make('label')
                                                                 ->label('عنوان فیلد (نمایش به مشتری)')
                                                                 ->required()
                                                                 ->live(debounce: 500)
-                                                                ->placeholder('نوع کسب‌وکار'),
+                                                                ->placeholder('امکانات کلیدی و فنی مورد نیاز'),
                                                         ]),
+                                                        static::stepCategoryInput(),
                                                         TextInput::make('options')
                                                             ->label('گزینه‌ها (با کامای انگلیسی جدا کنید)')
                                                             ->required()
-                                                            ->placeholder('فروشی, شرکتی, خدماتی')
-                                                            ->helperText('مثال: گزینه ۱, گزینه ۲, گزینه ۳')
+                                                            ->placeholder('فروشگاه آنلاین, درگاه بانکی, وبلاگ, سیستم رزرو')
                                                             ->columnSpanFull(),
                                                         Toggle::make('required')
-                                                            ->label('پاسخ اجباری است؟')
+                                                            ->label('انتخاب حداقل یک مورد اجباری است؟')
                                                             ->default(false),
                                                         static::helpSection(),
                                                     ]),
@@ -228,7 +229,7 @@ class BriefTemplateForm
                                                     ->label(fn (?array $state): string =>
                                                         filled($state['label'] ?? null)
                                                             ? $state['label'] . ' — تک‌انتخابی'
-                                                            : 'گزینه‌های تک‌انتخابی'
+                                                            : 'گزینه‌های تک‌انتخابی (رادیویی)'
                                                     )
                                                     ->icon('heroicon-o-check-circle')
                                                     ->schema([
@@ -242,12 +243,13 @@ class BriefTemplateForm
                                                                 ->label('عنوان فیلد (نمایش به مشتری)')
                                                                 ->required()
                                                                 ->live(debounce: 500)
-                                                                ->placeholder('آیا دامنه تهیه کرده‌اید؟'),
+                                                                ->placeholder('آیا دامنه و هاست تهیه کرده‌اید؟'),
                                                         ]),
+                                                        static::stepCategoryInput(),
                                                         TextInput::make('options')
                                                             ->label('گزینه‌ها (با کامای انگلیسی جدا کنید)')
                                                             ->required()
-                                                            ->placeholder('بله دارم, خیر نیاز به مشاوره دارم')
+                                                            ->placeholder('بله هر دو را دارم, فقط دامنه دارم, هیچکدام را ندارم')
                                                             ->columnSpanFull(),
                                                         Toggle::make('required')
                                                             ->label('پاسخ اجباری است؟')
@@ -255,7 +257,140 @@ class BriefTemplateForm
                                                         static::helpSection(),
                                                     ]),
 
-                                                // ─────── ۵. آپلود فایل ───────────────────────────────
+                                                // ─────── ۵. لیست کشویی ───────────────────────────────
+                                                Block::make('select')
+                                                    ->label(fn (?array $state): string =>
+                                                        filled($state['label'] ?? null)
+                                                            ? $state['label'] . ' — کشویی'
+                                                            : 'لیست کشویی (Select)'
+                                                    )
+                                                    ->icon('heroicon-o-chevron-down')
+                                                    ->schema([
+                                                        Grid::make(2)->schema([
+                                                            TextInput::make('name')
+                                                                ->label('نام فیلد (شناسه انگلیسی)')
+                                                                ->required()
+                                                                ->alphaDash()
+                                                                ->placeholder('launch_timeline'),
+                                                            TextInput::make('label')
+                                                                ->label('عنوان فیلد (نمایش به مشتری)')
+                                                                ->required()
+                                                                ->live(debounce: 500)
+                                                                ->placeholder('زمان‌بندی مدنظر جهت رونمایی'),
+                                                        ]),
+                                                        static::stepCategoryInput(),
+                                                        TextInput::make('options')
+                                                            ->label('گزینه‌ها (با کامای انگلیسی جدا کنید)')
+                                                            ->required()
+                                                            ->placeholder('اورژانسی (کمتر از ۱ ماه), عادی (۱ تا ۲ ماه), بیش از ۲ ماه')
+                                                            ->columnSpanFull(),
+                                                        Toggle::make('required')
+                                                            ->label('پاسخ اجباری است؟')
+                                                            ->default(false),
+                                                        static::helpSection(),
+                                                    ]),
+
+                                                // ─────── ۶. فهرست پویا (Repeater) ────────────────────
+                                                Block::make('repeater')
+                                                    ->label(fn (?array $state): string =>
+                                                        filled($state['label'] ?? null)
+                                                            ? $state['label'] . ' — فهرست پویا (+)'
+                                                            : 'فهرست پویا (افزودن آیتم‌های متعدد)'
+                                                    )
+                                                    ->icon('heroicon-o-list-bullet')
+                                                    ->schema([
+                                                        Grid::make(2)->schema([
+                                                            TextInput::make('name')
+                                                                ->label('نام فیلد (شناسه انگلیسی)')
+                                                                ->required()
+                                                                ->alphaDash()
+                                                                ->placeholder('competitors_list'),
+                                                            TextInput::make('label')
+                                                                ->label('عنوان فیلد (نمایش به مشتری)')
+                                                                ->required()
+                                                                ->live(debounce: 500)
+                                                                ->placeholder('آدرس وب‌سایت رقبای اصلی شما'),
+                                                        ]),
+                                                        static::stepCategoryInput(),
+                                                        Grid::make(2)->schema([
+                                                            TextInput::make('placeholder')
+                                                                ->label('عنوان آیتم / راهنمای ورودی')
+                                                                ->placeholder('آدرس سایت رقیب را وارد کنید...'),
+                                                            Toggle::make('required')
+                                                                ->label('پاسخ اجباری است؟')
+                                                                ->default(false),
+                                                        ]),
+                                                        static::helpSection(),
+                                                    ]),
+
+                                                // ─────── ۷. گروه ورودی‌های متنی (Input Group) ────────
+                                                Block::make('input_group')
+                                                    ->label(fn (?array $state): string =>
+                                                        filled($state['label'] ?? null)
+                                                            ? $state['label'] . ' — گروه فیلدها'
+                                                            : 'گروه فیلدهای متنی چندگانه'
+                                                    )
+                                                    ->icon('heroicon-o-rectangle-group')
+                                                    ->schema([
+                                                        Grid::make(2)->schema([
+                                                            TextInput::make('name')
+                                                                ->label('نام اصلی (شناسه انگلیسی)')
+                                                                ->required()
+                                                                ->alphaDash()
+                                                                ->placeholder('brand_names'),
+                                                            TextInput::make('label')
+                                                                ->label('عنوان اصلی گروه')
+                                                                ->required()
+                                                                ->live(debounce: 500)
+                                                                ->placeholder('نام کامل کسب‌وکار / سازمان شما'),
+                                                        ]),
+                                                        static::stepCategoryInput(),
+                                                        TextInput::make('subfields')
+                                                            ->label('زیرفیلدها (با کاما جدا کنید)')
+                                                            ->required()
+                                                            ->placeholder('نام فارسی/بومی, نام انگلیسی')
+                                                            ->helperText('برای هر فیلد یک برچسب با کاما جدا کنید.')
+                                                            ->columnSpanFull(),
+                                                        Toggle::make('required')
+                                                            ->label('پاسخ اجباری است؟')
+                                                            ->default(false),
+                                                        static::helpSection(),
+                                                    ]),
+
+                                                // ─────── ۸. ورودی آدرس اینترنتی (URL Input) ──────────
+                                                Block::make('url_input')
+                                                    ->label(fn (?array $state): string =>
+                                                        filled($state['label'] ?? null)
+                                                            ? $state['label'] . ' — آدرس URL'
+                                                            : 'ورودی لینک / آدرس اینترنتی'
+                                                    )
+                                                    ->icon('heroicon-o-link')
+                                                    ->schema([
+                                                        Grid::make(2)->schema([
+                                                            TextInput::make('name')
+                                                                ->label('نام فیلد (شناسه انگلیسی)')
+                                                                ->required()
+                                                                ->alphaDash()
+                                                                ->placeholder('existing_website'),
+                                                            TextInput::make('label')
+                                                                ->label('عنوان فیلد (نمایش به مشتری)')
+                                                                ->required()
+                                                                ->live(debounce: 500)
+                                                                ->placeholder('آدرس وب‌سایت فعال یا قدیمی'),
+                                                        ]),
+                                                        static::stepCategoryInput(),
+                                                        Grid::make(2)->schema([
+                                                            TextInput::make('placeholder')
+                                                                ->label('متن راهنمای درون ورودی')
+                                                                ->placeholder('https://example.com'),
+                                                            Toggle::make('required')
+                                                                ->label('پاسخ اجباری است؟')
+                                                                ->default(false),
+                                                        ]),
+                                                        static::helpSection(),
+                                                    ]),
+
+                                                // ─────── ۹. آپلود فایل و مدارک ────────────────────────
                                                 Block::make('file_upload')
                                                     ->label(fn (?array $state): string =>
                                                         filled($state['label'] ?? null)
@@ -276,6 +411,7 @@ class BriefTemplateForm
                                                                 ->live(debounce: 500)
                                                                 ->placeholder('فایل لوگو با کیفیت بالا'),
                                                         ]),
+                                                        static::stepCategoryInput(),
                                                         Grid::make(2)->schema([
                                                             Toggle::make('required')
                                                                 ->label('آپلود اجباری است؟')
@@ -288,7 +424,7 @@ class BriefTemplateForm
                                                         static::helpSection(),
                                                     ]),
 
-                                                // ─────── ۶. باکس اطلاعیه و راهنما ───────────────────
+                                                // ─────── ۱۰. باکس اطلاعیه و راهنما ───────────────────
                                                 Block::make('instruction_block')
                                                     ->label(fn (?array $state): string =>
                                                         filled($state['title'] ?? null)
@@ -300,7 +436,8 @@ class BriefTemplateForm
                                                         TextInput::make('title')
                                                             ->label('عنوان اطلاعیه')
                                                             ->live(debounce: 500)
-                                                            ->placeholder('نکات مهم قبل از تکمیل بریف'),
+                                                            ->placeholder('نکات مهم قبل از تکمیل پرسشنامه'),
+                                                        static::stepCategoryInput(),
                                                         RichEditor::make('content')
                                                             ->label('متن اطلاعیه (قابل نمایش به مشتری)')
                                                             ->toolbarButtons([
@@ -328,18 +465,17 @@ class BriefTemplateForm
 
                         // ─── تب ۳: راهنمای نمایش ───────────────────────────────────────
                         Tabs\Tab::make('guidelines')
-                            ->label('راهنمای نمایش و فلو')
+                            ->label('راهنمای جدید نمایش و گام‌ها')
                             ->icon('heroicon-o-light-bulb')
                             ->schema([
-                                Section::make('نکات استراتژیک طراحی بریف')
-                                    ->description('توصیه‌های سیستم جهت دریافت بهترین خروجی نیازمندی‌ها از مشتری')
+                                Section::make('نکات استراتژیک دسته‌بندی و طراحی')
+                                    ->description('توصیه‌های سیستم جهت ساخت پرسشنامه‌های ویزاردی دسته‌بندی شده')
                                     ->icon('heroicon-o-sparkles')
                                     ->schema([
                                         Text::make('
-<p style="margin-bottom:1rem"><strong>👁️ پیش‌نمایش زنده:</strong> با کلیک روی دکمه «پیش‌نمایش فرم کارفرما» در بالای صفحه یا جدول الگوها، می‌توانید دقیقاً ظاهر و ساختاری که مشتری در پورتال مشاهده خواهد کرد را به همراه راهنماها و مدارک ضروری بررسی کنید.</p>
-<p style="margin-bottom:1rem"><strong>📌 حالت ویزاردی:</strong> با فعال‌سازی گزینه «یک سوال در هر صفحه» در تب مشخصات، مشتری در هر مرحله فقط یک فیلد را می‌بیند. این حالت برای بریف‌های طولانی با ۷+ فیلد توصیه می‌شود.</p>
-<p style="margin-bottom:1rem"><strong>📌 باکس راهنما:</strong> برای هر فیلد می‌توانید یک بخش راهنمای غنی (متن، تصویر، لیست) اضافه کنید. تعیین کنید که آیا این راهنما از ابتدا باز باشد یا مشتری در صورت نیاز آن را باز کند.</p>
-<p><strong>📌 شماره‌گذاری:</strong> فیلدها به صورت خودکار شماره‌گذاری می‌شوند و عنوان هر فیلد در هدر آن نمایش داده می‌شود.</p>
+<p style="margin-bottom:1rem"><strong>📌 دسته‌بندی ویزاردی (گام‌ها):</strong> با تعیین فیلد اختیاری «عنوان گام / دسته‌بندی» در هر سوال، سوالات به صورت خودکار در مراحل ۶‌گانه ویزارد برای مشتری گروه‌بندی می‌شوند.</p>
+<p style="margin-bottom:1rem"><strong>📌 بلوک‌های پیشرفته:</strong> می‌توانید از انواع جدید بلوک‌ها مانند <em>چندانتخابی چک‌باکس</em>، <em>گروه ورودی‌های متنی</em>، <em>فهرست پویا (Repeater)</em> و <em>ورودی آدرس لینک (URL)</em> بهره ببرید.</p>
+<p><strong>👁️ پیش‌نمایش زنده:</strong> با کلیک روی دکمه «پیش‌نمایش فرم کارفرما» در بالای صفحه، می‌توانید فرم کامل ۶ گام را بر اساس تغییرات خود بررسی کنید.</p>
                                         '),
                                     ]),
                             ]),

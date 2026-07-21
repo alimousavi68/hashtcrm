@@ -198,6 +198,7 @@
             align-items: center;
             gap: 0.35rem;
             text-decoration: none !important;
+            box-sizing: border-box;
         }
         .dark .q-action-item-btn {
             color: #cbd5e1;
@@ -209,6 +210,18 @@
         .dark .q-action-item-btn:hover {
             color: var(--primary-400, #818cf8);
             background-color: #1e293b;
+        }
+
+        /* Strict Sizing for SVG Icons inside action buttons */
+        .q-action-item-btn svg {
+            width: 14px !important;
+            height: 14px !important;
+            min-width: 14px !important;
+            min-height: 14px !important;
+            max-width: 14px !important;
+            max-height: 14px !important;
+            flex-shrink: 0 !important;
+            display: inline-block !important;
         }
 
         .q-action-item-danger {
@@ -337,7 +350,7 @@
                             class="q-card-menu-btn" 
                             title="گزینه‌ها"
                         >
-                            <svg class="w-3.5 h-3.5 opacity-70" fill="currentColor" viewBox="0 0 20 20">
+                            <svg style="width: 14px !important; height: 14px !important;" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM18 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
                             </svg>
                         </button>
@@ -350,7 +363,7 @@
                             wire:click="previewTemplate({{ $record->id }})" 
                             class="q-action-item-btn"
                         >
-                            <svg class="w-3.5 h-3.5 text-info-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="text-info-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
                             </svg>
@@ -361,7 +374,7 @@
                             href="{{ \App\Filament\Resources\BriefTemplates\BriefTemplateResource::getUrl('edit', ['record' => $record]) }}" 
                             class="q-action-item-btn"
                         >
-                            <svg class="w-3.5 h-3.5 text-primary-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="text-primary-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                             </svg>
                             <span>ویرایش</span>
@@ -373,12 +386,12 @@
                             class="q-action-item-btn {{ $record->is_active ? 'q-action-item-danger' : 'text-emerald-600' }}"
                         >
                             @if($record->is_active)
-                                <svg class="w-3.5 h-3.5 text-rose-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="text-rose-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                 </svg>
                                 <span>غیرفعال‌سازی</span>
                             @else
-                                <svg class="w-3.5 h-3.5 text-emerald-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="text-emerald-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
                                 </svg>
                                 <span>فعال‌سازی</span>
@@ -391,7 +404,7 @@
                             wire:confirm="آیا از حذف این پرسشنامه اطمینان دارید؟" 
                             class="q-action-item-btn q-action-item-danger"
                         >
-                            <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                             </svg>
                             <span>حذف</span>
@@ -404,7 +417,7 @@
                                 class="q-card-menu-btn active"
                                 title="بستن"
                             >
-                                <svg class="w-3.5 h-3.5 opacity-70" fill="currentColor" viewBox="0 0 20 20">
+                                <svg style="width: 14px !important; height: 14px !important;" fill="currentColor" viewBox="0 0 20 20">
                                     <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM18 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
                                 </svg>
                             </button>
@@ -421,7 +434,7 @@
         <!-- Dedicated "Create New Questionnaire" Card (Filament Theme System) -->
         <a href="{{ \App\Filament\Resources\BriefTemplates\BriefTemplateResource::getUrl('create') }}" class="q-create-card group">
             <div class="w-11 h-11 rounded-2xl bg-primary-50 dark:bg-primary-950/60 text-primary-600 dark:text-primary-400 border border-primary-200/60 dark:border-primary-800/50 flex items-center justify-center shadow-xs transition-all group-hover:scale-105 group-hover:bg-primary-100 dark:group-hover:bg-primary-900/60">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg style="width: 20px !important; height: 20px !important;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                 </svg>
             </div>
