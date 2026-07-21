@@ -10,9 +10,9 @@ class BriefsCluster extends Cluster
 {
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedClipboardDocumentList;
 
-    protected static ?string $navigationLabel = 'مدیریت بریف‌ها';
+    protected static ?string $navigationLabel = 'مدیریت پرسشنامه‌ها';
 
-    protected static ?string $clusterBreadcrumb = 'بریف‌ها';
+    protected static ?string $clusterBreadcrumb = 'پرسشنامه‌ها';
 
     protected static ?int $navigationSort = 2;
 }

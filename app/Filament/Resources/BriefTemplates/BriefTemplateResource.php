@@ -19,12 +19,11 @@ class BriefTemplateResource extends Resource
 {
     protected static ?string $model = BriefTemplate::class;
 
-    protected static ?string $cluster = BriefsCluster::class;
-
-    protected static ?string $modelLabel = 'قالب بریف';
-    protected static ?string $pluralModelLabel = 'قالب‌های بریف';
-    protected static ?string $navigationLabel = 'قالب‌های بریف';
-    protected static ?int $navigationSort = 1;
+    protected static ?string $modelLabel = 'پرسشنامه';
+    protected static ?string $pluralModelLabel = 'پرسشنامه‌ها';
+    protected static ?string $navigationLabel = 'پرسشنامه‌ها';
+    protected static \UnitEnum|string|null $navigationGroup = 'مدیریت پروژه‌ها و نیازمندی‌ها';
+    protected static ?int $navigationSort = 3;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedDocumentDuplicate;
 

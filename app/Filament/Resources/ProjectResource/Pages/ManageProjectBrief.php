@@ -18,12 +18,12 @@ class ManageProjectBrief extends EditRecord
 
     public static function getNavigationLabel(): string
     {
-        return 'بریف نیازمندی‌ها';
+        return 'پرسشنامه نیازمندی‌ها';
     }
 
     public function getTitle(): string
     {
-        return 'مدیریت و پاسخ‌های بریف پروژه';
+        return 'مدیریت و پاسخ‌های پرسشنامه پروژه';
     }
 
     public function getMaxContentWidth(): \Filament\Support\Enums\Width | string | null
@@ -35,8 +35,8 @@ class ManageProjectBrief extends EditRecord
     {
         return $schema
             ->schema([
-                Section::make('پاسخ‌های ثبت‌شده بریف توسط مشتری')
-                    ->description('اطلاعات تکمیل‌شده توسط مشتری در ویزارد بریف')
+                Section::make('پاسخ‌های ثبت‌شده پرسشنامه توسط مشتری')
+                    ->description('اطلاعات تکمیل‌شده توسط مشتری در ویزارد پرسشنامه')
                     ->icon('heroicon-o-user-circle')
                     ->collapsible()
                     ->relationship('briefAnswer')
@@ -69,13 +69,13 @@ class ManageProjectBrief extends EditRecord
                             ->disabled(),
                     ]),
 
-                Section::make('مدیریت فرم‌ساز بریف اختصاصی (Schema Builder)')
-                    ->description('در این بخش می‌توانید سوالات و فیلدهای بریف اختصاصی این پروژه را تعیین یا تغییر دهید.')
+                Section::make('مدیریت فرم‌ساز پرسشنامه اختصاصی (Schema Builder)')
+                    ->description('در این بخش می‌توانید سوالات و فیلدهای پرسشنامه اختصاصی این پروژه را تعیین یا تغییر دهید.')
                     ->icon('heroicon-o-adjustments-vertical')
                     ->collapsible()
                     ->schema([
                         Forms\Components\Builder::make('brief_schema')
-                            ->label('فیلدهای پویا فرم بریف')
+                            ->label('فیلدهای پویا فرم پرسشنامه')
                             ->blocks([
                                 Forms\Components\Builder\Block::make('text_input')
                                     ->label('ورودی متن کوتاه')

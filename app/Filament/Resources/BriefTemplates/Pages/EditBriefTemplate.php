@@ -15,7 +15,7 @@ class EditBriefTemplate extends EditRecord
 
     public function getSubheading(): string|Htmlable|null
     {
-        return 'در این صفحه می‌توانید ساختار فیلدها و مشخصات عمومی الگوی بریف را با استفاده از ابزار فیلدساز تغییر دهید.';
+        return 'در این صفحه می‌توانید ساختار فیلدها و مشخصات عمومی الگوی پرسشنامه را با استفاده از ابزار فیلدساز تغییر دهید.';
     }
 
     protected function getHeaderActions(): array
@@ -32,7 +32,7 @@ class EditBriefTemplate extends EditRecord
                 ->modalCancelActionLabel('بستن پیش‌نمایش'),
 
             Action::make('toggleActiveStatus')
-                ->label(fn (): string => $this->getRecord()->is_active ? 'غیرفعال‌سازی الگو' : 'فعال‌سازی الگو')
+                ->label(fn (): string => $this->getRecord()->is_active ? 'غیرفعال‌سازی پرسشنامه' : 'فعال‌سازی پرسشنامه')
                 ->icon(fn (): string => $this->getRecord()->is_active ? 'heroicon-o-pause-circle' : 'heroicon-o-play-circle')
                 ->color(fn (): string => $this->getRecord()->is_active ? 'warning' : 'success')
                 ->action(function () {
@@ -41,15 +41,15 @@ class EditBriefTemplate extends EditRecord
 
                     Notification::make()
                         ->title('تغییر وضعیت ثبت شد')
-                        ->body("الگوی «{$record->name}» " . ($record->is_active ? 'فعال' : 'غیرفعال') . ' گردید.')
+                        ->body("پرسشنامه «{$record->name}» " . ($record->is_active ? 'فعال' : 'غیرفعال') . ' گردید.')
                         ->success()
                         ->send();
                 }),
 
             DeleteAction::make()
-                ->label('حذف الگو')
-                ->modalHeading('حذف الگوی بریف')
-                ->modalDescription('آیا از حذف این الگوی بریف اطمینان دارید؟'),
+                ->label('حذف پرسشنامه')
+                ->modalHeading('حذف پرسشنامه')
+                ->modalDescription('آیا از حذف این پرسشنامه اطمینان دارید؟'),
         ];
     }
 }

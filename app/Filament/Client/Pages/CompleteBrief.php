@@ -47,7 +47,7 @@ class CompleteBrief extends Page implements HasForms
         }
 
         if (!$this->project->brief_schema || count($this->project->brief_schema) === 0) {
-            Notification::make()->title('خطا')->body('فرم بریفی برای این پروژه تنظیم نشده است. لطفا با پشتیبانی تماس بگیرید.')->danger()->send();
+            Notification::make()->title('خطا')->body('پرسشنامه‌ای برای این پروژه تنظیم نشده است. لطفا با پشتیبانی تماس بگیرید.')->danger()->send();
             return;
         }
 
@@ -114,7 +114,7 @@ class CompleteBrief extends Page implements HasForms
             }
         } else {
             $allFields = array_column($fieldList, 'field');
-            $steps[] = Wizard\Step::make('تکمیل بریف نیازمندی‌ها')
+            $steps[] = Wizard\Step::make('تکمیل پرسشنامه نیازمندی‌ها')
                 ->schema($allFields)
                 ->icon('heroicon-o-document-text');
         }
@@ -124,7 +124,7 @@ class CompleteBrief extends Page implements HasForms
                 Wizard::make($steps)
                     ->submitAction(new HtmlString('
                         <button type="submit" class="fi-btn fi-btn-color-primary fi-color-primary fi-size-md relative grid-flow-col items-center justify-center font-semibold outline-none transition duration-75 focus-visible:ring-2 disabled:pointer-events-none disabled:opacity-70 bg-primary-600 hover:bg-primary-500 text-white shadow-sm fi-ac-btn-action px-5 py-2.5 rounded-xl text-sm">
-                            ثبت نهایی اطلاعات بریف
+                            ثبت نهایی اطلاعات پرسشنامه
                         </button>
                     '))
             ])

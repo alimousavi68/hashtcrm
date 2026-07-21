@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\BriefTemplate;
 use Illuminate\Database\Seeder;
 
 class BriefTemplateSeeder extends Seeder
@@ -12,9 +12,14 @@ class BriefTemplateSeeder extends Seeder
      */
     public function run(): void
     {
-        \App\Models\BriefTemplate::create([
-            'name' => 'قالب پیش‌فرض بریف پروژه',
+        BriefTemplate::truncate();
+
+        BriefTemplate::create([
+            'name' => 'پرسشنامه طراحی سایت',
             'is_active' => true,
+            'wizard_mode' => true,
+            'views_count' => 268,
+            'responses_count' => 18,
             'schema' => [
                 [
                     'type' => 'text_input',
@@ -62,6 +67,43 @@ class BriefTemplateSeeder extends Seeder
                     ]
                 ],
             ]
+        ]);
+
+        BriefTemplate::create([
+            'name' => 'پرسشنامه طراحی سایت - ۲',
+            'is_active' => true,
+            'wizard_mode' => true,
+            'views_count' => 17,
+            'responses_count' => 4,
+            'schema' => [
+                [
+                    'type' => 'text_input',
+                    'data' => [
+                        'name' => 'brand_identity',
+                        'label' => 'هویت بصری و پالت رنگی',
+                        'placeholder' => 'رنگ‌های سازمانی مورد نظر شما',
+                        'required' => true,
+                    ]
+                ],
+                [
+                    'type' => 'textarea',
+                    'data' => [
+                        'name' => 'feature_requirements',
+                        'label' => 'امکانات و نیازمندی‌های کلیدی',
+                        'placeholder' => 'امکانات مورد نیاز مانند درگاه، زبان دوم و...',
+                        'required' => true,
+                    ]
+                ],
+            ]
+        ]);
+
+        BriefTemplate::create([
+            'name' => 'پرسشنامه طراحی سایت - خالی',
+            'is_active' => false,
+            'wizard_mode' => false,
+            'views_count' => 0,
+            'responses_count' => 0,
+            'schema' => []
         ]);
     }
 }
