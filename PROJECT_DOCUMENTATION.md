@@ -1,51 +1,74 @@
-# مستند جامع و مرجع معماری، کدها و جریان‌های کاری پروژه (Hasht CRM)
+# مستند جامع و مرجع معماری، کدها، استراتژی UX و جریان‌های کاری پروژه (Hasht CRM)
 
 > [!IMPORTANT]
 > **دستورالعمل حیاتی برای هوش مصنوعی (AI System Context & Directives):**
-> این مستند منبع کامل، دقیق و به‌روز از تمامی ابعاد فنی، دیتابیس، روت‌ها، کلاس‌ها، قوانین کسب‌وکار و جریان‌های کاری سیستم **Hasht CRM** است. با خواندن این مستند، هر عامل هوشمند (AI Agent) یا برنامه‌نویس بدون نیاز به اسکن مجدد کدها، باز کردن فایل‌های متعددی از پروژه یا صرف توکن‌های اضافی برای درک Context، می‌تواند فوراً و با دقت ۱۰۰٪ درخواست‌های جدید مربوط به توسعه، اصلاح، بهینه‌سازی یا رفع اشکال را اجرا نماید.
+> این مستند منبع کامل، دقیق و به‌روز از تمامی ابعاد فنی، دیتابیس، روت‌ها، کلاس‌ها، استراتژی معماری اطلاعات (IA)، روانشناسی تجربه کاربری (UI/UX)، قوانین کسب‌وکار و جریان‌های کاری سیستم **Hasht CRM** است. با مطالعه این مستند، هر عامل هوشمند (AI Agent) یا برنامه‌نویس بدون نیاز به اسکن مجدد کدها، باز کردن فایل‌های متعددی از پروژه یا صرف توکن‌های اضافی برای درک Context، می‌تواند فوراً و با دقت ۱۰۰٪ درخواست‌های جدید مربوط به توسعه، اصلاح، بهینه‌سازی یا رفع اشکال را اجرا نماید.
 
 ---
 
 ## 📑 فهرست مطالب
 
-1. [اهداف و چشم‌انداز پروژه (Project Vision & Goals)](#۱-اهداف-و-چشم‌انداز-پروژه-project-vision--goals)
-2. [معماری کلی و زیرساخت (System Architecture & Stack)](#۲-معماری-کلی-و-زیرساخت-system-architecture--stack)
-3. [ساختار جامع فایل‌ها و دایرکتوری‌ها (File & Directory Structure)](#۳-ساختار-جامع-فایل‌ها-و-دایرکتوری‌ها-file--directory-structure)
-4. [ماژول‌ها و بخش‌های اصلی سیستم (Core Modules)](#۴-ماژول‌ها-و-بخش‌های-اصلی-سیستم-core-modules)
-5. [جریان‌های کاری و ماشین حالت (Workflows & State Machine)](#۵-جریان‌های-کاری-و-ماشین-حالت-workflows--state-machine)
-6. [مدل‌های داده و ساختار دیتابیس (Database Schema & Models)](#۶-مدل‌های-داده-و-ساختار-دیتابیس-database-schema--models)
-7. [نقشه جامع کلاس‌ها و کدهای پروژه (Codebase Map & Reference)](#۷-نقشه-جامع-کلاس‌ها-و-کدهای-پروژه-codebase-map--reference)
-8. [فهرست روت‌ها و نقطه‌تماس‌ها (Routes & Endpoints)](#۸-فهرست-روت‌ها-و-نقطه‌تماس‌ها-routes--endpoints)
-9. [قوانین کسب‌وکار و استانداردهای کدنویسی (Business Rules & Coding Standards)](#۹-قوانین-کسب‌وکار-و-استانداردهای-کدنویسی-business-rules--coding-standards)
-10. [سرویس‌های خارجی، وابستگی‌ها و دستورات اجرایی (Dependencies & Commands)](#۱۰-سرویس‌های-خارجی-وابستگی‌ها-و-دستورات-اجرایی-dependencies--commands)
+1. [اهداف، استراتژی محصول و چشم‌انداز (Product Vision & UX Strategy)](#۱-اهداف-استراتژی-محصول-و-چشم‌انداز-product-vision--ux-strategy)
+2. [معماری اطلاعات و طراحی رابط کاربری (Information Architecture & UI/UX)](#۲-معماری-اطلاعات-و-طراحی-رابط-کاربری-information-architecture--uiux)
+3. [پشته فناوری، فریمورک‌ها و پکیج‌ها (Tech Stack & Plugins)](#۳-پشته-فناوری-فریمورک‌ها-و-پکیج‌ها-tech-stack--plugins)
+4. [ساختار جامع فایل‌ها و دایرکتوری‌ها (File & Directory Structure)](#۴-ساختار-جامع-فایل‌ها-و-دایرکتوری‌ها-file--directory-structure)
+5. [ماژول‌ها و بخش‌های اصلی سیستم (Core Modules)](#۵-ماژول‌ها-و-بخش‌های-اصلی-سیستم-core-modules)
+6. [جریان‌های کاری و ماشین حالت (Workflows & State Machine)](#۶-جریان‌های-کاری-و-ماشین-حالت-workflows--state-machine)
+7. [مدل‌های داده و ساختار دیتابیس (Database Schema & Models)](#۷-مدل‌های-داده-و-ساختار-دیتابیس-database-schema--models)
+8. [نقشه جامع کلاس‌ها و کدهای پروژه (Codebase Map & Reference)](#۸-نقشه-جامع-کلاس‌ها-و-کدهای-پروژه-codebase-map--reference)
+9. [فهرست روت‌ها و نقطه‌تماس‌ها (Routes & Endpoints)](#۹-فهرست-روت‌ها-و-نقطه‌تماس‌ها-routes--endpoints)
+10. [قوانین کسب‌وکار و استانداردهای کدنویسی (Business Rules & Coding Standards)](#۱۰-قوانین-کسب‌وکار-و-استانداردهای-کدنویسی-business-rules--coding-standards)
+11. [راهنمای سریع تست و راه‌اندازی (Quick Start & Testing Accounts)](#۱۱-راهنمای-سریع-تست-و-راه‌اندازی-quick-start--testing-accounts)
 
 ---
 
-## ۱. اهداف و چشم‌انداز پروژه (Project Vision & Goals)
+## ۱. اهداف، استراتژی محصول و چشم‌انداز (Product Vision & UX Strategy)
 
-### ۱.۱ اهداف کسب‌وکار (Business Goals)
-* **آنبوردینگ بدون اصطکاک (Frictionless UX):** حذف فرم‌های طولانی و پیچیده ابتدایی و جذب اعتماد مشتری از طریق ورود جادویی (Magic Link / OTP) و فرایند مرحله‌به‌مرحله (Progressive Disclosure).
-* **شفاف‌سازی فرایند توسعه:** ارائه داشبورد اختصاصی به مشتری جهت مشاهده نوار پیشرفت زنده، وضعیت مالی، امضای دیجیتال قرارداد، ثبت نظرات روی دموها و دریافت بسته تحویل نهایی.
-* **کاهش بارهای پشتیبانی:** یکپارچه‌سازی سیستم تیکتینگ سبک و نوتیفیکیشن‌های چندکاناله جهت حذف تماس‌های تلفنی مکرر برای پیگیری پروژه.
+### ۱.۱ اهداف اصلی محصول (Core Objectives)
+* **آنبوردینگ بدون اصطکاک (Frictionless Onboarding):** حذف فرم‌های طولانی اولیه و ایجاد حس اعتماد در اولین برخورد کاربر. مشتری بلافاصله پس از ورود با سوالات سنگین مانند رمز عبور هاست/دامنه یا پیش‌پرداخت مواجه نمی‌شود.
+* **شفاف‌سازی کامل توسعه:** ارائه یک داشبورد زنده با نوار پیشرفت درصدری (Progress Bar)، وضعیت فازها، امضای دیجیتال قرارداد و تایمرهای معکوس.
+* **تحویل امن و قدردانی (Handover Experience):** ارائه بسته تحویل نهایی شامل پیام تبریک، ویدیوهای آموزشی و دسترسی‌های رمزنگاری‌شده پس از تسویه کامل حساب.
 
-### ۱.۲ اهداف فنی (Technical Goals)
-* **پایه قدرتمند فریمورک:** استفاده از Laravel 12 و PHP 8.2+ به همراه **FilamentPHP v5 / v3 Components**.
-* **تفکیک کامل پنل‌ها:** مجزاسازی پنل مدیریت (`/admin`) با گارد `web` و پنل مشتری (`/client`) با گارد اختصاصی `client`.
-* **امنیتی‌سازی دارایی‌های حساس:** رمزنگاری دوطرفه متغیرها و اطلاعات محرمانه (هاست، دامنه، پنل وردپرس و دسترسی‌های بسته تحویل) با متدهای `Crypt::encryptString` و کست‌های `encrypted` لاراول.
-* **سازوکار هوشمند یادآوری:** تایمرهای خودکار ددلاین و ارسال نوتیفیکیشن چندکاناله (Database, Email, SMS, Telegram).
+### ۱.۲ مخاطبان اصلی و نیازهای آنان (User Personas)
+1. **مدیر سیستم / مجری پروژه (Admin):** نیازمند آنبوردینگ سریع مشتری، تعریف فرم بریف پویا، ارسال لینک ورود جادویی، مدیریت وضعیت پروژه‌ها و بررسی واریزی‌های بانکی.
+2. **کارفرما / مشتری (Client):** نیازمند ورود بدون کلمه عبور (OTP/Magic Link)، مشاهده وضعیت شفاف پروژه، پاسخ مرحله‌به‌مرحله به بریف، امضای ساده قرارداد و ثبت آسان فیش پرداخت روی موبایل.
 
 ---
 
-## ۲. معماری کلی و زیرساخت (System Architecture & Stack)
+## ۲. معماری اطلاعات و طراحی رابط کاربری (Information Architecture & UI/UX)
 
-### ۲.۱ پشته فناوری (Tech Stack)
-* **فریمورک بک‌اند:** Laravel 12.x / PHP 8.2+
-* **پنل‌های مدیریتی و UI:** FilamentPHP v5 / v3 Components (با RTL استاندارد و فونت فارسی PeydaWebVF)
-* **پایگاه داده:** SQLite (محیط توسعه لوکال) / MySQL (محیط تولید)
-* **کلاینت زنده:** Livewire 3 + Alpine.js
-* **سیستم اعلان‌ها:** Laravel Notifications + پکیج `prodstarter/filament-notification-center` + کانال‌های سفارشی Telegram و SMS.
+> [!TIP]
+> **اصول روانشناسی کاربر و UI/UX در این پروژه:**
 
-### ۲.۲ دیاگرام معماری لایه‌ای (Layered Architecture)
+### ۲.۱ اصل افشای تدریجی (Progressive Disclosure)
+اطلاعات در ۳ مرحله اصلی و مجزا دریافت می‌شوند:
+1. **مرحله ۱ (میکرو بریف / بریف نیازمندی‌ها):** دریافت اطلاعات پایه برند، رنگ‌بندی و سوالات اولیه پروژه از طریق فرم ویزاردی.
+2. **مرحله ۲ (قرارداد و امور مالی):** رندر تعاملی متن قرارداد، امضای دیجیتال (نام و کد ملی) و بارگذاری تصویر فیش بانکی.
+3. **مرحله ۳ (گاوصندوق دارایی‌ها - Vault):** دریافت دسترسی‌های حساس هاست، دامنه و پنل مدیریت فقط در زمانی که پروژه به فاز اجرا رسیده و اعتماد کامل شکل گرفته است.
+
+### ۲.۲ تایپوگرافی و واکنش‌گرایی (Typography & Mobile Responsiveness)
+* **تایپوگرافی اختصاصی:** استفاده از فونت فارسی استاندارد **PeydaWebVF** (با متغیرهای weight و خوانایی بالا در صفحه‌نمایش‌های کوچک).
+* **طراحی Touch-First:** تمام دکمه‌ها، ورودی‌های ویزارد و آپلودرها دارای اندازه لمس (Tap Target) مناسب و راست‌چین (RTL) کامل هستند.
+
+---
+
+## ۳. پشته فناوری، فریمورک‌ها و پکیج‌ها (Tech Stack & Plugins)
+
+پروژه بر پایه لاراول ۱۲ و فریمورک فیلامنت پیاده‌سازی شده است. در جدول زیر تمام فناوری‌ها، فریمورک‌ها و پکیج‌های استفاده شده به همراه نقش آن‌ها توضیح داده شده است:
+
+| لایه / حوزه | ابزار / پکیج / کتابخانه | نسخه | نقش و کاربرد در پروژه |
+|---|---|---|---|
+| **فریمورک اصلی (Core Backend)** | `laravel/framework` | `^12.0` | هسته اصلی پروژه، ORM Eloquent، سیستم Routing، Validation و Notifications |
+| **زبان برنامه‌نویسی** | `PHP` | `^8.2` | اجرای کدهای بک‌اند، کست‌های متغیرها و ویژگی‌های شی‌گرایی |
+| **فریمورک UI و پنل‌ها** | `filament/filament` | `^5.0` / `v3` | ساخت پنل ادمین (`/admin`) و پنل کلاینت (`/client`)، ریسورس‌ها، فرم‌ها و جداول |
+| **پنل اختصاصی کلاینت (Launchpad)** | `anselmocossa/filament-launchpad` | `^1.0` | ایجاد فضای اختصاصی داشبورد کلاینت و کاشی‌های بصری (Tile Groups & Tiles) |
+| **مرکز نوتیفیکیشن فیلامنت** | `prodstarter/filament-notification-center` | `^1.0` | دسته‌بندی اعلانات در هدر پنل‌ها (دسته‌های: پروژه‌ها، مالی، پشتیبانی، سیستم) |
+| **فونت و تایپوگرافی** | `LocalFontProvider` (PeydaWebVF) | نسخه اختصاصی | ارائه فونت فارسی پیدا به صورت بومی در تم فیلامنت |
+| **فرانت‌اند تعاملی** | Livewire 3 + Alpine.js | بومی فیلامنت | رندر فرم‌ها، ویزاردهای چندمرحله‌ای، چت آنلاین تیکت‌ها و واکنش‌گرایی زنده |
+| **پایگاه داده** | SQLite / MySQL | - | ذخیره‌سازی اطلاعات (SQLite در لوکال و MySQL در تولید) |
+| **کانال‌های اطلاع‌رسانی** | `ProjectNotification` + `SmsChannel` + `TelegramChannel` | اختصاصی | ارسال نوتیفیکیشن همزمان به Database، Email، پیامک و ربات تلگرام |
+
+### ۳.۱ دیاگرام جامع معماری سیستم
 
 ```mermaid
 graph TD
@@ -62,6 +85,7 @@ graph TD
 
     subgraph Presentation & UI Layer
         AdminPanelProvider --> AdminResources["Filament Admin Resources & Widgets"]
+        AdminPanelProvider --> BriefsCluster["Briefs Cluster"]
         ClientPanelProvider --> ClientPages["Livewire Client Pages (Projects, CompleteBrief, Tickets)"]
     end
 
@@ -87,7 +111,7 @@ graph TD
 
 ---
 
-## ۳. ساختار جامع فایل‌ها و دایرکتوری‌ها (File & Directory Structure)
+## ۴. ساختار جامع فایل‌ها و دایرکتوری‌ها (File & Directory Structure)
 
 ```
 hasht_crm/
@@ -95,23 +119,25 @@ hasht_crm/
 │   ├── Channels/                               # کانال‌های اطلاع‌رسانی سفارشی
 │   │   ├── SmsChannel.php                      # کانال ارسال پیامک (شبیه‌سازی / کاوه‌نگار / ملی‌پبامک)
 │   │   └── TelegramChannel.php                 # کانال ارسال پیام به ربات تلگرام
-│   ├── Filament/                               # بخش کدهای فیلامنت
+│   ├── Filament/                               # کدهای فیلامنت
+│   │   ├── Clusters/                           # خوشه‌بندی منوها
+│   │   │   └── BriefsCluster.php               # خوشه منوی مدیریت بریف‌ها
 │   │   ├── Client/                             # کدهای مربوط به پنل مشتری (/client)
 │   │   │   └── Pages/                          # صفحات اختصاصی مشتری
 │   │   │       ├── CompleteBrief.php           # صفحه ویزاردی رندر و دریافت بریف پویا
 │   │   │       ├── Dashboard.php               # صفحه خلاصه وضعیت داشبورد
 │   │   │       ├── Projects.php                # صفحه اصلی مدیریت پروژه‌ها، قرارداد و پرداخت
 │   │   │       └── Tickets.php                 # صفحه پشتیبانی و تیکتینگ مشتری
-│   │   ├── Pages/                              # صفحات سفارشی عمومی/ادمین
+│   │   ├── Pages/                              # صفحات سفارشی ادمین
 │   │   │   └── Auth/
 │   │   │       └── CustomLogin.php             # لاگین دو مرحله‌ای OTP / شماره موبایل
 │   │   ├── Resources/                          # ریسورس‌های پنل مدیریت (/admin)
 │   │   │   ├── BriefTemplates/                 # مدیریت الگوهای پیش‌فرض بریف
 │   │   │   │   └── BriefTemplateResource.php
 │   │   │   ├── NotificationResource.php        # مرکز مدیریت اعلانات سیستم
-│   │   │   ├── ProjectResource.php             # ریسورس اصلی مدیریت پروژه‌ها + RelationManagerها
-│   │   │   │   └── RelationManagers/           # مدیریت وابستگی‌های پروژه (Contract, Payments, Feedbacks, Tickets)
-│   │   │   ├── TicketResource.php              # مدیریت و پاسخگویی تیکت‌های پشتیبانی
+│   │   │   ├── ProjectResource.php             # ریسورس اصلی مدیریت پروژه‌ها
+│   │   │   │   └── RelationManagers/           # رلیشن منجرها (Contract, Payments, Feedbacks, Tickets)
+│   │   │   ├── TicketResource.php              # مدیریت تیکت‌های پشتیبانی
 │   │   │   └── UserResource.php                # مدیریت کاربران و مشتریان
 │   │   └── Widgets/                            # ویجت‌های داشبورد ادمین
 │   │       ├── ActiveProjectsProgressWidget.php# پیشرفت پروژه‌های فعال
@@ -140,41 +166,40 @@ hasht_crm/
 │           ├── AdminPanelProvider.php          # پیکربندی پنل مدیریت (/admin)
 │           └── ClientPanelProvider.php         # پیکربندی پنل مشتری (/client)
 ├── database/
-│   ├── factories/                              # ساخت داده‌های فیک برای تست
-│   ├── migrations/                             # میگریشن‌های ساخت جداول دیتابیس
+│   ├── factories/                              # ساخت داده‌های فیک
+│   ├── migrations/                             # میگریشن‌های دیتابیس
 │   └── seeders/                                # دیتای اولیه و سیدر دیتابیس
+│       ├── DatabaseSeeder.php                  # سیدر اصلی سناریوهای تست
+│       └── BriefTemplateSeeder.php             # سیدر الگوهای بریف
 ├── resources/
-│   └── views/                                  # کدهای Blade، قالب‌های پیام و کامپوننت‌های رندر
+│   └── views/                                  # کدهای Blade و قالب‌های رندر
 ├── routes/
 │   ├── console.php                             # دستورات کنسول
-│   └── web.php                                 # روت‌های وب (از جمله روت ورودی لینک جادویی)
-├── AICoderContext.md                           # مستند راهبردی و قوانین هوش مصنوعی
-├── ExecutionPlan.md                            # چک‌لیست گام‌به‌گام اجرایی
-├── implement.md                                # سند بازبینی، طرح اصلاحی و لاگ پیشرفت
-├── PROJECT_DOCUMENTATION.md                    # این مستند (مرجع جامع سیستم)
-└── composer.json                               # مدیریت وابستگی‌های پکیج‌ها
+│   └── web.php                                 # روت‌های وب (از جمله لینک جادویی)
+├── AICoderContext.md                           # مستند راهبردی هوش مصنوعی
+├── ExecutionPlan.md                            # نقشه راه گام‌به‌گام
+├── implement.md                                # لاگ اجرایی توسعه
+├── PROJECT_DOCUMENTATION.md                    # این مستند (مرجع جامع)
+└── composer.json                               # مدیریت وابستگی‌ها
 ```
 
 ---
 
-## ۴. ماژول‌ها و بخش‌های اصلی سیستم (Core Modules)
+## ۵. ماژول‌ها و بخش‌های اصلی سیستم (Core Modules)
 
-### ۴.۱ ماژول احراز هویت بدون گذرواژه (Passwordless Auth & Magic Link)
-> [!NOTE]
-> ورود کاربران بر پایه شماره موبایل است. هیچ کلمه عبوری به کاربر اختصاص داده نمی‌شود یا اجباری نیست.
-
-* **جریان OTP:** 
+### ۵.۱ ماژول احراز هویت بدون گذرواژه (Passwordless Auth & Magic Link)
+* **ورود OTP دو مرحله‌ای:**
   1. کاربر شماره موبایل خود را وارد می‌کند.
-  2. سیستم در صورت عدم وجود مشتری در پنل کلاینت، کاربر جدید ایجاد می‌کند (`role = client`). در پنل ادمین، فقط به کاربران با `role = admin` اجازه ادامه می‌دهد.
-  3. کد ۵ رقمی تصادفی تولید و تاریخ انقضای ۵ دقیقه‌ای ثبت می‌شود.
-  4. پس از وارد کردن کد OTP، کاربر لاگین شده و نشست (Session) بازسازی می‌شود.
-* **جریان Magic Link:**
-  1. ادمین از طریق پنل یا اکشن‌ها لینک ورود مستقیم ایجاد می‌کند.
-  2. توکن منحصربه‌فردی در URL قرار می‌گیرد (`/login/magic/{token}`).
-  3. روت متناظر توکن را بررسی، آن را یکبارمصرف و باطل کرده و کاربر را بر اساس نقش به پنل مربوطه هدایت می‌کند.
+  2. در صورت عدم وجود کاربر در پنل کلاینت، حساب جدید ایجاد می‌شود (`role = client`). در پنل ادمین، صرفاً کاربران با `role = admin` مجاز هستند.
+  3. کد ۵ رقمی تولید شده و به همراه زمان انقضای ۵ دقیقه‌ای ثبت می‌گردد.
+  4. با ورود کد صحیح، احراز هویت انجام شده و نشست بازسازی می‌شود.
+* **ورود لینک جادویی (Magic Link):**
+  1. ادمین یا سیستم توکن منحصربه‌فردی را به همراه مهلت انقضا برای مشتری تولید می‌کند.
+  2. لینک در قالب پیامک ارسال می‌شود (`/login/magic/{token}`).
+  3. با ورود به این روت، توکن اعتبارسنجی شده، بلافاصله باطل می‌گردد و کاربر بدون نیاز به وارد کردن کد، وارد پنل کلاینت می‌شود.
 
-### ۴.۲ ماژول مدیریت پروژه‌ها و فازهای ۷گانه (Project Lifecycle Engine)
-هر پروژه دارای یک وضعیت (`status`) است که درصد پیشرفت پروژه و تب‌های فعال در پنل مشتری را کنترل می‌کند:
+### ۵.۲ ماژول مدیریت پروژه‌ها و فازهای ۷گانه (Project Lifecycle Engine)
+وضعیت‌های پروژه (`status`) و درصد پیشرفت آن‌ها:
 1. `draft` (پیش‌نویس اولیه - ۱۰٪ پیشرفت)
 2. `brief` (تکمیل بریف نیازمندی‌ها - ۲۵٪ پیشرفت)
 3. `contract` (امضای قرارداد و امور مالی - ۴۵٪ پیشرفت)
@@ -183,32 +208,37 @@ hasht_crm/
 6. `ready_handover` (آماده‌سازی بسته تحویل - ۹۰٪ پیشرفت)
 7. `completed` (تحویل نهایی و خاتمه - ۱۰۰٪ پیشرفت)
 
-### ۴.۳ ماژول بریف پویا (Dynamic Brief Engine)
-* ادمین می‌تواند برای هر پروژه در فیلد `brief_schema` ساختار فرم بریف (فیلدهای متنی، کشویی، چندخطی و آپلود فایل) را تعیین کند.
-* مشتری در فاز `brief` با ورود به پنل، به صفحه [CompleteBrief.php](file:///Users/user/Sites/localhost/hasht_crm/app/Filament/Client/Pages/CompleteBrief.php) هدایت می‌شود.
-* پس از ثبت فرم بریف، پاسخ‌ها در جدول `brief_answers` ذخیره شده و فاز پروژه به صورت خودکار به `contract` ارتقا می‌یابد.
+### ۵.۳ ماژول بریف پویا (Dynamic Brief Engine)
+* **ساختار JSON Schema:** فیلد `brief_schema` روی پروژه مجموعه‌ای از بلوک‌ها را ذخیره می‌کند:
+  ```json
+  [
+    {"type": "text_input", "data": {"name": "brand_name", "label": "نام برند", "required": true}},
+    {"type": "textarea", "data": {"name": "goals", "label": "اهداف سایت"}},
+    {"type": "select", "data": {"name": "style", "label": "سبک طراحی", "options": "مدرن,کلاسیک,مینیمال"}},
+    {"type": "file_upload", "data": {"name": "logo", "label": "فایل لوگو"}}
+  ]
+  ```
+* **رندر در فرانت‌اند:** صفحه [CompleteBrief.php](file:///Users/user/Sites/localhost/hasht_crm/app/Filament/Client/Pages/CompleteBrief.php) این ساختار را به صورت خودکار به ویزارد فیلامنت تبدیل کرده و پاسخ‌ها را در `dynamic_answers` ذخیره می‌کند.
 
-### ۴.۴ ماژول قرارداد و امور مالی (Contract & Finance Engine)
-* **قرارداد تعاملی:** متن قرارداد با متغیرهای هوشمند (`:client_name`, `:project_title`, `:date`) رندر می‌شود. مشتری نام و کد ملی خود را وارد کرده و به عنوان امضای دیجیتال ثبت می‌کند.
-* **پرداخت فیش بانکی:** مشتری تصویر فیش پیش‌پرداخت را آپلود و مبلغ را وارد می‌کند. رکورد پرداخت با وضعیت `pending` ایجاد شده و به ادمین نوتیفیکیشن داده می‌شود. ادمین پس از بررسی، وضعیت را به `verified` تغییر داده و پروژه وارد فاز `in_progress` می‌شود.
+### ۵.۴ ماژول قرارداد و امور مالی (Contract & Finance Engine)
+* **جایگذاری متغیرها:** متغیرهای `:client_name`, `:project_title`, `:date` در متن قرارداد جاگذاری می‌شوند.
+* **ثبت امضا:** نام امضاکننده و کد ملی ثبت شده و تاریخ `signed_at` آپدیت می‌شود.
+* **پرداخت فیش بانکی:** بارگذاری تصویر فیش در مسیر `bank-slips/` و ثبت مبلغ. وضعیت اولیه `pending` است و با تایید ادمین پروژه وارد فاز `in_progress` می‌شود.
 
-### ۴.۵ ماژول بازنگری، دمو و تایمر اتوماتیک (Review & Auto-Approval Engine)
-* ادمین لینک پیش‌نمایش را در فیلد `demo_url` ثبت کرده و مهلت زمانی ثبت نظر را در `feedback_deadline` تعیین می‌کند.
-* **تایید خودکار:** در صورتی که زمان جاری از `feedback_deadline` بگذرد و مشتری نظری ثبت نکرده باشد، سیستم هنگام لود پروژه به صورت اتوماتیک یک رکورد `Feedback` با وضعیت `approved` ثبت کرده و پروژه را به فاز `ready_handover` منتقل می‌کند.
+### ۵.۵ ماژول بازنگری و تایمر خودکار (Review & Auto-Approval Engine)
+* اگر پروژه در فاز `review` باشد و زمان جاری از `feedback_deadline` عبور کند، سیستم هنگام لود پروژه به صورت خودکار:
+  1. وضعیت پروژه را به `ready_handover` تغییر می‌دهد.
+  2. یک رکورد `Feedback` با متن "تایید خودکار پروژه به دلیل به پایان رسیدن مهلت زمانی ارسال فیدبک." ایجاد می‌نماید.
 
-### ۴.۶ گاوصندوق امن دسترسی‌ها (Project Credentials Vault)
-* اطلاعات حساس هاست، ثبت‌کننده دامنه و پنل مدیریت وردپرس/سایت در جدول `project_credentials` ذخیره می‌شود.
-* تمامی کلمه‌های عبور با کست `encrypted` لاراول در دیتابیس رمزنگاری می‌شوند و فقط برای ادمین یا مشتری صاحب پروژه و در زمان نیاز رمزگشایی می‌گردند.
+### ۵.۶ گاوصندوق امن دسترسی‌ها (Credentials Vault)
+* ذخیره دسترسی‌های هاست، دامنه و پنل مدیریت با کست `encrypted` لاراول در جدول `project_credentials`.
 
-### ۴.۷ بسته تحویل نهایی (Handover Package)
-* منوط به **تسویه حساب کامل مالی** (`is_settled = true`).
-* شامل پیام تبریک، ویدیوهای آموزشی استفاده از سایت و اطلاعات نهایی دسترسی‌ها (رمزنگاری شده).
+### ۵.۷ بسته تحویل نهایی (Handover Package)
+* نمایش ویدیوهای آموزشی، پیام تبریک و دسترسی‌های نهایی به شرط **تسویه حساب کامل مالی** (`is_settled = true`).
 
 ---
 
-## ۵. جریان‌های کاری و ماشین حالت (Workflows & State Machine)
-
-### ۵.۱ دیاگرام توالی آنبوردینگ مشتری و امضای قرارداد
+## ۶. جریان‌های کاری و ماشین حالت (Workflows & State Machine)
 
 ```mermaid
 sequenceDiagram
@@ -217,197 +247,163 @@ sequenceDiagram
     participant CRM as سیستم CRM
     actor Client as مشتری
     
-    Admin->>CRM: تعریف مشتری جدید (User) و ساخت پروژه
-    CRM->>CRM: تولید magic_link_token با انقضا
-    CRM->>Client: ارسال پیامک لینک جادویی
-    Client->>CRM: باز کردن لینک ورود (/login/magic/{token})
-    CRM->>CRM: احراز هویت و ردیجکت به پنل /client
-    CRM->>Client: نمایش فرم بریف پویا (CompleteBrief)
-    Client->>CRM: تکمیل و ارسال پاسخ‌های بریف
-    CRM->>CRM: تغییر status پروژه به contract
-    Client->>CRM: امضای دیجیتال قرارداد (ثبت نام + کدملی)
-    Client->>CRM: آپلود فیش بانکی پیش‌پرداخت
-    CRM->>Admin: ارسال نوتیفیکیشن بررسی فیش
+    Admin->>CRM: ساخت مشتری و پروژه جدید
+    CRM->>Client: ارسال پیامک Magic Link
+    Client->>CRM: ورود با لینک جادویی (/login/magic/{token})
+    CRM->>Client: هدایت به ویزارد CompleteBrief
+    Client->>CRM: ارسال پاسخ‌های بریف
+    CRM->>CRM: تغییر وضعیت به contract
+    Client->>CRM: امضای دیجیتال قرارداد
+    Client->>CRM: آپلود فیش بانکی (Payment)
     Admin->>CRM: تایید فیش واریزی
-    CRM->>CRM: تغییر status پروژه به in_progress
+    CRM->>CRM: تغییر وضعیت به in_progress
+    Admin->>CRM: ثبت demo_url و ددلاین فیدبک
+    CRM->>CRM: تغییر وضعیت به review
+    alt ثبت نظر توسط مشتری
+        Client->>CRM: ثبت اصلاحات در Feedback
+    else پایان ددلاین بدون ثبت نظر
+        CRM->>CRM: تایید خودکار و تغییر وضعیت به ready_handover
+    end
+    Admin->>CRM: ثبت تسویه مالی (is_settled = true)
+    CRM->>Client: فعال‌سازی بسته تحویل نهایی (Handover)
 ```
 
 ---
 
-## ۶. مدل‌های داده و ساختار دیتابیس (Database Schema & Models)
+## ۷. مدل‌های داده و ساختار دیتابیس (Database Schema & Models)
 
-### ۶.۱ جدول `users`
+### ۷.۱ جدول `users`
 * **مدل:** [User.php](file:///Users/user/Sites/localhost/hasht_crm/app/Models/User.php)
-* **کلید اصلی:** `id` (BigInteger)
-* **فیلدها:**
-  * `phone` (String, Unique) — کلید احراز هویت.
-  * `name` (String)
-  * `email` (String, Nullable)
-  * `role` (Enum: `admin`, `client`, Default: `client`)
-  * `password` (String, Nullable) — فقط برای سازگاری؛ ورود اصلی با OTP است.
-  * `magic_link_token` (String, Nullable)
-  * `magic_link_expires_at` (Timestamp, Nullable)
-  * `otp_code` (String, Nullable)
-  * `otp_expires_at` (Timestamp, Nullable)
+* **فیلدها:** `id` (PK), `phone` (Unique), `name`, `email` (Nullable), `role` (`admin`|`client`), `password` (Nullable), `magic_link_token`, `magic_link_expires_at`, `otp_code`, `otp_expires_at`.
 
-### ۶.۲ جدول `projects`
+### ۷.۲ جدول `projects`
 * **مدل:** [Project.php](file:///Users/user/Sites/localhost/hasht_crm/app/Models/Project.php)
-* **فیلدها:**
-  * `client_id` (FK -> `users.id`, Cascade)
-  * `title` (String)
-  * `status` (Enum: `draft`, `brief`, `contract`, `in_progress`, `review`, `ready_handover`, `completed`)
-  * `is_settled` (Boolean, Default: false)
-  * `brief_schema` (JSON/Array, Nullable) — ساختار پویای بریف این پروژه.
-  * `demo_url` (String, Nullable)
-  * `feedback_deadline` (Timestamp, Nullable)
+* **فیلدها:** `id` (PK), `client_id` (FK -> `users.id`), `title`, `status` (`draft`, `brief`, `contract`, `in_progress`, `review`, `ready_handover`, `completed`), `is_settled` (Boolean), `brief_schema` (JSON), `demo_url`, `feedback_deadline`.
 
-### ۶.۳ جدول `brief_answers`
+### ۷.۳ جدول `brief_answers`
 * **مدل:** [BriefAnswer.php](file:///Users/user/Sites/localhost/hasht_crm/app/Models/BriefAnswer.php)
-* **فیلدها:** `project_id` (FK), `business_name`, `business_description`, `target_audience`, `competitors`, `design_style`, `color_preferences`, `features_required` (JSON), `extra_notes`, `dynamic_answers` (JSON).
+* **فیلدها:** `id` (PK), `project_id` (FK), `business_name`, `business_description`, `target_audience`, `competitors`, `design_style`, `color_preferences`, `features_required` (JSON), `extra_notes`, `dynamic_answers` (JSON).
 
-### ۶.۴ جدول `contracts`
+### ۷.۴ جدول `contracts`
 * **مدل:** [Contract.php](file:///Users/user/Sites/localhost/hasht_crm/app/Models/Contract.php)
-* **فیلدها:** `project_id` (FK), `title`, `content` (Text), `signed_at` (Timestamp, Nullable), `signature_name` (Nullable), `signature_national_code` (Nullable).
+* **فیلدها:** `id` (PK), `project_id` (FK), `title`, `content` (Text), `signed_at` (Timestamp), `signature_name`, `signature_national_code`.
 
-### ۶.۵ جدول `payments`
+### ۷.۵ جدول `payments`
 * **مدل:** [Payment.php](file:///Users/user/Sites/localhost/hasht_crm/app/Models/Payment.php)
-* **فیلدها:** `project_id` (FK), `amount` (BigInteger), `bank_slip_path` (String), `status` (Enum: `pending`, `verified`, `rejected`), `verified_at` (Timestamp, Nullable).
+* **فیلدها:** `id` (PK), `project_id` (FK), `amount` (BigInt), `bank_slip_path`, `status` (`pending`, `verified`, `rejected`), `verified_at` (Timestamp).
 
-### ۶.۶ جدول `project_credentials`
+### ۷.۶ جدول `project_credentials`
 * **مدل:** [ProjectCredential.php](file:///Users/user/Sites/localhost/hasht_crm/app/Models/ProjectCredential.php)
-* **فیلدها:** `project_id` (FK), `host_provider`, `host_username`, `host_password` (`encrypted`), `host_panel_url`, `domain_provider`, `domain_username`, `domain_password` (`encrypted`), `domain_panel_url`, `admin_panel_url`, `admin_username`, `admin_password` (`encrypted`), `other_credentials` (`encrypted`).
+* **فیلدها:** `id` (PK), `project_id` (FK), `host_provider`, `host_username`, `host_password` (`encrypted`), `host_panel_url`, `domain_provider`, `domain_username`, `domain_password` (`encrypted`), `domain_panel_url`, `admin_panel_url`, `admin_username`, `admin_password` (`encrypted`), `other_credentials` (`encrypted`).
 
-### ۶.۷ جدول `feedbacks`
-* **مدل:** [Feedback.php](file:///Users/user/Sites/localhost/hasht_crm/app/Models/Feedback.php)
-* **فیلدها:** `project_id` (FK), `notes` (Text), `status` (Enum: `approved`, `needs_changes`).
-
-### ۶.۸ جداول پشتیبانی (`tickets` و `ticket_messages`)
-* **مدل‌ها:** [Ticket.php](file:///Users/user/Sites/localhost/hasht_crm/app/Models/Ticket.php) و [TicketMessage.php](file:///Users/user/Sites/localhost/hasht_crm/app/Models/TicketMessage.php)
-* **فیلدها:** `project_id` (FK), `client_id` (FK), `subject`, `status` (`open`, `replied`, `closed`), `sender_id` (FK -> `users.id`), `message` (Text).
-
-### ۶.۹ جدول `handovers`
-* **مدل:** [Handover.php](file:///Users/user/Sites/localhost/hasht_crm/app/Models/Handover.php)
-* **فیلدها:** `project_id` (FK), `congratulations_message` (Text), `training_videos` (JSON), `final_credentials` (`encrypted`).
-
-### ۶.۱۰ جدول `brief_templates`
-* **مدل:** [BriefTemplate.php](file:///Users/user/Sites/localhost/hasht_crm/app/Models/BriefTemplate.php)
-* **فیلدها:** `name`, `schema` (JSON), `is_active` (Boolean).
+### ۷.۷ سایر جداول
+* **`feedbacks`:** `id`, `project_id` (FK), `notes`, `status` (`approved`, `needs_changes`).
+* **`tickets` & `ticket_messages`:** `id`, `project_id` (FK), `client_id` (FK), `subject`, `status` (`open`, `replied`, `closed`), `sender_id` (FK), `message`.
+* **`handovers`:** `id`, `project_id` (FK), `congratulations_message`, `training_videos` (JSON), `final_credentials` (`encrypted`).
+* **`brief_templates`:** `id`, `name`, `schema` (JSON), `is_active` (Boolean).
 
 ---
 
-## ۷. نقشه جامع کلاس‌ها و کدهای پروژه (Codebase Map & Reference)
+## ۸. نقشه جامع کلاس‌ها و کدهای پروژه (Codebase Map & Reference)
 
-### 🔗 لینک مستقیم تمام فایل‌های حیاتی پروژه:
+### 🔗 لینک‌های مستقیم فایل‌های پروژه:
 
 #### ۱. مدل‌ها (Models)
-* [User.php](file:///Users/user/Sites/localhost/hasht_crm/app/Models/User.php) — کاربر سیستم و متد `canAccessPanel`.
-* [Project.php](file:///Users/user/Sites/localhost/hasht_crm/app/Models/Project.php) — مدل پروژه، آرایه وضعیت‌ها و محاسبه پیشرفت.
-* [ProjectCredential.php](file:///Users/user/Sites/localhost/hasht_crm/app/Models/ProjectCredential.php) — دسترسی‌های هاست و دامنه با Castهای `encrypted`.
-* [Contract.php](file:///Users/user/Sites/localhost/hasht_crm/app/Models/Contract.php) — امضای دیجیتال قرارداد.
-* [Payment.php](file:///Users/user/Sites/localhost/hasht_crm/app/Models/Payment.php) — تراکنش‌های واریز فیش.
-* [Handover.php](file:///Users/user/Sites/localhost/hasht_crm/app/Models/Handover.php) — بسته تحویل نهایی.
-* [BriefAnswer.php](file:///Users/user/Sites/localhost/hasht_crm/app/Models/BriefAnswer.php) — پاسخ‌های فرم بریف.
-* [BriefTemplate.php](file:///Users/user/Sites/localhost/hasht_crm/app/Models/BriefTemplate.php) — الگوهای آماده بریف.
-* [Ticket.php](file:///Users/user/Sites/localhost/hasht_crm/app/Models/Ticket.php) — تیکت پشتیبانی.
-* [TicketMessage.php](file:///Users/user/Sites/localhost/hasht_crm/app/Models/TicketMessage.php) — پیام‌های چت پشتیبانی.
-* [Feedback.php](file:///Users/user/Sites/localhost/hasht_crm/app/Models/Feedback.php) — نظرات مرحله دمو.
+* [User.php](file:///Users/user/Sites/localhost/hasht_crm/app/Models/User.php)
+* [Project.php](file:///Users/user/Sites/localhost/hasht_crm/app/Models/Project.php)
+* [ProjectCredential.php](file:///Users/user/Sites/localhost/hasht_crm/app/Models/ProjectCredential.php)
+* [Contract.php](file:///Users/user/Sites/localhost/hasht_crm/app/Models/Contract.php)
+* [Payment.php](file:///Users/user/Sites/localhost/hasht_crm/app/Models/Payment.php)
+* [Handover.php](file:///Users/user/Sites/localhost/hasht_crm/app/Models/Handover.php)
+* [BriefAnswer.php](file:///Users/user/Sites/localhost/hasht_crm/app/Models/BriefAnswer.php)
+* [BriefTemplate.php](file:///Users/user/Sites/localhost/hasht_crm/app/Models/BriefTemplate.php)
+* [Ticket.php](file:///Users/user/Sites/localhost/hasht_crm/app/Models/Ticket.php)
+* [TicketMessage.php](file:///Users/user/Sites/localhost/hasht_crm/app/Models/TicketMessage.php)
+* [Feedback.php](file:///Users/user/Sites/localhost/hasht_crm/app/Models/Feedback.php)
 
-#### ۲. کنترولرها و احراز هویت (Controllers & Auth)
-* [CustomLogin.php](file:///Users/user/Sites/localhost/hasht_crm/app/Filament/Pages/Auth/CustomLogin.php) — سیستم ورود با کد OTP.
-* [MagicLinkController.php](file:///Users/user/Sites/localhost/hasht_crm/app/Http/Controllers/Auth/MagicLinkController.php) — تایید توکن لینک جادویی.
+#### ۲. احراز هویت و کنترولرها
+* [CustomLogin.php](file:///Users/user/Sites/localhost/hasht_crm/app/Filament/Pages/Auth/CustomLogin.php)
+* [MagicLinkController.php](file:///Users/user/Sites/localhost/hasht_crm/app/Http/Controllers/Auth/MagicLinkController.php)
 
-#### ۳. پنل‌ها و ریسورس‌های فیلامنت (Filament Providers & Resources)
-* [AdminPanelProvider.php](file:///Users/user/Sites/localhost/hasht_crm/app/Providers/Filament/AdminPanelProvider.php) — پیکربندی پنل مدیریت (`/admin`).
-* [ClientPanelProvider.php](file:///Users/user/Sites/localhost/hasht_crm/app/Providers/Filament/ClientPanelProvider.php) — پیکربندی پنل مشتری (`/client`).
-* [ProjectResource.php](file:///Users/user/Sites/localhost/hasht_crm/app/Filament/Resources/ProjectResource.php) — مدیریت پروژه‌ها، فرم بریف پویا و اکشن ارسال پیامک.
-* [UserResource.php](file:///Users/user/Sites/localhost/hasht_crm/app/Filament/Resources/UserResource.php) — مدیریت کاربران و مشتریان.
-* [TicketResource.php](file:///Users/user/Sites/localhost/hasht_crm/app/Filament/Resources/TicketResource.php) — مدیریت و پاسخگویی تیکت‌ها در ادمین.
-* [BriefTemplateResource.php](file:///Users/user/Sites/localhost/hasht_crm/app/Filament/Resources/BriefTemplates/BriefTemplateResource.php) — مدیریت الگوهای آماده بریف.
+#### ۳. فیلامنت و ریسورس‌های ادمین
+* [AdminPanelProvider.php](file:///Users/user/Sites/localhost/hasht_crm/app/Providers/Filament/AdminPanelProvider.php)
+* [BriefsCluster.php](file:///Users/user/Sites/localhost/hasht_crm/app/Filament/Clusters/BriefsCluster.php)
+* [ProjectResource.php](file:///Users/user/Sites/localhost/hasht_crm/app/Filament/Resources/ProjectResource.php)
+  * [ContractRelationManager.php](file:///Users/user/Sites/localhost/hasht_crm/app/Filament/Resources/ProjectResource/RelationManagers/ContractRelationManager.php)
+  * [PaymentsRelationManager.php](file:///Users/user/Sites/localhost/hasht_crm/app/Filament/Resources/ProjectResource/RelationManagers/PaymentsRelationManager.php)
+  * [FeedbacksRelationManager.php](file:///Users/user/Sites/localhost/hasht_crm/app/Filament/Resources/ProjectResource/RelationManagers/FeedbacksRelationManager.php)
+  * [TicketsRelationManager.php](file:///Users/user/Sites/localhost/hasht_crm/app/Filament/Resources/ProjectResource/RelationManagers/TicketsRelationManager.php)
+* [UserResource.php](file:///Users/user/Sites/localhost/hasht_crm/app/Filament/Resources/UserResource.php)
+* [TicketResource.php](file:///Users/user/Sites/localhost/hasht_crm/app/Filament/Resources/TicketResource.php)
+* [BriefTemplateResource.php](file:///Users/user/Sites/localhost/hasht_crm/app/Filament/Resources/BriefTemplates/BriefTemplateResource.php)
 
-#### ۴. صفحات اختصاصی کلاینت (Client Livewire Pages)
-* [Projects.php](file:///Users/user/Sites/localhost/hasht_crm/app/Filament/Client/Pages/Projects.php) — داشبورد تعاملی پروژه، امضای قرارداد، واریز فیش و ثبت نظرات.
-* [CompleteBrief.php](file:///Users/user/Sites/localhost/hasht_crm/app/Filament/Client/Pages/CompleteBrief.php) — فرم ويزاردی رندر بریف پویا.
-* [Tickets.php](file:///Users/user/Sites/localhost/hasht_crm/app/Filament/Client/Pages/Tickets.php) — چت و ارسال تیکت کلاینت.
-* [Dashboard.php](file:///Users/user/Sites/localhost/hasht_crm/app/Filament/Client/Pages/Dashboard.php) — خلاصه آمار کلاینت.
+#### ۴. صفحات پنل کلاینت (Client Livewire Pages)
+* [ClientPanelProvider.php](file:///Users/user/Sites/localhost/hasht_crm/app/Providers/Filament/ClientPanelProvider.php)
+* [Projects.php](file:///Users/user/Sites/localhost/hasht_crm/app/Filament/Client/Pages/Projects.php)
+* [CompleteBrief.php](file:///Users/user/Sites/localhost/hasht_crm/app/Filament/Client/Pages/CompleteBrief.php)
+* [Tickets.php](file:///Users/user/Sites/localhost/hasht_crm/app/Filament/Client/Pages/Tickets.php)
+* [Dashboard.php](file:///Users/user/Sites/localhost/hasht_crm/app/Filament/Client/Pages/Dashboard.php)
 
-#### ۵. سیستم اطلاع‌رسانی (Notification Engine)
-* [ProjectNotification.php](file:///Users/user/Sites/localhost/hasht_crm/app/Notifications/ProjectNotification.php) — نوتیفیکیشن جامع چندکاناله.
-* [SmsChannel.php](file:///Users/user/Sites/localhost/hasht_crm/app/Channels/SmsChannel.php) — کانال ارسال پیامک.
-* [TelegramChannel.php](file:///Users/user/Sites/localhost/hasht_crm/app/Channels/TelegramChannel.php) — کانال پیام تلگرام.
+#### ۵. نوتیفیکیشن‌ها و کانال‌ها
+* [ProjectNotification.php](file:///Users/user/Sites/localhost/hasht_crm/app/Notifications/ProjectNotification.php)
+* [SmsChannel.php](file:///Users/user/Sites/localhost/hasht_crm/app/Channels/SmsChannel.php)
+* [TelegramChannel.php](file:///Users/user/Sites/localhost/hasht_crm/app/Channels/TelegramChannel.php)
 
-#### ۶. ویجت‌های داشبورد (Widgets)
-* [StatsOverview.php](file:///Users/user/Sites/localhost/hasht_crm/app/Filament/Widgets/StatsOverview.php) — کارت‌های آماری بالایی ادمین.
-* [ActiveProjectsProgressWidget.php](file:///Users/user/Sites/localhost/hasht_crm/app/Filament/Widgets/ActiveProjectsProgressWidget.php) — نوار پیشرفت پروژه‌های فعال.
-* [DeadlineReminderWidget.php](file:///Users/user/Sites/localhost/hasht_crm/app/Filament/Widgets/DeadlineReminderWidget.php) — یادآور ددلاین‌ها و هشدارهای مالی.
+#### ۶. ویجت‌های داشبورد
+* [StatsOverview.php](file:///Users/user/Sites/localhost/hasht_crm/app/Filament/Widgets/StatsOverview.php)
+* [ActiveProjectsProgressWidget.php](file:///Users/user/Sites/localhost/hasht_crm/app/Filament/Widgets/ActiveProjectsProgressWidget.php)
+* [DeadlineReminderWidget.php](file:///Users/user/Sites/localhost/hasht_crm/app/Filament/Widgets/DeadlineReminderWidget.php)
+
+#### ۷. سیدرهای دیتابیس
+* [DatabaseSeeder.php](file:///Users/user/Sites/localhost/hasht_crm/database/seeders/DatabaseSeeder.php)
 
 ---
 
-## ۸. فهرست روت‌ها و نقطه‌تماس‌ها (Routes & Endpoints)
+## ۹. فهرست روت‌ها و نقطه‌تماس‌ها (Routes & Endpoints)
 
 | مسیر (URI) | متد | نام روت / اکشن | دسترسی / گارد | توضیحات |
 |---|---|---|---|---|
 | `/` | `GET` | `welcome` | عمومی | صفحه اصلی |
-| `/login/magic/{token}` | `GET` | `magic.verify` | عمومی | بررسی توکن لینک جادویی و ورود خودکار |
-| `/admin/login` | `GET/POST` | `filament.admin.auth.login` | عمومی | لاگین OTP ادمین |
-| `/admin` | `GET` | `filament.admin.pages.dashboard` | Auth (`web`) - Role: admin | داشبورد مدیریت و ویجت‌ها |
-| `/admin/projects` | `GET` | `filament.admin.resources.projects.index` | Auth (`web`) - Role: admin | مدیریت پروژه‌ها |
-| `/admin/users` | `GET` | `filament.admin.resources.users.index` | Auth (`web`) - Role: admin | مدیریت کاربران |
-| `/admin/tickets` | `GET` | `filament.admin.resources.tickets.index` | Auth (`web`) - Role: admin | صندوق تیکت‌های ادمین |
-| `/client/login` | `GET/POST` | `filament.client.auth.login` | عمومی | لاگین OTP مشتری |
-| `/client` | `GET` | `filament.client.pages.dashboard` | Auth (`client`) - Role: client | داشبورد شبکه Tiles مشتری |
-| `/client/projects` | `GET` | `filament.client.pages.projects` | Auth (`client`) - Role: client | پروژه‌های من، امضا و پرداخت |
-| `/client/complete-brief` | `GET` | `filament.client.pages.complete-brief` | Auth (`client`) - Role: client | فرم ویزاردی تکمیل بریف پویا |
-| `/client/tickets` | `GET` | `filament.client.pages.tickets` | Auth (`client`) - Role: client | تیکتینگ و چت آنلاین |
+| `/login/magic/{token}` | `GET` | `magic.verify` | عمومی | تایید توکن لینک جادویی و ورود |
+| `/admin/login` | `GET/POST` | `filament.admin.auth.login` | عمومی | ورود OTP ادمین |
+| `/admin` | `GET` | `filament.admin.pages.dashboard` | Auth (`web`) - Admin | داشبورد ادمین |
+| `/admin/projects` | `GET` | `filament.admin.resources.projects.index` | Auth (`web`) - Admin | مدیریت پروژه‌ها |
+| `/admin/users` | `GET` | `filament.admin.resources.users.index` | Auth (`web`) - Admin | مدیریت کاربران |
+| `/admin/tickets` | `GET` | `filament.admin.resources.tickets.index` | Auth (`web`) - Admin | مدیریت تیکت‌ها |
+| `/client/login` | `GET/POST` | `filament.client.auth.login` | عمومی | ورود OTP مشتری |
+| `/client` | `GET` | `filament.client.pages.dashboard` | Auth (`client`) - Client | داشبورد کلاینت |
+| `/client/projects` | `GET` | `filament.client.pages.projects` | Auth (`client`) - Client | پروژه‌ها، امضا و پرداخت |
+| `/client/complete-brief` | `GET` | `filament.client.pages.complete-brief` | Auth (`client`) - Client | ویزارد تکمیل بریف پویا |
+| `/client/tickets` | `GET` | `filament.client.pages.tickets` | Auth (`client`) - Client | پشتیبانی و چت آنلاین |
 
 ---
 
-## ۹. قوانین کسب‌وکار و استانداردهای کدنویسی (Business Rules & Coding Standards)
+## ۱۰. قوانین کسب‌وکار و استانداردهای کدنویسی (Business Rules & Coding Standards)
 
 > [!WARNING]
-> **خطوط قرمز توسعه (Dev Rules & Constraints):**
+> **الزامات حیاتی توسعه برای AI Coder:**
 
-1. **مدیریت فیلدهای محرمانه:** هرگز فیلدهای مربوط به کلمه عبور در `ProjectCredential` و `Handover` نباید به صورت متن خام ذخیره شوند. حتماً از Cast متناظر `'encrypted'` استفاده کنید.
-2. **جداسازی گاردها:** گارد `web` فقط برای کاربران با `role = 'admin'` و گارد `client` فقط برای `role = 'client'` معتبر است.
-3. **تکمیل بریف پویا:** اگر پروژه فاقد `brief_schema` باشد یا پاسخ‌ها تکمیل نشده باشند، سیستم به کاربر اخطار می‌دهد. پس از تکمیل بریف، فاز پروژه حتماً به `contract` ارتقا داده می‌شود.
-4. **تایید اتوماتیک دمو:** در صورت انقضای `feedback_deadline` در فاز `review` بدون پاسخ مشتری، سیستم به صورت خودکار پروژه را به فاز `ready_handover` منتقل می‌کند.
-5. **محدودیت دسترسی بسته تحویل:** تب یا محتوای `Handover` در پنل مشتری صرفاً زمانی که `is_settled == true` باشد نمایش می‌یابد.
+1. **رمزنگاری اجباری داده‌های محرمانه:** تمام پسوردها در `ProjectCredential` و `Handover` باید دارای کست `encrypted` باشند.
+2. **عدم Over-engineering:** از ساخت ساختارهای قراردادساز پیچیده یا فرم‌ساز گرافیکی درگ‌اندر‌دراپ پرهیز شود. بریف‌ها در قالب JSON schema هاردکد یا با Filament Builder تعریف می‌شوند.
+3. **تفکیک کامل پنل‌ها:** دسترسی مشتری با گارد `client` است و به کدهای ادمین یا اطلاعات پروژه‌های سایر مشتریان دسترسی ندارد.
+4. **مدیریت خطای ارسال پیامک/تلگرام:** در صورت بروز خطا در ارسال SMS یا پیام تلگرام، سیستم نباید Crash کند؛ بلکه خطا فقط در فایل لاگ ثبت شده و نوتیفیکیشن دیتابیس به کارش ادامه می‌دهد.
 
 ---
 
-## ۱۰. سرویس‌های خارجی، وابستگی‌ها و دستورات اجرایی (Dependencies & Commands)
+## ۱۱. راهنمای سریع تست و راه‌اندازی (Quick Start & Testing Accounts)
 
-### ۱۰.۱ پکیج‌های Composer اصلی
-```json
-"require": {
-    "php": "^8.2",
-    "anselmocossa/filament-launchpad": "^1.0",
-    "filament/filament": "^5.0",
-    "laravel/framework": "^12.0",
-    "prodstarter/filament-notification-center": "^1.0"
-}
+برای تست و بررسی پروژه بدون نیاز به اسکن مجدد فایل‌ها، حساب‌های آزمایشی زیر در [DatabaseSeeder.php](file:///Users/user/Sites/localhost/hasht_crm/database/seeders/DatabaseSeeder.php) قرار دارند:
+
+* **حساب مدیر سیستم (Admin):**
+  * شماره موبایل: `09120000000` (ایمیل: `admin@test.com`)
+* **مشتری ۱ (پروژه تکمیل‌شده و تسویه‌شده):**
+  * شماره موبایل: `09121111111` (نام: احمد حسینی)
+* **مشتری ۲ (پروژه در فاز بازنگری دمو و دارای تیکت‌های فعال):**
+  * شماره موبایل: `09122222222` (نام: مریم رضایی)
+* **مشتری ۳ (پروژه در فاز بریف اولیه):**
+  * شماره موبایل: `09123333333` (نام: سعید عباسی)
+
+### دستور بازسازی کامل دیتابیس و تست:
+```bash
+php artisan migrate:fresh --seed
 ```
-
-### ۱۰.۲ دستورات کلیدی اجرای پروژه
-
-* **اجرای سرور توسعه (Local Dev):**
-  ```bash
-  php artisan serve
-  ```
-* **اجرای صف اعلانات و Pail (در صورت نیاز):**
-  ```bash
-  php artisan queue:listen --tries=1
-  ```
-* **مهاجرت دیتابیس:**
-  ```bash
-  php artisan migrate
-  ```
-* **پاکسازی کش و کانفیگ لاراول:**
-  ```bash
-  php artisan config:clear
-  php artisan cache:clear
-  ```
-
----
-
-> **پایان مستند جامع پروژه Hasht CRM**  
-> *ارتقایافته و بازبینی‌شده با تمامی جزئیات فنی و روابط کدهای پروژه.*
