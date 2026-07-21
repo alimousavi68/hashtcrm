@@ -21,6 +21,16 @@ class EditBriefTemplate extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            Action::make('previewClientForm')
+                ->label('پیش‌نمایش فرم کارفرما')
+                ->icon('heroicon-o-eye')
+                ->color('info')
+                ->modalHeading(fn (): string => "پیش‌نمایش نحوه نمایش فرم: «{$this->getRecord()->name}»")
+                ->modalWidth('3xl')
+                ->modalContent(fn (): \Illuminate\Contracts\View\View => view('filament.admin.brief-template-preview', ['record' => $this->getRecord()]))
+                ->modalSubmitAction(false)
+                ->modalCancelActionLabel('بستن پیش‌نمایش'),
+
             Action::make('toggleActiveStatus')
                 ->label(fn (): string => $this->getRecord()->is_active ? 'غیرفعال‌سازی الگو' : 'فعال‌سازی الگو')
                 ->icon(fn (): string => $this->getRecord()->is_active ? 'heroicon-o-pause-circle' : 'heroicon-o-play-circle')

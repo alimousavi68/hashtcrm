@@ -60,6 +60,16 @@ class BriefTemplatesTable
                     ->falseLabel('فقط الگوهای غیرفعال'),
             ])
             ->recordActions([
+                Action::make('previewClientForm')
+                    ->label('پیش‌نمایش فرم')
+                    ->icon('heroicon-o-eye')
+                    ->color('info')
+                    ->modalHeading(fn (BriefTemplate $record): string => "پیش‌نمایش نحوه نمایش فرم: «{$record->name}»")
+                    ->modalWidth('3xl')
+                    ->modalContent(fn (BriefTemplate $record): \Illuminate\Contracts\View\View => view('filament.admin.brief-template-preview', ['record' => $record]))
+                    ->modalSubmitAction(false)
+                    ->modalCancelActionLabel('بستن پیش‌نمایش'),
+
                 EditAction::make()
                     ->label('ویرایش الگو')
                     ->icon('heroicon-o-pencil-square'),

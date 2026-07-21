@@ -12,6 +12,7 @@ use Filament\Forms\Components\Builder\Block;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Text;
 
 class BriefTemplateForm
 {
@@ -40,7 +41,8 @@ class BriefTemplateForm
                 RichEditor::make('help_content')
                     ->label('محتوای راهنما')
                     ->toolbarButtons([
-                        'heading',
+                        'h2',
+                        'h3',
                         'bold',
                         'italic',
                         'underline',
@@ -302,7 +304,8 @@ class BriefTemplateForm
                                                         RichEditor::make('content')
                                                             ->label('متن اطلاعیه (قابل نمایش به مشتری)')
                                                             ->toolbarButtons([
-                                                                'heading',
+                                                                'h2',
+                                                                'h3',
                                                                 'bold',
                                                                 'italic',
                                                                 'underline',
@@ -332,7 +335,8 @@ class BriefTemplateForm
                                     ->description('توصیه‌های سیستم جهت دریافت بهترین خروجی نیازمندی‌ها از مشتری')
                                     ->icon('heroicon-o-sparkles')
                                     ->schema([
-                                        \Filament\Schemas\Components\Utilities\Text::make('
+                                        Text::make('
+<p style="margin-bottom:1rem"><strong>👁️ پیش‌نمایش زنده:</strong> با کلیک روی دکمه «پیش‌نمایش فرم کارفرما» در بالای صفحه یا جدول الگوها، می‌توانید دقیقاً ظاهر و ساختاری که مشتری در پورتال مشاهده خواهد کرد را به همراه راهنماها و مدارک ضروری بررسی کنید.</p>
 <p style="margin-bottom:1rem"><strong>📌 حالت ویزاردی:</strong> با فعال‌سازی گزینه «یک سوال در هر صفحه» در تب مشخصات، مشتری در هر مرحله فقط یک فیلد را می‌بیند. این حالت برای بریف‌های طولانی با ۷+ فیلد توصیه می‌شود.</p>
 <p style="margin-bottom:1rem"><strong>📌 باکس راهنما:</strong> برای هر فیلد می‌توانید یک بخش راهنمای غنی (متن، تصویر، لیست) اضافه کنید. تعیین کنید که آیا این راهنما از ابتدا باز باشد یا مشتری در صورت نیاز آن را باز کند.</p>
 <p><strong>📌 شماره‌گذاری:</strong> فیلدها به صورت خودکار شماره‌گذاری می‌شوند و عنوان هر فیلد در هدر آن نمایش داده می‌شود.</p>

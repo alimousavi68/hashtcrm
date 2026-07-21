@@ -132,11 +132,22 @@ hasht_crm/
 │   │   │   └── Auth/
 │   │   │       └── CustomLogin.php             # لاگین دو مرحله‌ای OTP / شماره موبایل
 │   │   ├── Resources/                          # ریسورس‌های پنل مدیریت (/admin)
-│   │   │   ├── BriefTemplates/                 # مدیریت الگوهای پیش‌فرض بریف
-│   │   │   │   └── BriefTemplateResource.php
+│   │   │   ├── BriefTemplates/                 # مدیریت الگوهای پیش‌فرض بریف (کلاستر مدیریت بریف‌ها)
+│   │   │   │   ├── BriefTemplateResource.php   # ریسورس اصلی الگوی بریف
+│   │   │   │   ├── Schemas/BriefTemplateForm.php # فرم ۳ تبِه، فیلدساز و تنظیمات
+│   │   │   │   ├── Tables/BriefTemplatesTable.php# جدول الگوها با فیلتر و اکشن‌ها
+│   │   │   │   └── Pages/                      # صفحات لیست، ایجاد و ویرایش (همراه با اکشن پیش‌نمایش)
 │   │   │   ├── NotificationResource.php        # مرکز مدیریت اعلانات سیستم
 │   │   │   ├── ProjectResource.php             # ریسورس اصلی مدیریت پروژه‌ها
-│   │   │   │   └── RelationManagers/           # رلیشن منجرها (Contract, Payments, Feedbacks, Tickets)
+│   │   │   │   └── Pages/                      # صفحات تب‌بندی شده Sub-Navigation (سایدبار سمت راست)
+│   │   │   │       ├── EditProject.php         # اطلاعات اصلی، فاز ۷‌گانه و اکشن‌های سریع
+│   │   │   │       ├── ManageProjectBrief.php  # پاسخ‌های بریف مشتری و فرم‌ساز پویا
+│   │   │   │       ├── ManageProjectContract.php # متن قرارداد و مشخصات امضای دیجیتال
+│   │   │   │       ├── ManageProjectPayments.php # تراکنش‌ها، تایید/رد فیش و سوئیچ تسویه
+│   │   │   │       ├── ManageProjectFeedbacks.php # دمو، مهلت فیدبک و نظرات مشتری
+│   │   │   │       ├── ManageProjectVault.php    # گاوصندوق امن دسترسی‌ها (رمزنگاری شده)
+│   │   │   │       ├── ManageProjectHandover.php # بسته تحویل نهایی و آموزش‌ها
+│   │   │   │       └── ManageProjectTickets.php  # چت و تیکت‌های پشتیبانی پروژه
 │   │   │   ├── TicketResource.php              # مدیریت تیکت‌های پشتیبانی
 │   │   │   └── UserResource.php                # مدیریت کاربران و مشتریان
 │   │   └── Widgets/                            # ویجت‌های داشبورد ادمین
@@ -173,6 +184,9 @@ hasht_crm/
 │       └── BriefTemplateSeeder.php             # سیدر الگوهای بریف
 ├── resources/
 │   └── views/                                  # کدهای Blade و قالب‌های رندر
+│       └── filament/
+│           └── admin/
+│               └── brief-template-preview.blade.php # کامپوننت پیش‌نمایش تعاملی فرم کارفرما
 ├── routes/
 │   ├── console.php                             # دستورات کنسول
 │   └── web.php                                 # روت‌های وب (از جمله لینک جادویی)
@@ -208,14 +222,24 @@ hasht_crm/
 6. `ready_handover` (آماده‌سازی بسته تحویل - ۹۰٪ پیشرفت)
 7. `completed` (تحویل نهایی و خاتمه - ۱۰۰٪ پیشرفت)
 
-### ۵.۳ ماژول بریف پویا (Dynamic Brief Engine)
+* **معماری Sub-Navigation و تفکیک مدولار مدیریت پروژه (`ProjectResource`):**
+  - **سایدبار عمودی سمت راست (`SubNavigationPosition::Start`):** تمامی اجزای مدیریت پروژه به صورت مدولار در ۸ تب مجزا در سایدبار راست تفکیک شده‌اند.
+  - **بهینه‌سازی فضای نمایش (`Width::Full`):** تمامی صفحات رکورد پروژه از `Width::Full` استفاده می‌کنند تا از تمام عرض موجود در پنل بهره ببرند.
+  - **تنظیمات عرض سایدبارها:** عرض سایدبار اصلی پنل ادمین روی `14rem` و عرض سایدبار داخلی کلاستر/Sub-Navigation روی `13rem` تنظیم شده است تا حداکثر فضا در اختیار محتوا قرار گیرد.
+
+* **مدیریت الگوها در کلاستر بریف‌ها (`BriefsCluster`):**
+  - **ساختار فرم ۳ تبِه (`BriefTemplateForm`):** 
+    - *تب ۱ (مشخصات و تنظیمات)*: مدیریت نام الگو، وضعیت انتشار، فعال‌سازی حالت ویزاردی (`wizard_mode`) و متن پیام راهنمای بالای فرم (`guide_notice`).
+    - *تب ۲ (طراح فیلدها و نیازمندی‌ها)*: ابزار Form Builder غنی با ۶ نوع بلوک (`text_input`, `textarea`, `select`, `radio_choice`, `file_upload` با سوئیچ مدارک ضروری `is_essential`, `instruction_block` برای اطلاعیه‌ها) + بخش راهنمای ریچ‌تکست تاشو برای هر فیلد.
+    - *تب ۳ (راهنما و پیش‌نمایش)*: راهنما و نکات استراتژیک طراحی بریف.
+  - **پیش‌نمایش تعاملی و زنده:** استفاده از نمای اختصاصی [brief-template-preview.blade.php](file:///Users/user/Sites/localhost/hasht_crm/resources/views/filament/admin/brief-template-preview.blade.php) جهت مشاهده دقیق فرم از دید کارفرما مستقیم در پنل ادمین بدون نیاز به سوئیچ به پنل مشتری.
 * **ساختار JSON Schema:** فیلد `brief_schema` روی پروژه مجموعه‌ای از بلوک‌ها را ذخیره می‌کند:
   ```json
   [
     {"type": "text_input", "data": {"name": "brand_name", "label": "نام برند", "required": true}},
     {"type": "textarea", "data": {"name": "goals", "label": "اهداف سایت"}},
     {"type": "select", "data": {"name": "style", "label": "سبک طراحی", "options": "مدرن,کلاسیک,مینیمال"}},
-    {"type": "file_upload", "data": {"name": "logo", "label": "فایل لوگو"}}
+    {"type": "file_upload", "data": {"name": "logo", "label": "فایل لوگو", "is_essential": true}}
   ]
   ```
 * **رندر در فرانت‌اند:** صفحه [CompleteBrief.php](file:///Users/user/Sites/localhost/hasht_crm/app/Filament/Client/Pages/CompleteBrief.php) این ساختار را به صورت خودکار به ویزارد فیلامنت تبدیل کرده و پاسخ‌ها را در `dynamic_answers` ذخیره می‌کند.
@@ -300,7 +324,7 @@ sequenceDiagram
 * **`feedbacks`:** `id`, `project_id` (FK), `notes`, `status` (`approved`, `needs_changes`).
 * **`tickets` & `ticket_messages`:** `id`, `project_id` (FK), `client_id` (FK), `subject`, `status` (`open`, `replied`, `closed`), `sender_id` (FK), `message`.
 * **`handovers`:** `id`, `project_id` (FK), `congratulations_message`, `training_videos` (JSON), `final_credentials` (`encrypted`).
-* **`brief_templates`:** `id`, `name`, `schema` (JSON), `is_active` (Boolean).
+* **`brief_templates`:** `id`, `name`, `schema` (JSON), `is_active` (Boolean), `wizard_mode` (Boolean), `guide_notice` (Text/Nullable).
 
 ---
 
@@ -329,13 +353,21 @@ sequenceDiagram
 * [AdminPanelProvider.php](file:///Users/user/Sites/localhost/hasht_crm/app/Providers/Filament/AdminPanelProvider.php)
 * [BriefsCluster.php](file:///Users/user/Sites/localhost/hasht_crm/app/Filament/Clusters/BriefsCluster.php)
 * [ProjectResource.php](file:///Users/user/Sites/localhost/hasht_crm/app/Filament/Resources/ProjectResource.php)
-  * [ContractRelationManager.php](file:///Users/user/Sites/localhost/hasht_crm/app/Filament/Resources/ProjectResource/RelationManagers/ContractRelationManager.php)
-  * [PaymentsRelationManager.php](file:///Users/user/Sites/localhost/hasht_crm/app/Filament/Resources/ProjectResource/RelationManagers/PaymentsRelationManager.php)
-  * [FeedbacksRelationManager.php](file:///Users/user/Sites/localhost/hasht_crm/app/Filament/Resources/ProjectResource/RelationManagers/FeedbacksRelationManager.php)
-  * [TicketsRelationManager.php](file:///Users/user/Sites/localhost/hasht_crm/app/Filament/Resources/ProjectResource/RelationManagers/TicketsRelationManager.php)
+  * [EditProject.php](file:///Users/user/Sites/localhost/hasht_crm/app/Filament/Resources/ProjectResource/Pages/EditProject.php)
+  * [ManageProjectBrief.php](file:///Users/user/Sites/localhost/hasht_crm/app/Filament/Resources/ProjectResource/Pages/ManageProjectBrief.php)
+  * [ManageProjectContract.php](file:///Users/user/Sites/localhost/hasht_crm/app/Filament/Resources/ProjectResource/Pages/ManageProjectContract.php)
+  * [ManageProjectPayments.php](file:///Users/user/Sites/localhost/hasht_crm/app/Filament/Resources/ProjectResource/Pages/ManageProjectPayments.php)
+  * [ManageProjectFeedbacks.php](file:///Users/user/Sites/localhost/hasht_crm/app/Filament/Resources/ProjectResource/Pages/ManageProjectFeedbacks.php)
+  * [ManageProjectVault.php](file:///Users/user/Sites/localhost/hasht_crm/app/Filament/Resources/ProjectResource/Pages/ManageProjectVault.php)
+  * [ManageProjectHandover.php](file:///Users/user/Sites/localhost/hasht_crm/app/Filament/Resources/ProjectResource/Pages/ManageProjectHandover.php)
+  * [ManageProjectTickets.php](file:///Users/user/Sites/localhost/hasht_crm/app/Filament/Resources/ProjectResource/Pages/ManageProjectTickets.php)
 * [UserResource.php](file:///Users/user/Sites/localhost/hasht_crm/app/Filament/Resources/UserResource.php)
 * [TicketResource.php](file:///Users/user/Sites/localhost/hasht_crm/app/Filament/Resources/TicketResource.php)
 * [BriefTemplateResource.php](file:///Users/user/Sites/localhost/hasht_crm/app/Filament/Resources/BriefTemplates/BriefTemplateResource.php)
+  * [BriefTemplateForm.php](file:///Users/user/Sites/localhost/hasht_crm/app/Filament/Resources/BriefTemplates/Schemas/BriefTemplateForm.php)
+  * [BriefTemplatesTable.php](file:///Users/user/Sites/localhost/hasht_crm/app/Filament/Resources/BriefTemplates/Tables/BriefTemplatesTable.php)
+  * [EditBriefTemplate.php](file:///Users/user/Sites/localhost/hasht_crm/app/Filament/Resources/BriefTemplates/Pages/EditBriefTemplate.php)
+  * [brief-template-preview.blade.php](file:///Users/user/Sites/localhost/hasht_crm/resources/views/filament/admin/brief-template-preview.blade.php)
 
 #### ۴. صفحات پنل کلاینت (Client Livewire Pages)
 * [ClientPanelProvider.php](file:///Users/user/Sites/localhost/hasht_crm/app/Providers/Filament/ClientPanelProvider.php)
@@ -367,7 +399,15 @@ sequenceDiagram
 | `/login/magic/{token}` | `GET` | `magic.verify` | عمومی | تایید توکن لینک جادویی و ورود |
 | `/admin/login` | `GET/POST` | `filament.admin.auth.login` | عمومی | ورود OTP ادمین |
 | `/admin` | `GET` | `filament.admin.pages.dashboard` | Auth (`web`) - Admin | داشبورد ادمین |
-| `/admin/projects` | `GET` | `filament.admin.resources.projects.index` | Auth (`web`) - Admin | مدیریت پروژه‌ها |
+| `/admin/projects` | `GET` | `filament.admin.resources.projects.index` | Auth (`web`) - Admin | مدیریت و لیست پروژه‌ها |
+| `/admin/projects/{record}/edit` | `GET` | `filament.admin.resources.projects.edit` | Auth (`web`) - Admin | ویرایش اطلاعات اصلی و فاز پروژه |
+| `/admin/projects/{record}/brief` | `GET` | `filament.admin.resources.projects.brief` | Auth (`web`) - Admin | مدیریت بریف و پاسخ‌های مشتری |
+| `/admin/projects/{record}/contract` | `GET` | `filament.admin.resources.projects.contract` | Auth (`web`) - Admin | قرارداد و مشخصات امضای دیجیتال |
+| `/admin/projects/{record}/payments` | `GET` | `filament.admin.resources.projects.payments` | Auth (`web`) - Admin | مدیریت پرداخت‌ها و فیش‌های بانکی |
+| `/admin/projects/{record}/feedbacks` | `GET` | `filament.admin.resources.projects.feedbacks` | Auth (`web`) - Admin | بازنگری دمو، ددلاین و فیدبک‌ها |
+| `/admin/projects/{record}/vault` | `GET` | `filament.admin.resources.projects.vault` | Auth (`web`) - Admin | گاوصندوق دسترسی‌های رمزنگاری شده |
+| `/admin/projects/{record}/handover` | `GET` | `filament.admin.resources.projects.handover` | Auth (`web`) - Admin | مدیریت بسته تحویل نهایی |
+| `/admin/projects/{record}/tickets` | `GET` | `filament.admin.resources.projects.tickets` | Auth (`web`) - Admin | تیکت‌ها و پشتیبانی پروژه |
 | `/admin/users` | `GET` | `filament.admin.resources.users.index` | Auth (`web`) - Admin | مدیریت کاربران |
 | `/admin/tickets` | `GET` | `filament.admin.resources.tickets.index` | Auth (`web`) - Admin | مدیریت تیکت‌ها |
 | `/client/login` | `GET/POST` | `filament.client.auth.login` | عمومی | ورود OTP مشتری |
@@ -387,6 +427,7 @@ sequenceDiagram
 2. **عدم Over-engineering:** از ساخت ساختارهای قراردادساز پیچیده یا فرم‌ساز گرافیکی درگ‌اندر‌دراپ پرهیز شود. بریف‌ها در قالب JSON schema هاردکد یا با Filament Builder تعریف می‌شوند.
 3. **تفکیک کامل پنل‌ها:** دسترسی مشتری با گارد `client` است و به کدهای ادمین یا اطلاعات پروژه‌های سایر مشتریان دسترسی ندارد.
 4. **مدیریت خطای ارسال پیامک/تلگرام:** در صورت بروز خطا در ارسال SMS یا پیام تلگرام، سیستم نباید Crash کند؛ بلکه خطا فقط در فایل لاگ ثبت شده و نوتیفیکیشن دیتابیس به کارش ادامه می‌دهد.
+5. **استایل‌دهی خودمختار در کامپوننت‌های سفارشی Blade:** کلیه ویوهای Blade سفارشی (مانند مودال‌های پیش‌نمایش در ادمین) باید دارای استایل‌های ایزوله و مستقل CSS بومی باشند تا از عدم رندر یا Purge شدن کلاس‌های کامپایل‌نشده Tailwind در پنل فیلامنت جلوگیری شود.
 
 ---
 

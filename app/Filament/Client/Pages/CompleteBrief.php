@@ -57,10 +57,13 @@ class CompleteBrief extends Page implements HasForms
 
     public function form(Schema $schema): Schema
     {
-        $fields = [];
-        $schemaBlocks = $this->project ? $this->project->brief_schema : [];
+        $steps = [];
+        $schemaBlocks = $this->project ? ($this->project->brief_schema ?? []) : [];
+        $activeTemplate = \App\Models\BriefTemplate::where('is_active', true)->first();
+        $isWizardMode = $activeTemplate ? $activeTemplate->wizard_mode : true;
 
-        foreach ($schemaBlocks as $block) {
+        $fieldList = [];
+        foreach ($schemaBlocks as $index => $block) {
             $type = $block['type'] ?? '';
             $data = $block['data'] ?? [];
 
@@ -76,8 +79,14 @@ class CompleteBrief extends Page implements HasForms
                 'select' => Select::make($data['name'])
                     ->label($data['label'] ?? 'بدون عنوان')
                     ->options(array_combine(
-                        explode(',', $data['options'] ?? ''),
-                        explode(',', $data['options'] ?? '')
+                        array_map('trim', explode(',', $data['options'] ?? '')),
+                        array_map('trim', explode(',', $data['options'] ?? ''))
+                    )),
+                'radio_choice' => \Filament\Forms\Components\Radio::make($data['name'])
+                    ->label($data['label'] ?? 'بدون عنوان')
+                    ->options(array_combine(
+                        array_map('trim', explode(',', $data['options'] ?? '')),
+                        array_map('trim', explode(',', $data['options'] ?? ''))
                     )),
                 'file_upload' => FileUpload::make($data['name'])
                     ->label($data['label'] ?? 'بدون عنوان'),
@@ -88,22 +97,36 @@ class CompleteBrief extends Page implements HasForms
                 if (!empty($data['required'])) {
                     $field->required();
                 }
-                $fields[] = $field;
+                $fieldList[] = [
+                    'label' => $data['label'] ?? "سوال " . ($index + 1),
+                    'field' => $field,
+                ];
             }
+        }
+
+        if ($isWizardMode && count($fieldList) > 0) {
+            foreach ($fieldList as $idx => $item) {
+                $stepNum = $idx + 1;
+                $steps[] = Wizard\Step::make("سوال {$stepNum}")
+                    ->label($item['label'])
+                    ->schema([$item['field']])
+                    ->icon('heroicon-o-question-mark-circle');
+            }
+        } else {
+            $allFields = array_column($fieldList, 'field');
+            $steps[] = Wizard\Step::make('تکمیل بریف نیازمندی‌ها')
+                ->schema($allFields)
+                ->icon('heroicon-o-document-text');
         }
 
         return $schema
             ->schema([
-                Wizard::make([
-                    Wizard\Step::make('گام اول: پاسخ به سوالات')
-                        ->schema($fields)
-                        ->icon('heroicon-o-document-text'),
-                ])
-                ->submitAction(new HtmlString('
-                    <button type="submit" class="fi-btn fi-btn-color-primary fi-color-primary fi-size-md relative grid-flow-col items-center justify-center font-semibold outline-none transition duration-75 focus-visible:ring-2 disabled:pointer-events-none disabled:opacity-70 bg-primary-600 hover:bg-primary-500 text-white shadow-sm fi-ac-btn-action px-4 py-2 rounded-lg text-sm">
-                        ثبت نهایی اطلاعات
-                    </button>
-                '))
+                Wizard::make($steps)
+                    ->submitAction(new HtmlString('
+                        <button type="submit" class="fi-btn fi-btn-color-primary fi-color-primary fi-size-md relative grid-flow-col items-center justify-center font-semibold outline-none transition duration-75 focus-visible:ring-2 disabled:pointer-events-none disabled:opacity-70 bg-primary-600 hover:bg-primary-500 text-white shadow-sm fi-ac-btn-action px-5 py-2.5 rounded-xl text-sm">
+                            ثبت نهایی اطلاعات بریف
+                        </button>
+                    '))
             ])
             ->statePath('data');
     }

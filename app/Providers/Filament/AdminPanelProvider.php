@@ -35,6 +35,12 @@ class AdminPanelProvider extends PanelProvider
                 url: asset('fonts/peyda/fontiran.css'),
                 provider: \Filament\FontProviders\LocalFontProvider::class,
             )
+            ->maxContentWidth(\Filament\Support\Enums\Width::Full)
+            ->sidebarWidth('14rem')
+            ->renderHook(
+                \Filament\View\PanelsRenderHook::HEAD_END,
+                fn (): \Illuminate\Support\HtmlString => new \Illuminate\Support\HtmlString('<style>.fi-page-sub-navigation-sidebar-ctn { width: 13rem !important; flex-shrink: 0; }</style>')
+            )
             ->databaseNotifications()
             ->plugins([
                 \Prodstarter\FilamentNotificationCenter\FilamentNotificationCenterPlugin::make()
