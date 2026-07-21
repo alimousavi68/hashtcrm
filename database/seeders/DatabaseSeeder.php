@@ -12,6 +12,7 @@ use App\Models\Feedback;
 use App\Models\Ticket;
 use App\Models\TicketMessage;
 use App\Models\Handover;
+use App\Models\BriefTemplate;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 use Illuminate\Support\Carbon;
@@ -70,11 +71,14 @@ class DatabaseSeeder extends Seeder
         Handover::truncate();
         ProjectCredential::truncate();
         BriefAnswer::truncate();
+        BriefTemplate::truncate();
         Payment::truncate();
         Contract::truncate();
         Project::truncate();
         DB::table('notifications')->truncate();
         Schema::enableForeignKeyConstraints();
+
+        $this->call(BriefTemplateSeeder::class);
 
         // --- Scenario 1: Completed & Settled Project (Client 1) ---
         $projectCompleted = Project::create([

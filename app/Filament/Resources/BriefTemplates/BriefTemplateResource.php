@@ -18,6 +18,11 @@ class BriefTemplateResource extends Resource
 {
     protected static ?string $model = BriefTemplate::class;
 
+    protected static ?string $modelLabel = 'قالب بریف';
+    protected static ?string $pluralModelLabel = 'قالب‌های بریف';
+    protected static ?string $navigationLabel = 'قالب‌های بریف';
+    protected static ?int $navigationSort = 2;
+
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     public static function form(Schema $schema): Schema

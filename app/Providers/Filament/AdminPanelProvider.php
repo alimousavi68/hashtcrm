@@ -62,7 +62,6 @@ class AdminPanelProvider extends PanelProvider
             ->widgets([
                 \App\Filament\Widgets\StatsOverview::class,
                 \App\Filament\Widgets\ActiveProjectsProgressWidget::class,
-                \App\Filament\Widgets\ClientActivityFeedWidget::class,
                 \App\Filament\Widgets\DeadlineReminderWidget::class,
             ])
             ->middleware([
