@@ -74,52 +74,53 @@ class ProjectResource extends Resource
                         ])
                     ]),
 
-                Section::make('بریف مشتری')
-                    ->description('اطلاعات و بریف ثبت‌شده توسط مشتری برای این پروژه')
+                Section::make('مدیریت بریف اختصاصی این پروژه')
+                    ->description('در این قسمت می‌توانید فیلدهای بریف را برای این پروژه تعیین یا حذف کنید. مشتری در اولین ورود ملزم به تکمیل این فرم است.')
                     ->collapsible()
                     ->collapsed()
-                    ->relationship('briefAnswer')
                     ->schema([
-                        Grid::make(2)->schema([
-                            Forms\Components\TextInput::make('business_name')
-                                ->label('نام برند / کسب‌وکار')
-                                ->disabled(),
-                            Forms\Components\TextInput::make('design_style')
-                                ->label('سبک طراحی')
-                                ->disabled(),
-                            Forms\Components\Textarea::make('business_description')
-                                ->label('توصیف کسب‌وکار')
-                                ->columnSpanFull()
-                                ->disabled(),
-                            Forms\Components\Textarea::make('target_audience')
-                                ->label('مخاطبان هدف')
-                                ->columnSpanFull()
-                                ->disabled(),
-                            Forms\Components\Textarea::make('competitors')
-                                ->label('رقبای اصلی')
-                                ->columnSpanFull()
-                                ->disabled(),
-                            Forms\Components\TextInput::make('color_preferences')
-                                ->label('رنگ‌های ترجیحی')
-                                ->disabled(),
-                            Forms\Components\CheckboxList::make('features_required')
-                                ->label('امکانات مورد نیاز وب‌سایت')
-                                ->options([
-                                    'e_commerce' => 'فروشگاه آنلاین و درگاه پرداخت',
-                                    'blog' => 'وبلاگ و بخش اخبار/مقالات',
-                                    'portfolio' => 'گالری تصاویر / نمونه کارها',
-                                    'user_panel' => 'ثبت‌نام و پنل اختصاصی کاربران',
-                                    'support_ticket' => 'سیستم تیکت پشتیبانی و چت آنلاین',
-                                    'multi_language' => 'پشتیبانی از چند زبان',
-                                    'custom' => 'سایر امکانات اختصاصی',
-                                ])
-                                ->columns(2)
-                                ->disabled(),
-                            Forms\Components\Textarea::make('extra_notes')
-                                ->label('توضیحات تکمیلی')
-                                ->columnSpanFull()
-                                ->disabled(),
-                        ])
+                        Forms\Components\Builder::make('brief_schema')
+                            ->label('فیلدهای فرم بریف')
+                            ->blocks([
+                                Forms\Components\Builder\Block::make('text_input')
+                                    ->label('ورودی متن کوتاه')
+                                    ->icon('heroicon-o-bars-3-bottom-left')
+                                    ->schema([
+                                        Forms\Components\TextInput::make('name')->label('نام فیلد (انگلیسی)')->required()->alphaDash(),
+                                        Forms\Components\TextInput::make('label')->label('عنوان')->required(),
+                                        Forms\Components\TextInput::make('placeholder')->label('متن راهنما'),
+                                        Forms\Components\Toggle::make('required')->label('اجباری است؟')->default(false),
+                                    ]),
+                                Forms\Components\Builder\Block::make('textarea')
+                                    ->label('ورودی متن چندخطی')
+                                    ->icon('heroicon-o-bars-3')
+                                    ->schema([
+                                        Forms\Components\TextInput::make('name')->label('نام فیلد (انگلیسی)')->required()->alphaDash(),
+                                        Forms\Components\TextInput::make('label')->label('عنوان')->required(),
+                                        Forms\Components\TextInput::make('placeholder')->label('متن راهنما'),
+                                        Forms\Components\Toggle::make('required')->label('اجباری است؟')->default(false),
+                                    ]),
+                                Forms\Components\Builder\Block::make('select')
+                                    ->label('لیست کشویی')
+                                    ->icon('heroicon-o-chevron-down')
+                                    ->schema([
+                                        Forms\Components\TextInput::make('name')->label('نام فیلد (انگلیسی)')->required()->alphaDash(),
+                                        Forms\Components\TextInput::make('label')->label('عنوان')->required(),
+                                        Forms\Components\TextInput::make('options')->label('گزینه‌ها (با کاما جدا کنید)')->required(),
+                                        Forms\Components\Toggle::make('required')->label('اجباری است؟')->default(false),
+                                    ]),
+                                Forms\Components\Builder\Block::make('file_upload')
+                                    ->label('آپلود فایل')
+                                    ->icon('heroicon-o-arrow-up-tray')
+                                    ->schema([
+                                        Forms\Components\TextInput::make('name')->label('نام فیلد (انگلیسی)')->required()->alphaDash(),
+                                        Forms\Components\TextInput::make('label')->label('عنوان')->required(),
+                                        Forms\Components\Toggle::make('required')->label('اجباری است؟')->default(false),
+                                        Forms\Components\Toggle::make('is_essential')->label('برای شروع الزامی است؟')->default(false),
+                                    ]),
+                            ])
+                            ->collapsible()
+                            ->cloneable(),
                     ]),
 
                 Section::make('اطلاعات دسترسی و دارایی‌ها')
@@ -236,23 +237,51 @@ class ProjectResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('title')
                     ->label('عنوان پروژه')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable()
+                    ->weight('bold')
+                    ->icon('heroicon-o-briefcase')
+                    ->iconColor('primary')
+                    ->description(fn (Project $record): ?string => $record->demo_url ? 'دارای لینک دمو' : null),
+
                 Tables\Columns\TextColumn::make('client.name')
                     ->label('مشتری')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('status')
-                    ->label('وضعیت فاز فعلی')
-                    ->badge()
-                    ->color(fn (string $state): string => match ($state) {
-                        'draft' => 'gray',
-                        'brief' => 'warning',
-                        'contract' => 'info',
-                        'in_progress' => 'primary',
-                        'review' => 'danger',
-                        'ready_handover' => 'success',
-                        'completed' => 'success',
-                    })
-                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                    ->searchable()
+                    ->sortable()
+                    ->icon('heroicon-o-user')
+                    ->iconColor('gray'),
+
+                Tables\Columns\ViewColumn::make('progress')
+                    ->label('پیشرفت و وضعیت پروژه')
+                    ->view('filament.tables.columns.project-progress'),
+
+                Tables\Columns\IconColumn::make('is_settled')
+                    ->label('تسویه مالی')
+                    ->boolean()
+                    ->trueIcon('heroicon-o-check-circle')
+                    ->falseIcon('heroicon-o-x-circle')
+                    ->trueColor('success')
+                    ->falseColor('danger')
+                    ->sortable(),
+
+                Tables\Columns\TextColumn::make('feedback_deadline')
+                    ->label('مهلت فیدبک')
+                    ->dateTime('Y/m/d H:i')
+                    ->sortable()
+                    ->icon('heroicon-o-clock')
+                    ->iconColor('warning')
+                    ->toggleable(isToggledHiddenByDefault: false),
+
+                Tables\Columns\TextColumn::make('created_at')
+                    ->label('تاریخ ثبت')
+                    ->dateTime('Y/m/d')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+            ])
+            ->filters([
+                Tables\Filters\SelectFilter::make('status')
+                    ->label('وضعیت پروژه')
+                    ->options([
                         'draft' => 'پیش‌نویس اولیه',
                         'brief' => 'تکمیل بریف نیازمندی‌ها',
                         'contract' => 'امضای قرارداد و امور مالی',
@@ -260,24 +289,23 @@ class ProjectResource extends Resource
                         'review' => 'بازنگری و ثبت نظرات (دمو)',
                         'ready_handover' => 'آماده‌سازی بسته تحویل',
                         'completed' => 'تحویل نهایی و خاتمه',
-                    }),
-                Tables\Columns\IconColumn::make('is_settled')
-                    ->label('تسویه حساب مالی')
+                    ]),
+
+                Tables\Filters\TernaryFilter::make('is_settled')
+                    ->label('وضعیت تسویه مالی')
                     ->boolean()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('feedback_deadline')
-                    ->label('مهلت فیدبک')
-                    ->dateTime('Y/m/d H:i')
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->label('تاریخ تعریف پروژه')
-                    ->dateTime('Y/m/d')
-                    ->sortable(),
-            ])
-            ->filters([
-                //
+                    ->trueLabel('تسویه‌شده')
+                    ->falseLabel('تسویه‌نشده'),
             ])
             ->actions([
+                Actions\Action::make('openDemo')
+                    ->label('دمو')
+                    ->icon('heroicon-o-arrow-top-right-on-square')
+                    ->color('info')
+                    ->url(fn (Project $record): ?string => $record->demo_url)
+                    ->openUrlInNewTab()
+                    ->visible(fn (Project $record): bool => !empty($record->demo_url)),
+
                 Actions\Action::make('sendSms')
                     ->label('ارسال پیامک')
                     ->icon('heroicon-o-chat-bubble-left-right')
@@ -288,7 +316,7 @@ class ProjectResource extends Resource
                             ->required()
                             ->rows(4),
                     ])
-                    ->action(function (Project $record, array $data) {
+                            ->action(function (Project $record, array $data) {
                         $client = $record->client;
                         if (!$client || !$client->phone) {
                             \Filament\Notifications\Notification::make()

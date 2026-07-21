@@ -17,12 +17,14 @@ class BriefAnswer extends Model
         'color_preferences',
         'features_required',
         'extra_notes',
+        'dynamic_answers',
     ];
 
     protected function casts(): array
     {
         return [
             'features_required' => 'array',
+            'dynamic_answers' => 'array',
         ];
     }
 

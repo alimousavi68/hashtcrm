@@ -22,7 +22,7 @@ class CustomLogin extends BaseLogin
     {
         parent::mount();
 
-        if (Auth::check()) {
+        if (filament()->auth()->check()) {
             redirect()->intended(filament()->getUrl());
         }
     }
@@ -61,19 +61,43 @@ class CustomLogin extends BaseLogin
     public function authenticate(): ?LoginResponse
     {
         $data = $this->form->getState();
+        $panelId = filament()->getCurrentPanel()->getId();
 
         if (!$this->otpSent) {
             // Step 1: Send OTP
             $phone = $data['phone'];
 
-            // Find or create user
-            $user = User::firstOrCreate(
-                ['phone' => $phone],
-                [
-                    'name' => 'مشتری جدید',
-                    'role' => 'client',
-                ]
-            );
+            // Find user
+            $user = User::where('phone', $phone)->first();
+
+            if ($panelId === 'admin') {
+                if (!$user || $user->role !== 'admin') {
+                    Notification::make()
+                        ->title('خطا در ورود')
+                        ->body('شماره موبایل وارد شده در سیستم ثبت نشده یا دسترسی مدیریت ندارد.')
+                        ->danger()
+                        ->send();
+                    return null;
+                }
+            } else { // client panel
+                if ($user && $user->role !== 'client') {
+                    Notification::make()
+                        ->title('خطا در ورود')
+                        ->body('این شماره همراه متعلق به مدیر سیستم است. لطفاً از پنل مدیریت وارد شوید.')
+                        ->danger()
+                        ->send();
+                    return null;
+                }
+
+                if (!$user) {
+                    // Create new client user
+                    $user = User::create([
+                        'phone' => $phone,
+                        'name' => 'مشتری جدید',
+                        'role' => 'client',
+                    ]);
+                }
+            }
 
             // Generate OTP (5 digit simple code)
             $otpCode = rand(10000, 99999);
@@ -113,13 +137,23 @@ class CustomLogin extends BaseLogin
             return null;
         }
 
+        // Double check role on verification
+        if ($panelId === 'admin' && $user->role !== 'admin') {
+            Notification::make()->title('خطا در ورود')->body('دسترسی مدیریت ندارید.')->danger()->send();
+            return null;
+        }
+        if ($panelId === 'client' && $user->role !== 'client') {
+            Notification::make()->title('خطا در ورود')->body('دسترسی مشتری ندارید.')->danger()->send();
+            return null;
+        }
+
         // Reset OTP code
         $user->otp_code = null;
         $user->otp_expires_at = null;
         $user->save();
 
         // Login user
-        Auth::login($user);
+        filament()->auth()->login($user);
 
         session()->regenerate();
 

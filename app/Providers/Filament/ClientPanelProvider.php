@@ -25,6 +25,7 @@ class ClientPanelProvider extends PanelProvider
         return $panel
             ->id('client')
             ->path('client')
+            ->authGuard('client')
             ->login(\App\Filament\Pages\Auth\CustomLogin::class)
             ->colors([
                 'primary' => Color::Amber,
@@ -34,7 +35,8 @@ class ClientPanelProvider extends PanelProvider
                 url: asset('fonts/peyda/fontiran.css'),
                 provider: \Filament\FontProviders\LocalFontProvider::class,
             )
-            ->plugin(
+            ->databaseNotifications()
+            ->plugins([
                 \Filament\Launchpad\LaunchpadPlugin::make()
                     ->spaces([
                         \Filament\Launchpad\Launchpad\LaunchpadSpace::make('داشبورد')
@@ -46,20 +48,20 @@ class ClientPanelProvider extends PanelProvider
                                         \Filament\Launchpad\Launchpad\TileGroup::make('آمار پروژه‌ها و تیکت‌ها')
                                             ->tiles([
                                                 \Filament\Launchpad\Launchpad\Tile::make('پروژه‌های فعال')
-                                                    ->kpi(fn () => \App\Models\Project::where('client_id', auth()->id())->where('status', '!=', 'completed')->count())
+                                                    ->kpi(fn () => \App\Models\Project::where('client_id', auth('client')->id())->where('status', '!=', 'completed')->count())
                                                     ->icon('heroicon-o-folder-open')
-                                                    ->subtitle('تعداد کل: ' . \App\Models\Project::where('client_id', auth()->id())->count())
+                                                    ->subtitle('تعداد کل: ' . (auth('client')->check() ? \App\Models\Project::where('client_id', auth('client')->id())->count() : 0))
                                                     ->page(\App\Filament\Client\Pages\Projects::class),
                                                 \Filament\Launchpad\Launchpad\Tile::make('پروژه‌های پایان‌یافته')
-                                                    ->kpi(fn () => \App\Models\Project::where('client_id', auth()->id())->where('status', 'completed')->count())
+                                                    ->kpi(fn () => \App\Models\Project::where('client_id', auth('client')->id())->where('status', 'completed')->count())
                                                     ->icon('heroicon-o-folder')
                                                     ->page(\App\Filament\Client\Pages\Projects::class),
                                                 \Filament\Launchpad\Launchpad\Tile::make('تیکت‌های باز پشتیبانی')
-                                                    ->kpi(fn () => \App\Models\Ticket::where('client_id', auth()->id())->where('status', 'open')->count())
+                                                    ->kpi(fn () => \App\Models\Ticket::where('client_id', auth('client')->id())->where('status', 'open')->count())
                                                     ->icon('heroicon-o-chat-bubble-left-right')
                                                     ->trend(
-                                                        \App\Models\Ticket::where('client_id', auth()->id())->where('status', 'open')->count() > 0 ? 'نیاز به پیگیری' : 'همه پاسخ داده شده',
-                                                        \App\Models\Ticket::where('client_id', auth()->id())->where('status', 'open')->count() > 0 ? 'warning' : 'success'
+                                                        (auth('client')->check() && \App\Models\Ticket::where('client_id', auth('client')->id())->where('status', 'open')->count() > 0) ? 'نیاز به پیگیری' : 'همه پاسخ داده شده',
+                                                        (auth('client')->check() && \App\Models\Ticket::where('client_id', auth('client')->id())->where('status', 'open')->count() > 0) ? 'warning' : 'success'
                                                     )
                                                     ->page(\App\Filament\Client\Pages\Tickets::class),
                                             ]),
@@ -76,8 +78,23 @@ class ClientPanelProvider extends PanelProvider
                                             ]),
                                     ]),
                             ]),
-                    ])
-            )
+                    ]),
+                \Prodstarter\FilamentNotificationCenter\FilamentNotificationCenterPlugin::make()
+                    ->categories([
+                        \Prodstarter\FilamentNotificationCenter\NotificationCenterCategory::make('projects')
+                            ->label('پروژه‌ها')
+                            ->icon('heroicon-o-folder'),
+                        \Prodstarter\FilamentNotificationCenter\NotificationCenterCategory::make('financial')
+                            ->label('مالی و قراردادها')
+                            ->icon('heroicon-o-credit-card'),
+                        \Prodstarter\FilamentNotificationCenter\NotificationCenterCategory::make('tickets')
+                            ->label('پشتیبانی')
+                            ->icon('heroicon-o-chat-bubble-left-right'),
+                        \Prodstarter\FilamentNotificationCenter\NotificationCenterCategory::make('system')
+                            ->label('سیستم')
+                            ->icon('heroicon-o-cpu-chip'),
+                    ]),
+            ])
             ->discoverResources(in: app_path('Filament/Client/Resources'), for: 'App\\Filament\\Client\\Resources')
             ->discoverPages(in: app_path('Filament/Client/Pages'), for: 'App\\Filament\\Client\\Pages')
             ->pages([])

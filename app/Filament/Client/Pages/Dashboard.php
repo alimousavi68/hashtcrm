@@ -20,7 +20,7 @@ class Dashboard extends Page
 
     public function mount(): void
     {
-        $clientId = Auth::id();
+        $clientId = Auth::guard('client')->id();
 
         $this->totalProjects = Project::where('client_id', $clientId)->count();
         $this->activeProjects = Project::where('client_id', $clientId)->where('status', '!=', 'completed')->count();

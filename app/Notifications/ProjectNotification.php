@@ -17,15 +17,17 @@ class ProjectNotification extends Notification implements ShouldQueue
     protected Project $project;
     protected string $title;
     protected string $message;
+    protected string $category;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct(Project $project, string $title, string $message)
+    public function __construct(Project $project, string $title, string $message, string $category = 'projects')
     {
         $this->project = $project;
         $this->title = $title;
         $this->message = $message;
+        $this->category = $category;
     }
 
     /**
@@ -62,8 +64,9 @@ class ProjectNotification extends Notification implements ShouldQueue
         return [
             'project_id' => $this->project->id,
             'title' => $this->title,
-            'message' => $this->message,
+            'body' => $this->message,
             'status' => $this->project->status,
+            'category' => $this->category,
         ];
     }
 

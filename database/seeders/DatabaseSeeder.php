@@ -242,7 +242,9 @@ class DatabaseSeeder extends Seeder
             'notifiable_id' => $admin->id,
             'data' => json_encode([
                 'title' => 'ثبت بریف جدید',
-                'message' => "مشتری برای پروژه «{$projectReview->title}» پرسشنامه بریف و دسترسی‌ها را تکمیل نمود.",
+                'body' => "مشتری برای پروژه «{$projectReview->title}» پرسشنامه بریف و دسترسی‌ها را تکمیل نمود.",
+                'category' => 'projects',
+                'viewData' => ['category' => 'projects'],
             ]),
             'read_at' => null,
             'created_at' => Carbon::now()->subHours(2),
@@ -257,7 +259,9 @@ class DatabaseSeeder extends Seeder
             'notifiable_id' => $admin->id,
             'data' => json_encode([
                 'title' => 'ثبت فیش واریز جدید',
-                'message' => "مشتری برای پروژه «{$projectReview->title}» فیش واریزی جدیدی به مبلغ ۲۰,۰۰۰,۰۰۰ تومان بارگذاری کرد.",
+                'body' => "مشتری برای پروژه «{$projectReview->title}» فیش واریزی جدیدی به مبلغ ۲۰,۰۰۰,۰۰۰ تومان بارگذاری کرد.",
+                'category' => 'financial',
+                'viewData' => ['category' => 'financial'],
             ]),
             'read_at' => Carbon::now()->subHour(),
             'created_at' => Carbon::now()->subHours(4),
@@ -272,7 +276,9 @@ class DatabaseSeeder extends Seeder
             'notifiable_id' => $client2->id,
             'data' => json_encode([
                 'title' => 'آماده‌سازی نسخه دمو',
-                'message' => "دموی اولیه پروژه «{$projectReview->title}» آماده بازنگری و ثبت فیدبک شماست.",
+                'body' => "دموی اولیه پروژه «{$projectReview->title}» آماده بازنگری و ثبت فیدبک شماست.",
+                'category' => 'projects',
+                'viewData' => ['category' => 'projects'],
             ]),
             'read_at' => null,
             'created_at' => Carbon::now()->subMinutes(30),

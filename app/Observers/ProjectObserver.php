@@ -53,7 +53,8 @@ class ProjectObserver
                 $client->notify(new ProjectNotification(
                     $project,
                     $statusMessages[$newStatus]['title'],
-                    $statusMessages[$newStatus]['message']
+                    $statusMessages[$newStatus]['message'],
+                    'projects'
                 ));
             }
         }
@@ -63,7 +64,8 @@ class ProjectObserver
             $client->notify(new ProjectNotification(
                 $project,
                 'تسویه حساب کامل مالی',
-                'تسویه حساب کامل مالی پروژه شما تایید شد. بسته تحویل نهایی فعال گردید.'
+                'تسویه حساب کامل مالی پروژه شما تایید شد. بسته تحویل نهایی فعال گردید.',
+                'financial'
             ));
         }
     }

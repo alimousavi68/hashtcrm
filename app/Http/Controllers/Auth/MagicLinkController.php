@@ -27,15 +27,14 @@ class MagicLinkController extends Controller
         $user->save();
 
         // Login user
-        Auth::login($user);
-
-        $request->session()->regenerate();
-
-        // Redirect to their respective panel
         if ($user->role === 'admin') {
+            Auth::guard('web')->login($user);
+            $request->session()->regenerate();
             return redirect('/admin');
         }
 
+        Auth::guard('client')->login($user);
+        $request->session()->regenerate();
         return redirect('/client');
     }
 }

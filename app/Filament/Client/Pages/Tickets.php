@@ -35,7 +35,7 @@ class Tickets extends Page
 
     public function loadData(): void
     {
-        $clientId = Auth::id();
+        $clientId = Auth::guard('client')->id();
         
         $this->myProjects = Project::where('client_id', $clientId)->latest()->get();
         
@@ -76,13 +76,13 @@ class Tickets extends Page
 
         $ticket = Ticket::create([
             'project_id' => $this->newTicketProjectId,
-            'client_id' => Auth::id(),
+            'client_id' => Auth::guard('client')->id(),
             'subject' => $this->newTicketSubject,
             'status' => 'open',
         ]);
 
         $ticket->messages()->create([
-            'sender_id' => Auth::id(),
+            'sender_id' => Auth::guard('client')->id(),
             'message' => $this->newTicketMessage,
         ]);
 
@@ -92,7 +92,8 @@ class Tickets extends Page
             $admin->notify(new \App\Notifications\ProjectNotification(
                 $ticket->project,
                 'تیکت جدید از مشتری',
-                "مشتری برای پروژه «{$ticket->project->title}» تیکت جدیدی با موضوع «{$ticket->subject}» ثبت کرد."
+                "مشتری برای پروژه «{$ticket->project->title}» تیکت جدیدی با موضوع «{$ticket->subject}» ثبت کرد.",
+                'tickets'
             ));
         }
 
@@ -118,11 +119,11 @@ class Tickets extends Page
             'newChatMessage.required' => 'نمی‌توانید پیام خالی ارسال کنید.',
         ]);
 
-        $ticket = Ticket::where('client_id', Auth::id())->find($this->activeTicketId);
+        $ticket = Ticket::where('client_id', Auth::guard('client')->id())->find($this->activeTicketId);
         if (!$ticket) return;
 
         $ticket->messages()->create([
-            'sender_id' => Auth::id(),
+            'sender_id' => Auth::guard('client')->id(),
             'message' => $this->newChatMessage,
         ]);
 
@@ -134,7 +135,8 @@ class Tickets extends Page
             $admin->notify(new \App\Notifications\ProjectNotification(
                 $ticket->project,
                 'پیام جدید در تیکت پشتیبانی',
-                "مشتری پیام جدیدی برای تیکت «{$ticket->subject}» ارسال کرد."
+                "مشتری پیام جدیدی برای تیکت «{$ticket->subject}» ارسال کرد.",
+                'tickets'
             ));
         }
 

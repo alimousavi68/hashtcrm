@@ -305,30 +305,32 @@
                             <h3 class="text-sm font-bold text-gray-900 dark:text-white mb-2">تکمیل پرسشنامه بریف پروژه</h3>
                             <p class="text-xs text-gray-500 dark:text-gray-400">لطفاً مشخصات کسب‌وکار و اطلاعات دسترسی هاست/دامنه خود را به صورت گام به گام تکمیل فرمایید تا فرآیند فنی کار آغاز شود.</p>
                             
-                            <form wire:submit.prevent="saveBrief" class="space-y-6">
-                                {{ $this->form }}
-                            </form>
+                            <div class="bg-amber-50 dark:bg-amber-900/20 p-6 rounded-xl border border-amber-200 dark:border-amber-900/50 text-center space-y-4">
+                                <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-amber-100 dark:bg-amber-800 text-amber-600 dark:text-amber-400 mb-2">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                                </div>
+                                <h4 class="font-bold text-sm text-gray-900 dark:text-white">تکمیل بریف در صفحه اختصاصی</h4>
+                                <p class="text-xs text-gray-600 dark:text-gray-400 max-w-md mx-auto leading-relaxed">برای راحتی شما و تمرکز بیشتر، فرم بریف پروژه شما در یک صفحه اختصاصی آماده شده است. لطفاً برای شروع فرآیند تکمیل اطلاعات روی دکمه زیر کلیک کنید.</p>
+                                <a href="{{ \App\Filament\Client\Pages\CompleteBrief::getUrl() }}" class="inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-primary-600 hover:bg-primary-500 text-white rounded-xl text-xs font-bold transition-colors shadow-sm">
+                                    ورود به فرم بریف
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+                                </a>
+                            </div>
                         @else
                             <h3 class="text-sm font-bold text-gray-900 dark:text-white border-b pb-3 dark:border-gray-700">اطلاعات بریف و دسترسی‌های ثبت‌شده</h3>
                             @if($project->briefAnswer)
                                 <div class="bg-gray-50 dark:bg-gray-900 p-4 rounded-xl space-y-3 text-xs leading-relaxed">
-                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <p><span class="font-bold text-gray-500">نام برند:</span> {{ $project->briefAnswer->business_name }}</p>
-                                        <p><span class="font-bold text-gray-500">سبک طراحی ترجیحی:</span> {{ $project->briefAnswer->design_style }}</p>
-                                    </div>
-                                    <p><span class="font-bold text-gray-500 block mb-1">توصیف کسب‌وکار:</span> {{ $project->briefAnswer->business_description }}</p>
-                                    <p><span class="font-bold text-gray-500 block mb-1">مخاطبان هدف:</span> {{ $project->briefAnswer->target_audience }}</p>
-                                    <p><span class="font-bold text-gray-500 block mb-1">امکانات درخواستی:</span> 
-                                        {{ implode('، ', array_map(fn($item) => match($item) {
-                                            'e_commerce' => 'فروشگاه آنلاین',
-                                            'blog' => 'وبلاگ',
-                                            'portfolio' => 'گالری نمونه‌کار',
-                                            'user_panel' => 'پنل کاربری کلاینت',
-                                            'support_ticket' => 'تیکتینگ و پشتیبانی',
-                                            'multi_language' => 'چندزبانه',
-                                            default => $item
-                                        }, is_array($project->briefAnswer->features_required) ? $project->briefAnswer->features_required : [])) }}
-                                    </p>
+                                    @if(is_array($project->briefAnswer->dynamic_answers))
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            @foreach($project->briefAnswer->dynamic_answers as $key => $value)
+                                                @if(!is_array($value) && !empty($value))
+                                                    <p><span class="font-bold text-gray-500">{{ __($key) }}:</span> {{ $value }}</p>
+                                                @endif
+                                            @endforeach
+                                        </div>
+                                    @else
+                                        <p>اطلاعاتی یافت نشد.</p>
+                                    @endif
                                 </div>
                             @else
                                 <p class="text-xs text-gray-500 dark:text-gray-400 text-center py-6">پرسشنامه بریف برای این پروژه هنوز تکمیل نشده است.</p>
