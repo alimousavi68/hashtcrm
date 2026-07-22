@@ -84,7 +84,7 @@ class ManageProjectFeedbacks extends ManageRelatedRecords
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('تاریخ ثبت')
-                    ->dateTime('Y/m/d H:i')
+                    ->formatStateUsing(fn ($state) => \App\Helpers\JalaliHelper::toJalali($state, 'Y/m/d H:i'))
                     ->sortable(),
             ])
             ->headerActions([
@@ -99,6 +99,7 @@ class ManageProjectFeedbacks extends ManageRelatedRecords
                             ->default(fn () => $this->getOwnerRecord()->demo_url),
                         Forms\Components\DateTimePicker::make('feedback_deadline')
                             ->label('مهلت زمان ارسال فیدبک (تایمر خودکار)')
+                            ->displayFormat('Y/m/d H:i')
                             ->default(fn () => $this->getOwnerRecord()->feedback_deadline),
                     ])
                     ->action(function (array $data) {

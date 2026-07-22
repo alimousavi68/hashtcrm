@@ -59,6 +59,7 @@ class ManageProjectPayments extends ManageRelatedRecords
                     ->required(),
                 Forms\Components\DateTimePicker::make('verified_at')
                     ->label('تاریخ بررسی')
+                    ->displayFormat('Y/m/d H:i')
                     ->nullable(),
             ]);
     }
@@ -101,12 +102,12 @@ class ManageProjectPayments extends ManageRelatedRecords
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('تاریخ ثبت فیش')
-                    ->dateTime('Y/m/d H:i')
+                    ->formatStateUsing(fn ($state) => \App\Helpers\JalaliHelper::toJalali($state, 'Y/m/d H:i'))
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('verified_at')
                     ->label('تاریخ بررسی')
-                    ->dateTime('Y/m/d H:i')
+                    ->formatStateUsing(fn ($state) => \App\Helpers\JalaliHelper::toJalali($state, 'Y/m/d H:i'))
                     ->placeholder('-')
                     ->sortable(),
             ])

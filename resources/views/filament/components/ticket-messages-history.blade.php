@@ -15,7 +15,7 @@
                     </div>
                     <div class="whitespace-pre-line leading-relaxed">{{ $message->message }}</div>
                     <div class="text-[10px] mt-1 text-left opacity-75">
-                        {{ \Illuminate\Support\Carbon::parse($message->created_at)->format('Y/m/d H:i') }}
+                        {{ \App\Helpers\JalaliHelper::toJalali($message->created_at, 'Y/m/d H:i') }}
                     </div>
                 </div>
             </div>

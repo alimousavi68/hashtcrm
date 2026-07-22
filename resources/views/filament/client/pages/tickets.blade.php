@@ -48,7 +48,7 @@
                                 </div>
                                 <div class="flex justify-between w-full text-[9px] text-gray-450 mt-1">
                                     <span>پروژه: {{ $t->project->title }}</span>
-                                    <span>{{ \Illuminate\Support\Carbon::parse($t->created_at)->format('Y/m/d H:i') }}</span>
+                                    <span>{{ \App\Helpers\JalaliHelper::toJalali($t->created_at, 'Y/m/d H:i') }}</span>
                                 </div>
                             </button>
                         @empty
@@ -125,7 +125,7 @@
                                                 </div>
                                                 <p class="whitespace-pre-line leading-relaxed">{{ $msg->message }}</p>
                                                 <span class="text-[9px] mt-1 block text-left opacity-75">
-                                                    {{ \Illuminate\Support\Carbon::parse($msg->created_at)->format('Y/m/d H:i') }}
+                                                    {{ \App\Helpers\JalaliHelper::toJalali($msg->created_at, 'Y/m/d H:i') }}
                                                 </span>
                                             </div>
                                         </div>

@@ -37,7 +37,7 @@
                                             {{ $statusInfo['label'] }}
                                         </span>
                                     </div>
-                                    <p class="text-xs text-gray-500 mt-2">تاریخ ثبت پروژه: {{ \Illuminate\Support\Carbon::parse($p->created_at)->format('Y/m/d') }}</p>
+                                    <p class="text-xs text-gray-500 mt-2">تاریخ ثبت پروژه: {{ \App\Helpers\JalaliHelper::toJalali($p->created_at, 'Y/m/d') }}</p>
                                 </div>
 
                                 <div class="space-y-2">
@@ -187,7 +187,7 @@
                                             قرارداد با موفقیت امضای دیجیتال شده است
                                         </div>
                                         <p>امضاکننده: {{ $project->contract->signature_name }} | کد ملی: {{ $project->contract->signature_national_code }}</p>
-                                        <p>تاریخ امضا: {{ \Illuminate\Support\Carbon::parse($project->contract->signed_at)->format('Y/m/d H:i') }}</p>
+                                        <p>تاریخ امضا: {{ \App\Helpers\JalaliHelper::toJalali($project->contract->signed_at, 'Y/m/d H:i') }}</p>
                                     </div>
                                     <div class="p-4 bg-gray-50 dark:bg-gray-900 rounded-xl max-h-80 overflow-y-auto text-xs text-gray-700 dark:text-gray-300 leading-relaxed">
                                         {!! $renderedContractContent !!}
@@ -284,7 +284,7 @@
                                                             @endif
                                                         </td>
                                                         <td class="px-3 py-2 text-[10px] text-gray-400">
-                                                            {{ \Illuminate\Support\Carbon::parse($payment->created_at)->format('Y/m/d') }}
+                                                            {{ \App\Helpers\JalaliHelper::toJalali($payment->created_at, 'Y/m/d') }}
                                                         </td>
                                                     </tr>
                                                 @endforeach
@@ -456,7 +456,7 @@
                                                         <span class="text-yellow-600">در انتظار بررسی</span>
                                                     @endif
                                                 </span>
-                                                <span class="text-[10px] text-gray-400">{{ \Illuminate\Support\Carbon::parse($fb->created_at)->format('Y/m/d H:i') }}</span>
+                                                <span class="text-[10px] text-gray-400">{{ \App\Helpers\JalaliHelper::toJalali($fb->created_at, 'Y/m/d H:i') }}</span>
                                             </div>
                                             <p class="text-gray-700 dark:text-gray-300 leading-relaxed">{{ $fb->notes }}</p>
                                         </div>

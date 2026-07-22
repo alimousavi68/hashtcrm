@@ -186,13 +186,24 @@ class CompleteBrief extends Page implements HasForms
             ['dynamic_answers' => $state]
         );
 
+        // ارتقای هوشمند پروژه از فاز brief به فاز contract (امضای قرارداد و امور مالی)
         $this->project->update([
             'status' => 'contract'
         ]);
 
+        // ارسال اعلان دیتابیس به مدیران سیستم
+        $admins = \App\Models\User::where('role', 'admin')->get();
+        foreach ($admins as $admin) {
+            Notification::make()
+                ->title('بریف نیازمندی‌ها تکمیل شد')
+                ->body("مشتری {$this->project->client->name} پرسشنامه پروژه «{$this->project->title}» را پر نمود. پروژه به فاز قرارداد منتقل شد.")
+                ->success()
+                ->sendToDatabase($admin);
+        }
+
         Notification::make()
-            ->title('اطلاعات با موفقیت ثبت شد')
-            ->body('پروژه شما وارد مرحله قرارداد و امور مالی شد.')
+            ->title('اطلاعات پرسشنامه با موفقیت ثبت شد')
+            ->body('پاسخ‌های شما با موفقیت دریافت شد. پروژه شما وارد مرحله «امضای قرارداد و امور مالی» گردید.')
             ->success()
             ->send();
 

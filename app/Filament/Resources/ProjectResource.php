@@ -67,6 +67,27 @@ class ProjectResource extends Resource
                                 ->preload()
                                 ->required(),
 
+                            Forms\Components\Select::make('brief_template_id')
+                                ->label('الگوی پرسشنامه (بریف نیازمندی‌ها)')
+                                ->options(fn () => \App\Models\BriefTemplate::where('is_active', true)->pluck('name', 'id'))
+                                ->searchable()
+                                ->preload()
+                                ->nullable()
+                                ->live()
+                                ->afterStateUpdated(function ($state, $set, $get) {
+                                    if ($state) {
+                                        $template = \App\Models\BriefTemplate::find($state);
+                                        if ($template && !empty($template->schema)) {
+                                            $set('brief_schema', $template->schema);
+                                            // اگر فاز پروژه پیش‌نویس بود، آن را به بریف تغییر می‌دهیم
+                                            if ($get('status') === 'draft' || empty($get('status'))) {
+                                                $set('status', 'brief');
+                                            }
+                                        }
+                                    }
+                                })
+                                ->helperText('با انتخاب الگو، فیلدهای پرسشنامه به صورت خودکار به پروژه متصل شده و فاز به «تکمیل بریف» تغییر می‌یابد.'),
+
                             Forms\Components\Select::make('status')
                                 ->label('فاز و وضعیت پروژه')
                                 ->options([
@@ -90,6 +111,7 @@ class ProjectResource extends Resource
                             Forms\Components\DateTimePicker::make('feedback_deadline')
                                 ->label('مهلت زمان ارسال بازنگری و فیدبک')
                                 ->helperText('در صورت اتمام ددلاین، پروژه به صورت خودکار تایید می‌شود.')
+                                ->displayFormat('Y/m/d H:i')
                                 ->nullable(),
 
                             Forms\Components\TextInput::make('demo_url')
@@ -137,7 +159,7 @@ class ProjectResource extends Resource
 
                 Tables\Columns\TextColumn::make('feedback_deadline')
                     ->label('مهلت فیدبک')
-                    ->dateTime('Y/m/d H:i')
+                    ->formatStateUsing(fn ($state) => \App\Helpers\JalaliHelper::toJalali($state, 'Y/m/d H:i'))
                     ->sortable()
                     ->icon('heroicon-o-clock')
                     ->iconColor('warning')
@@ -145,7 +167,7 @@ class ProjectResource extends Resource
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('تاریخ ثبت')
-                    ->dateTime('Y/m/d')
+                    ->formatStateUsing(fn ($state) => \App\Helpers\JalaliHelper::toJalali($state, 'Y/m/d'))
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
