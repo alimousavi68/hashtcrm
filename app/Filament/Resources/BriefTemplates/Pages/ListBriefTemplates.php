@@ -9,15 +9,25 @@ use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Contracts\Support\Htmlable;
+use Livewire\Attributes\Url;
 
 class ListBriefTemplates extends ListRecords
 {
     protected static string $resource = BriefTemplateResource::class;
-
     protected string $view = 'filament.admin.pages.list-brief-templates';
 
+    #[Url]
     public string $search = '';
+
+    #[Url]
+    public ?string $activeTab = 'all';
+
     public string $sortOrder = 'default';
+
+    public function setTab(string $tab): void
+    {
+        $this->activeTab = $tab;
+    }
 
     public function getSubheading(): string|Htmlable|null
     {
@@ -33,14 +43,32 @@ class ListBriefTemplates extends ListRecords
         ];
     }
 
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            \App\Filament\Widgets\BriefTemplatesOverviewStatsWidget::class,
+        ];
+    }
+
     public function getTemplatesProperty()
     {
         $query = BriefTemplate::query();
 
+        // 1. فیلتر تب‌ها
+        if ($this->activeTab === 'active') {
+            $query->where('is_active', true);
+        } elseif ($this->activeTab === 'wizard') {
+            $query->where('wizard_mode', true);
+        } elseif ($this->activeTab === 'inactive') {
+            $query->where('is_active', false);
+        }
+
+        // 2. جستجو
         if (!empty($this->search)) {
             $query->where('name', 'like', '%' . $this->search . '%');
         }
 
+        // 3. مرتب‌سازی
         match ($this->sortOrder) {
             'newest' => $query->latest(),
             'most_views' => $query->orderBy('views_count', 'desc'),

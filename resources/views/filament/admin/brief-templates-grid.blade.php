@@ -1,444 +1,197 @@
 @php
-    $toPersian = fn($number) => str_replace(['0','1','2','3','4','5','6','7','8','9'], ['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'], (string) number_format($number ?? 0));
+    $toPersian = fn($number) => \App\Helpers\JalaliHelper::toPersianDigits((string) ($number ?? 0));
 @endphp
 
-<div class="q-grid-wrapper" dir="rtl">
-    <style>
-        .q-grid-wrapper {
-            font-family: inherit;
-            width: 100%;
-            box-sizing: border-box;
-        }
+<div dir="rtl" style="width: 100%;">
 
-        /* Cards Grid Layout */
-        .q-cards-grid {
-            display: grid;
-            grid-template-columns: repeat(1, minmax(0, 1fr));
-            gap: 1.25rem;
-        }
-        @media (min-width: 640px) {
-            .q-cards-grid {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-            }
-        }
-        @media (min-width: 1024px) {
-            .q-cards-grid {
-                grid-template-columns: repeat(3, minmax(0, 1fr));
-            }
-        }
-        @media (min-width: 1280px) {
-            .q-cards-grid {
-                grid-template-columns: repeat(4, minmax(0, 1fr));
-            }
-        }
+    <!-- کادر فیلترها و جستجوی آنلاین -->
+    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px 16px; margin-bottom: 16px; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;">
+            
+            <!-- تب‌های فیلتر -->
+            <div style="display: flex; align-items: center; gap: 4px; background: #f1f5f9; padding: 4px; border-radius: 8px; flex-wrap: wrap;">
+                
+                <button wire:click="setTab('all')" 
+                        style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; font-size: 11px; border-radius: 6px; border: none; cursor: pointer; transition: all 0.2s; {{ $activeTab === 'all' ? 'background: #4f46e5; color: #ffffff; font-weight: 700; box-shadow: 0 2px 4px rgba(79,70,229,0.25);' : 'background: transparent; color: #334155; font-weight: 600;' }}">
+                    <svg style="width: 14px; height: 14px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z" />
+                    </svg>
+                    <span>همه الگوها</span>
+                </button>
 
-        /* Unified Questionnaire Card Item */
-        .q-card-item {
-            background-color: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 1.25rem;
-            overflow: hidden;
-            display: flex;
-            height: 195px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-        }
-        .dark .q-card-item {
-            background-color: #0f172a;
-            border-color: #1e293b;
-        }
+                <button wire:click="setTab('active')" 
+                        style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; font-size: 11px; border-radius: 6px; border: none; cursor: pointer; transition: all 0.2s; {{ $activeTab === 'active' ? 'background: #16a34a; color: #ffffff; font-weight: 700; box-shadow: 0 2px 4px rgba(22,163,74,0.25);' : 'background: transparent; color: #334155; font-weight: 600;' }}">
+                    <svg style="width: 14px; height: 14px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                    </svg>
+                    <span>الگوهای فعال</span>
+                </button>
 
-        .q-card-item:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 16px -4px rgba(0, 0, 0, 0.06);
-            border-color: #cbd5e1;
-        }
-        .dark .q-card-item:hover {
-            border-color: #334155;
-            box-shadow: 0 8px 16px -4px rgba(0, 0, 0, 0.3);
-        }
+                <button wire:click="setTab('wizard')" 
+                        style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; font-size: 11px; border-radius: 6px; border: none; cursor: pointer; transition: all 0.2s; {{ $activeTab === 'wizard' ? 'background: #d97706; color: #ffffff; font-weight: 700; box-shadow: 0 2px 4px rgba(217,119,6,0.25);' : 'background: transparent; color: #334155; font-weight: 600;' }}">
+                    <svg style="width: 14px; height: 14px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
+                    </svg>
+                    <span>حالت ویزاردی (گام‌به‌گام)</span>
+                </button>
 
-        /* Right Side Main Title Thumbnail Area (Pastel Background Tint) */
-        .q-card-title-col {
-            flex: 1;
-            padding: 0.75rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: #ffffff;
-        }
-        .dark .q-card-title-col {
-            background-color: #0f172a;
-        }
+                <button wire:click="setTab('inactive')" 
+                        style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; font-size: 11px; border-radius: 6px; border: none; cursor: pointer; transition: all 0.2s; {{ $activeTab === 'inactive' ? 'background: #dc2626; color: #ffffff; font-weight: 700; box-shadow: 0 2px 4px rgba(220,38,38,0.25);' : 'background: transparent; color: #334155; font-weight: 600;' }}">
+                    <svg style="width: 14px; height: 14px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                    </svg>
+                    <span>غیرفعال‌ها</span>
+                </button>
+            </div>
 
-        .q-card-thumbnail-box {
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, rgba(99, 102, 241, 0.09) 100%);
-            border-radius: 0.85rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 1rem;
-            text-align: center;
-            box-sizing: border-box;
-            border: 1px solid rgba(99, 102, 241, 0.15);
-            transition: all 0.2s ease;
-        }
-        .dark .q-card-thumbnail-box {
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.12) 0%, rgba(99, 102, 241, 0.18) 100%);
-            border-color: rgba(99, 102, 241, 0.25);
-        }
+            <!-- کادر جستجو -->
+            <div style="position: relative; min-width: 240px;">
+                <input type="text" 
+                       wire:model.live.debounce.300ms="search" 
+                       placeholder="جستجو در عنوان پرسشنامه..." 
+                       style="width: 100%; padding: 6px 36px 6px 12px; font-size: 12px; border: 1px solid #cbd5e1; border-radius: 8px; background: #ffffff; color: #0f172a; outline: none; transition: border-color 0.2s;" />
+                <svg style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: #64748b;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                </svg>
+            </div>
 
-        .q-card-title-text {
-            font-size: 0.875rem;
-            font-weight: 500;
-            color: #334155;
-            line-height: 1.5;
-        }
-        .dark .q-card-title-text {
-            color: #e2e8f0;
-        }
+        </div>
+    </div>
 
-        /* Left Side Stats / Action Panel */
-        .q-card-stats-col {
-            width: 125px;
-            background-color: #ffffff;
-            border-right: 1px solid #f1f5f9;
-            padding: 0.65rem 0.5rem;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            align-items: center;
-            text-align: center;
-            box-sizing: border-box;
-            transition: background-color 0.2s ease;
-        }
-        .dark .q-card-stats-col {
-            background-color: #0f172a;
-            border-right-color: #1e293b;
-        }
+    <!-- شبکه‌بندی کارت‌های پرسشنامه‌ها -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px;">
 
-        .q-stat-unit {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-bottom: 0.15rem;
-        }
-
-        .q-stat-label {
-            font-size: 0.675rem;
-            color: #64748b;
-            font-weight: 400;
-        }
-        .dark .q-stat-label {
-            color: #94a3b8;
-        }
-
-        .q-stat-value {
-            font-size: 0.875rem;
-            font-weight: 600;
-            color: #334155;
-        }
-        .dark .q-stat-value {
-            color: #e2e8f0;
-        }
-
-        .q-status-badge {
-            font-size: 0.65rem;
-            font-weight: 500;
-            padding: 0.125rem 0.45rem;
-            border-radius: 9999px;
-            display: inline-block;
-        }
-        .q-status-active {
-            background-color: #ecfdf5;
-            color: #059669;
-        }
-        .dark .q-status-active {
-            background-color: rgba(6, 95, 70, 0.25);
-            color: #34d399;
-        }
-        .q-status-inactive {
-            background-color: #fef2f2;
-            color: #dc2626;
-        }
-        .dark .q-status-inactive {
-            background-color: rgba(153, 27, 27, 0.25);
-            color: #f87171;
-        }
-
-        /* Organized Action Menu Overlay */
-        .q-actions-container {
-            display: flex;
-            flex-direction: column;
-            gap: 0.35rem;
-            width: 100%;
-            height: 100%;
-            justify-content: space-between;
-            padding: 0.25rem 0.15rem;
-            text-align: right;
-            box-sizing: border-box;
-        }
-
-        .q-action-item-btn {
-            background: transparent;
-            border: none;
-            font-size: 0.75rem;
-            font-weight: 500;
-            color: #475569;
-            cursor: pointer;
-            text-align: right;
-            padding: 0.3rem 0.4rem;
-            width: 100%;
-            border-radius: 0.45rem;
-            transition: all 0.15s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.35rem;
-            text-decoration: none !important;
-            box-sizing: border-box;
-        }
-        .dark .q-action-item-btn {
-            color: #cbd5e1;
-        }
-        .q-action-item-btn:hover {
-            color: var(--primary-600, #4f46e5);
-            background-color: #f1f5f9;
-        }
-        .dark .q-action-item-btn:hover {
-            color: var(--primary-400, #818cf8);
-            background-color: #1e293b;
-        }
-
-        /* Strict Sizing for SVG Icons inside action buttons */
-        .q-action-item-btn svg {
-            width: 14px !important;
-            height: 14px !important;
-            min-width: 14px !important;
-            min-height: 14px !important;
-            max-width: 14px !important;
-            max-height: 14px !important;
-            flex-shrink: 0 !important;
-            display: inline-block !important;
-        }
-
-        .q-action-item-danger {
-            color: #e11d48 !important;
-        }
-        .dark .q-action-item-danger {
-            color: #fb7185 !important;
-        }
-        .q-action-item-danger:hover {
-            background-color: #fef2f2 !important;
-        }
-        .dark .q-action-item-danger:hover {
-            background-color: rgba(153, 27, 27, 0.2) !important;
-        }
-
-        /* Small, Thin, Sleek Three Dots Button */
-        .q-card-menu-btn {
-            background-color: #ffffff;
-            border: 1px solid #e2e8f0;
-            color: #94a3b8;
-            border-radius: 0.45rem;
-            width: 26px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.15s ease;
-        }
-        .dark .q-card-menu-btn {
-            background-color: #1e293b;
-            border-color: #334155;
-            color: #64748b;
-        }
-        .q-card-menu-btn:hover, .q-card-menu-btn.active {
-            background-color: #f1f5f9;
-            border-color: #cbd5e1;
-            color: #475569;
-        }
-        .dark .q-card-menu-btn:hover, .dark .q-card-menu-btn.active {
-            background-color: #334155;
-            border-color: #475569;
-            color: #e2e8f0;
-        }
-
-        /* Dedicated "Create New Questionnaire" Card (Filament Theme System) */
-        .q-create-card {
-            background-color: #ffffff;
-            border: 2px dashed #cbd5e1;
-            border-radius: 1.25rem;
-            height: 195px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 0.75rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            text-decoration: none !important;
-        }
-        .dark .q-create-card {
-            background-color: #0f172a;
-            border-color: #334155;
-        }
-
-        .q-create-card:hover {
-            border-color: var(--primary-500, #6366f1);
-            background-color: #f8fafc;
-            transform: translateY(-2px);
-        }
-        .dark .q-create-card:hover {
-            border-color: var(--primary-400, #818cf8);
-            background-color: #1e293b;
-        }
-    </style>
-
-    <!-- Cards Grid -->
-    <div class="q-cards-grid">
         @forelse($templates as $record)
-            <div 
-                x-data="{ open: false }" 
-                @mouseenter="open = true" 
-                @mouseleave="open = false" 
-                class="q-card-item" 
-                id="questionnaire-card-{{ $record->id }}"
-            >
-                <!-- Right Side Main Title Thumbnail Area (First in HTML order -> Right in RTL) -->
-                <div class="q-card-title-col">
-                    <div class="q-card-thumbnail-box">
-                        <span class="q-card-title-text">
+            <!-- کارت پرسشنامه -->
+            <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; display: flex; flex-direction: column; justify-content: space-between; gap: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.03); transition: all 0.2s;">
+                
+                <!-- هدر کارت -->
+                <div>
+                    <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 8px;">
+                        <h3 style="font-size: 14px; font-weight: 700; color: #0f172a; margin: 0; line-height: 1.4;">
                             {{ $record->name }}
-                        </span>
+                        </h3>
+                        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
+                            @if($record->is_active)
+                                <span style="padding: 3px 8px; font-size: 10px; font-weight: 700; border-radius: 6px; background: #dcfce7; color: #166534; white-space: nowrap; display: inline-flex; align-items: center; gap: 3px;">
+                                    <svg style="width: 10px; height: 10px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                    </svg>
+                                    فعال
+                                </span>
+                            @else
+                                <span style="padding: 3px 8px; font-size: 10px; font-weight: 700; border-radius: 6px; background: #ffe4e6; color: #991b1b; white-space: nowrap;">
+                                    غیرفعال
+                                </span>
+                            @endif
+
+                            @if($record->wizard_mode)
+                                <span style="padding: 2px 6px; font-size: 9px; font-weight: 700; border-radius: 4px; background: #fef3c7; color: #b45309; white-space: nowrap;">
+                                    ⚡ ویزاردی (گام‌به‌گام)
+                                </span>
+                            @else
+                                <span style="padding: 2px 6px; font-size: 9px; font-weight: 600; border-radius: 4px; background: #f1f5f9; color: #475569; white-space: nowrap;">
+                                    تک‌صفحه‌ای
+                                </span>
+                            @endif
+                        </div>
+                    </div>
+
+                    @if($record->guide_notice)
+                        <div style="font-size: 11px; color: #64748b; margin-top: 6px; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                            {{ $record->guide_notice }}
+                        </div>
+                    @endif
+                </div>
+
+                <!-- آمار و فیلدهای الگو -->
+                <div style="background: #f8fafc; padding: 10px 12px; border-radius: 8px; border: 1px solid #e2e8f0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; text-align: center;">
+                    <div>
+                        <div style="font-size: 10px; color: #64748b;">تعداد فیلدها</div>
+                        <div style="font-size: 13px; font-weight: 800; color: #4338ca; margin-top: 2px;">
+                            {{ $toPersian($record->questions_count) }}
+                        </div>
+                    </div>
+                    <div style="border-right: 1px solid #e2e8f0; border-left: 1px solid #e2e8f0;">
+                        <div style="font-size: 10px; color: #64748b;">پاسخ‌ها</div>
+                        <div style="font-size: 13px; font-weight: 800; color: #166534; margin-top: 2px;">
+                            {{ $toPersian($record->dynamic_responses_count) }}
+                        </div>
+                    </div>
+                    <div>
+                        <div style="font-size: 10px; color: #64748b;">بازدیدها</div>
+                        <div style="font-size: 13px; font-weight: 700; color: #334155; margin-top: 2px;">
+                            {{ $toPersian($record->views_count) }}
+                        </div>
                     </div>
                 </div>
 
-                <!-- Left Side Stats / Action Panel (Second in HTML order -> Left in RTL) -->
-                <div class="q-card-stats-col">
-                    <!-- Default Stats Display (when not hovering/clicking) -->
-                    <div x-show="!open" class="flex flex-col h-full justify-between items-center py-0.5 w-full">
-                        <div class="q-stat-unit">
-                            <span class="q-stat-label">بازدید</span>
-                            <span class="q-stat-value">{{ $toPersian($record->views_count ?? 0) }}</span>
-                        </div>
-
-                        <div class="q-stat-unit">
-                            <span class="q-stat-label">پاسخ</span>
-                            <span class="q-stat-value">{{ $toPersian($record->dynamic_responses_count ?? 0) }}</span>
-                        </div>
-
-                        <div class="q-stat-unit">
-                            <span class="q-stat-label">سوالات</span>
-                            <span class="q-stat-value">{{ $toPersian($record->questions_count ?? 0) }}</span>
-                        </div>
-
-                        <div class="my-0.5">
-                            @if($record->is_active)
-                                <span class="q-status-badge q-status-active">فعال</span>
-                            @else
-                                <span class="q-status-badge q-status-inactive">غیرفعال</span>
-                            @endif
-                        </div>
-
-                        <button 
-                            type="button" 
-                            @click.stop="open = !open" 
-                            class="q-card-menu-btn" 
-                            title="گزینه‌ها"
-                        >
-                            <svg style="width: 14px !important; height: 14px !important;" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM18 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                            </svg>
-                        </button>
-                    </div>
-
-                    <!-- Organized Action List Display (on hover / click - clean spacing) -->
-                    <div x-show="open" x-transition.opacity class="q-actions-container">
-                        <button 
-                            type="button" 
-                            wire:click="previewTemplate({{ $record->id }})" 
-                            class="q-action-item-btn"
-                        >
-                            <svg class="text-info-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                <!-- فوتر و کلیدهای اقدام سریع (با آیکون‌های برداری SVG، بدون ایموجی) -->
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 6px; padding-top: 8px; border-top: 1px solid #f1f5f9; font-size: 11px;">
+                    
+                    <div style="display: flex; align-items: center; gap: 6px;">
+                        <button type="button" 
+                                wire:click="previewTemplate({{ $record->id }})" 
+                                title="پیش‌نمایش فرم پرسشنامه"
+                                style="display: inline-flex; align-items: center; gap: 4px; font-weight: 700; color: #0284c7; background: #e0f2fe; border: 1px solid #bae6fd; padding: 5px 10px; border-radius: 6px; cursor: pointer; transition: all 0.2s;">
+                            <svg style="width: 14px; height: 14px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.573 16.49 16.638 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                             </svg>
                             <span>پیش‌نمایش</span>
                         </button>
 
-                        <a 
-                            href="{{ \App\Filament\Resources\BriefTemplates\BriefTemplateResource::getUrl('edit', ['record' => $record]) }}" 
-                            class="q-action-item-btn"
-                        >
-                            <svg class="text-primary-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                        <a href="{{ \App\Filament\Resources\BriefTemplates\BriefTemplateResource::getUrl('edit', ['record' => $record]) }}" 
+                           title="ویرایش فرم پرسشنامه"
+                           style="display: inline-flex; align-items: center; gap: 4px; font-weight: 700; color: #4338ca; text-decoration: none; padding: 5px 10px; border-radius: 6px; background: #eef2ff; border: 1px solid #c7d2fe; transition: all 0.2s;">
+                            <svg style="width: 14px; height: 14px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
                             </svg>
                             <span>ویرایش</span>
                         </a>
-
-                        <button 
-                            type="button" 
-                            wire:click="toggleActive({{ $record->id }})" 
-                            class="q-action-item-btn {{ $record->is_active ? 'q-action-item-danger' : 'text-emerald-600' }}"
-                        >
-                            @if($record->is_active)
-                                <svg class="text-rose-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                </svg>
-                                <span>غیرفعال‌سازی</span>
-                            @else
-                                <svg class="text-emerald-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
-                                </svg>
-                                <span>فعال‌سازی</span>
-                            @endif
-                        </button>
-
-                        <button 
-                            type="button" 
-                            wire:click="deleteTemplate({{ $record->id }})" 
-                            wire:confirm="آیا از حذف این پرسشنامه اطمینان دارید؟" 
-                            class="q-action-item-btn q-action-item-danger"
-                        >
-                            <svg class="shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                            </svg>
-                            <span>حذف</span>
-                        </button>
-
-                        <div class="w-full flex justify-center pt-0.5 border-t border-gray-100 dark:border-gray-800">
-                            <button 
-                                type="button" 
-                                @click.stop="open = false" 
-                                class="q-card-menu-btn active"
-                                title="بستن"
-                            >
-                                <svg style="width: 14px !important; height: 14px !important;" fill="currentColor" viewBox="0 0 20 20">
-                                    <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM18 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                                </svg>
-                            </button>
-                        </div>
                     </div>
+
+                    <div style="display: flex; align-items: center; gap: 4px;">
+                        <button type="button" 
+                                wire:click="toggleActive({{ $record->id }})" 
+                                title="{{ $record->is_active ? 'غیرفعال‌سازی' : 'فعال‌سازی' }}"
+                                style="padding: 6px; border-radius: 6px; border: 1px solid #e2e8f0; background: #f8fafc; color: {{ $record->is_active ? '#dc2626' : '#16a34a' }}; cursor: pointer;">
+                            <svg style="width: 14px; height: 14px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M5.636 5.636a9 9 0 1 0 12.728 0M12 3v9" />
+                            </svg>
+                        </button>
+
+                        <button type="button" 
+                                wire:click="deleteTemplate({{ $record->id }})" 
+                                wire:confirm="آیا از حذف این پرسشنامه اطمینان دارید؟" 
+                                title="حذف"
+                                style="padding: 6px; border-radius: 6px; border: 1px solid #fecdd3; background: #ffe4e6; color: #be123c; cursor: pointer;">
+                            <svg style="width: 14px; height: 14px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                            </svg>
+                        </button>
+                    </div>
+
                 </div>
+
             </div>
         @empty
-            <div class="col-span-full py-12 text-center text-gray-500 bg-white dark:bg-gray-900 rounded-2xl border border-dashed border-gray-300 dark:border-gray-800">
-                هیچ پرسشنامه‌ای یافت نشد.
+            <div style="grid-column: 1 / -1; padding: 32px 16px; text-align: center; color: #475569; font-size: 13px; background: #ffffff; border-radius: 12px; border: 1px dashed #cbd5e1;">
+                هیچ پرسشنامه‌ای مطابق فیلتر جاری یافت نشد.
             </div>
         @endforelse
 
-        <!-- Dedicated "Create New Questionnaire" Card (Filament Theme System) -->
-        <a href="{{ \App\Filament\Resources\BriefTemplates\BriefTemplateResource::getUrl('create') }}" class="q-create-card group">
-            <div class="w-11 h-11 rounded-2xl bg-primary-50 dark:bg-primary-950/60 text-primary-600 dark:text-primary-400 border border-primary-200/60 dark:border-primary-800/50 flex items-center justify-center shadow-xs transition-all group-hover:scale-105 group-hover:bg-primary-100 dark:group-hover:bg-primary-900/60">
-                <svg style="width: 20px !important; height: 20px !important;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+        <!-- کارت اختصاصی «+ ساخت پرسشنامه جدید» -->
+        <a href="{{ \App\Filament\Resources\BriefTemplates\BriefTemplateResource::getUrl('create') }}" 
+           style="background: #ffffff; border: 2px dashed #cbd5e1; border-radius: 12px; padding: 24px 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; text-decoration: none; cursor: pointer; transition: all 0.2s; min-height: 180px;">
+            <div style="width: 42px; height: 42px; border-radius: 10px; background: #eef2ff; color: #4338ca; border: 1px solid #c7d2fe; display: flex; align-items: center; justify-content: center;">
+                <svg style="width: 22px; height: 22px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                 </svg>
             </div>
-            <span class="text-xs md:text-sm font-medium text-primary-600 dark:text-primary-400 transition-colors">ساخت پرسشنامه جدید</span>
+            <span style="font-size: 13px; font-weight: 700; color: #4338ca;">ساخت پرسشنامه جدید</span>
         </a>
+
     </div>
+
 </div>
