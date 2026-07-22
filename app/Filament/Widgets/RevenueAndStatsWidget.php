@@ -10,7 +10,7 @@ use Illuminate\Support\Carbon;
 
 class RevenueAndStatsWidget extends Widget
 {
-    protected static ?int $sort = 2;
+    protected static ?int $sort = 1;
     protected int | string | array $columnSpan = [
         'default' => 'full',
         'md' => 1,
@@ -47,6 +47,9 @@ class RevenueAndStatsWidget extends Widget
 
         $unverifiedRevenue = Payment::whereNull('verified_at')->sum('amount');
 
+        // 5. بریف‌های در انتظار تکمیل (گلوگاه عملیاتی)
+        $pendingBriefsCount = Project::where('status', 'brief')->count();
+
         return [
             'active_projects' => \App\Helpers\JalaliHelper::toPersianDigits((string) $activeProjectsCount),
             'total_projects' => \App\Helpers\JalaliHelper::toPersianDigits((string) $totalProjectsCount),
@@ -60,6 +63,7 @@ class RevenueAndStatsWidget extends Widget
             'yearly_revenue' => \App\Helpers\JalaliHelper::toPersianDigits(number_format($yearlyRevenue)),
             'total_revenue' => \App\Helpers\JalaliHelper::toPersianDigits(number_format($totalRevenue)),
             'unverified_revenue' => \App\Helpers\JalaliHelper::toPersianDigits(number_format($unverifiedRevenue)),
+            'pending_briefs' => \App\Helpers\JalaliHelper::toPersianDigits((string) $pendingBriefsCount),
             'jalali_month' => \App\Helpers\JalaliHelper::toJalali($now, 'F Y'),
         ];
     }

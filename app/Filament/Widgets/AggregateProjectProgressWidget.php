@@ -7,8 +7,8 @@ use Filament\Widgets\ChartWidget;
 
 class AggregateProjectProgressWidget extends ChartWidget
 {
-    protected static ?int $sort = 1;
-    protected ?string $heading = 'تحلیل تجمعی پیشرفت سیستم';
+    protected static ?int $sort = 2;
+    protected ?string $heading = null;
     protected int | string | array $columnSpan = [
         'default' => 'full',
         'md' => 1,

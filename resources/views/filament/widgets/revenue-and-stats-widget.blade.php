@@ -104,5 +104,61 @@
             </div>
         </div>
 
+        <!-- ========================= سطر دوم کارت‌های عملیاتی و اکشن‌های سریع ادمین ========================= -->
+
+        <!-- کارت ۵: اکشن سریع تعریف پروژه جدید -->
+        <a href="{{ route('filament.admin.resources.projects.create') }}" style="text-decoration: none; background: #faf5ff; border: 1px dashed #d8b4fe; border-radius: 12px; padding: 12px; display: flex; align-items: center; gap: 10px; transition: all 0.2s;">
+            <div style="width: 32px; height: 32px; border-radius: 8px; background: #9333ea; color: #fff; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <svg style="width: 18px; height: 18px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                </svg>
+            </div>
+            <div>
+                <div style="font-size: 12px; font-weight: 700; color: #6b21a8;">تعریف پروژه جدید 🚀</div>
+                <div style="font-size: 10px; color: #9333ea; margin-top: 2px;">ثبت کارفرمای جدید و شروع فاز بریف</div>
+            </div>
+        </a>
+
+        <!-- کارت ۶: اکشن سریع ورود با لینک جادویی -->
+        <a href="{{ route('filament.admin.resources.users.index') }}" style="text-decoration: none; background: #f0fdf4; border: 1px dashed #86efac; border-radius: 12px; padding: 12px; display: flex; align-items: center; gap: 10px; transition: all 0.2s;">
+            <div style="width: 32px; height: 32px; border-radius: 8px; background: #16a34a; color: #fff; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <svg style="width: 18px; height: 18px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244" />
+                </svg>
+            </div>
+            <div>
+                <div style="font-size: 12px; font-weight: 700; color: #166534;">لینک جادویی ورود 🔗</div>
+                <div style="font-size: 10px; color: #15803d; margin-top: 2px;">ارسال لینک بدون کلمه عبور به مشتری</div>
+            </div>
+        </a>
+
+        <!-- کارت ۷: اکشن سریع مدیریت پرسشنامه‌ها -->
+        <a href="{{ route('filament.admin.resources.brief-templates.index') }}" style="text-decoration: none; background: #eff6ff; border: 1px dashed #93c5fd; border-radius: 12px; padding: 12px; display: flex; align-items: center; gap: 10px; transition: all 0.2s;">
+            <div style="width: 32px; height: 32px; border-radius: 8px; background: #2563eb; color: #fff; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <svg style="width: 18px; height: 18px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+                </svg>
+            </div>
+            <div>
+                <div style="font-size: 12px; font-weight: 700; color: #1e40af;">مدیریت پرسشنامه‌ها 📝</div>
+                <div style="font-size: 10px; color: #1d4ed8; margin-top: 2px;">ویرایش فرم‌های ویزاردی نیازمندی‌ها</div>
+            </div>
+        </a>
+
+        <!-- کارت ۸: شاخص گلوگاه بریف‌های معطل -->
+        <div style="background: #fff7ed; border: 1px solid #ffedd5; border-radius: 12px; padding: 12px; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+            <div>
+                <div style="font-size: 11px; font-weight: 700; color: #c2410c;">بریف‌های در انتظار تکمیل</div>
+                <div style="font-size: 16px; font-weight: 800; color: #ea580c; margin-top: 2px;">
+                    {{ $data['pending_briefs'] }} <span style="font-size: 10px; font-weight: 500; color: #c2410c;">مورد</span>
+                </div>
+            </div>
+            <div style="width: 28px; height: 28px; border-radius: 8px; background: #ffedd5; display: flex; align-items: center; justify-content: center; color: #ea580c; flex-shrink: 0;">
+                <svg style="width: 16px; height: 16px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" />
+                </svg>
+            </div>
+        </div>
+
     </div>
 </x-filament-widgets::widget>
