@@ -22,8 +22,8 @@ class BriefTemplateResource extends Resource
     protected static ?string $modelLabel = 'پرسشنامه';
     protected static ?string $pluralModelLabel = 'پرسشنامه‌ها';
     protected static ?string $navigationLabel = 'پرسشنامه‌ها';
-    protected static \UnitEnum|string|null $navigationGroup = 'مدیریت پروژه‌ها و نیازمندی‌ها';
-    protected static ?int $navigationSort = 3;
+    protected static \UnitEnum|string|null $navigationGroup = null;
+    protected static ?int $navigationSort = 2;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedDocumentDuplicate;
 

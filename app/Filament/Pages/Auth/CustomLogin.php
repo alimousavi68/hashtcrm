@@ -18,6 +18,21 @@ class CustomLogin extends BaseLogin
     public ?string $otp = '';
     public bool $otpSent = false;
 
+    public function getTitle(): string|\Illuminate\Contracts\Support\Htmlable
+    {
+        return 'ورود به سامانه مدیریت پروژه‌های هشت بهشت';
+    }
+
+    public function getHeading(): string|\Illuminate\Contracts\Support\Htmlable
+    {
+        return new \Illuminate\Support\HtmlString('
+            <div class="text-center space-y-1">
+                <div class="text-2xl font-black text-primary-600 dark:text-primary-400 tracking-tight">هشت بهشت</div>
+                <div class="text-xs font-bold text-gray-500 dark:text-gray-400">سامانه مدیریت پروژه‌ها</div>
+            </div>
+        ');
+    }
+
     public function mount(): void
     {
         parent::mount();

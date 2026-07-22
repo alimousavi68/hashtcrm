@@ -172,7 +172,9 @@
         <!-- هدر سند -->
         <div class="header">
             <div class="header-title">
-                <h1>سند نیازمندی‌ها و بریف پروژه: {{ $project->title }}</h1>
+                <div style="font-size: 22px; font-weight: 900; color: #4f46e5;">هشت بهشت</div>
+                <div style="font-size: 11px; font-weight: bold; color: #64748b; margin-bottom: 12px;">سامانه مدیریت پروژه‌ها</div>
+                <h1 style="font-size: 16px; color: #0f172a; border-top: 1px dashed #cbd5e1; pt-2; margin-top: 5px; padding-top: 5px;">سند نیازمندی‌ها و بریف پروژه: {{ $project->title }}</h1>
                 <p>کارفرما: {{ $project->client ? $project->client->name : 'نامشخص' }} | تاریخ ثبت: {{ $createdJalali }}</p>
             </div>
             <div class="meta-badge">
@@ -227,7 +229,7 @@
         @endforeach
 
         <div class="footer">
-            این سند به صورت خودکار توسط سامانه مدیریت پروژه‌های هشت ایجاد گردیده است.
+            این سند به صورت خودکار توسط سامانه مدیریت پروژه‌های هشت بهشت ایجاد گردیده است.
         </div>
     </div>
 

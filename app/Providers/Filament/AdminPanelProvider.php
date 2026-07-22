@@ -27,6 +27,13 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login(\App\Filament\Pages\Auth\CustomLogin::class)
+            ->brandName('سامانه مدیریت پروژه‌های هشت بهشت')
+            ->brandLogo(fn () => new \Illuminate\Support\HtmlString('
+                <div class="flex flex-col">
+                    <span class="text-base font-black tracking-tight text-primary-600 dark:text-primary-400">هشت بهشت</span>
+                    <span class="text-[9px] font-normal text-gray-400 dark:text-gray-500 -mt-1 tracking-tighter">(سامانه مدیریت پروژه‌ها)</span>
+                </div>
+            '))
             ->colors([
                 'primary' => Color::Amber,
             ])
@@ -58,6 +65,13 @@ class AdminPanelProvider extends PanelProvider
                             ->label('سیستم')
                             ->icon('heroicon-o-cpu-chip'),
                     ]),
+            ])
+            ->navigationGroups([
+                \Filament\Navigation\NavigationGroup::make()
+                    ->label('پشتیبانی و تیکت‌ها')
+                    ->collapsed(false),
+                \Filament\Navigation\NavigationGroup::make()
+                    ->label('مدیریت سیستم'),
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverClusters(in: app_path('Filament/Clusters'), for: 'App\\Filament\\Clusters')

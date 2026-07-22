@@ -27,6 +27,13 @@ class ClientPanelProvider extends PanelProvider
             ->path('client')
             ->authGuard('client')
             ->login(\App\Filament\Pages\Auth\CustomLogin::class)
+            ->brandName('سامانه مدیریت پروژه‌های هشت بهشت')
+            ->brandLogo(fn () => new \Illuminate\Support\HtmlString('
+                <div class="flex flex-col">
+                    <span class="text-base font-black tracking-tight text-primary-600 dark:text-primary-400">هشت بهشت</span>
+                    <span class="text-[9px] font-normal text-gray-400 dark:text-gray-500 -mt-1 tracking-tighter">(سامانه مدیریت پروژه‌ها)</span>
+                </div>
+            '))
             ->colors([
                 'primary' => Color::Amber,
             ])
