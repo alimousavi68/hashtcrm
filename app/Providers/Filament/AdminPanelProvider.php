@@ -82,8 +82,8 @@ class AdminPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
                 \App\Filament\Widgets\StatsOverview::class,
-                \App\Filament\Widgets\ActiveProjectsProgressWidget::class,
-                \App\Filament\Widgets\DeadlineReminderWidget::class,
+                \App\Filament\Widgets\AggregateProjectProgressWidget::class,
+                \App\Filament\Widgets\SingleProjectProgressCardsWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,
