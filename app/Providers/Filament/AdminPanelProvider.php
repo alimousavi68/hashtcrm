@@ -77,13 +77,14 @@ class AdminPanelProvider extends PanelProvider
             ->discoverClusters(in: app_path('Filament/Clusters'), for: 'App\\Filament\\Clusters')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
-                Pages\Dashboard::class,
+                \App\Filament\Pages\Dashboard::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
                 \App\Filament\Widgets\StatsOverview::class,
                 \App\Filament\Widgets\AggregateProjectProgressWidget::class,
                 \App\Filament\Widgets\SingleProjectProgressCardsWidget::class,
+                \App\Filament\Widgets\RecentTicketsAndPaymentsWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,

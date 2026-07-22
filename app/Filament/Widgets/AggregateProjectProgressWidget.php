@@ -8,9 +8,12 @@ use Filament\Widgets\ChartWidget;
 class AggregateProjectProgressWidget extends ChartWidget
 {
     protected static ?int $sort = 2;
-    protected ?string $heading = 'تحلیل تجمعی پیشرفت و میزان کار باقیمانده پروژه‌ها';
-    protected int | string | array $columnSpan = 'full';
-    protected ?string $maxHeight = '320px';
+    protected ?string $heading = 'تحلیل تجمعی پیشرفت و کار باقیمانده';
+    protected int | string | array $columnSpan = [
+        'default' => 'full',
+        'lg' => 1,
+    ];
+    protected ?string $maxHeight = '200px';
 
     protected function getData(): array
     {

@@ -12,6 +12,10 @@ use Illuminate\Support\Carbon;
 class StatsOverview extends BaseWidget
 {
     protected static ?int $sort = 1;
+    protected int | string | array $columnSpan = [
+        'default' => 'full',
+        'lg' => 2,
+    ];
 
     protected function getStats(): array
     {
@@ -58,7 +62,7 @@ class StatsOverview extends BaseWidget
                 ->color($openTicketsCount > 0 ? 'danger' : 'gray'),
 
             Stat::make('درآمد تاییدشده (ماه جاری)', number_format($monthlyRevenue) . ' تومان')
-                ->description('واریزی‌های تاییدشده در ' . Carbon::now()->format('F Y'))
+                ->description('واریزی‌های تاییدشده در ' . \App\Helpers\JalaliHelper::toJalali(Carbon::now(), 'F Y'))
                 ->descriptionIcon('heroicon-m-banknotes')
                 ->color('success'),
         ];

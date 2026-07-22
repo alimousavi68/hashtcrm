@@ -1,16 +1,33 @@
 <x-filament-widgets::widget>
     <x-filament::section>
         <x-slot name="heading">
-            <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap;">
                 <div style="display: flex; align-items: center; gap: 8px;">
                     <svg style="width: 20px; height: 20px; flex-shrink: 0; color: var(--primary-600, #4f46e5);" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v11.25A2.25 2.25 0 0 0 6 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0 1 18 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-1-1.5h-9.5m0 0l-.5 1.5m.75-9l3-3 2.25 2.25L15 7.5" />
                     </svg>
                     <span style="font-size: 15px; font-weight: 700; color: var(--gray-900, #0f172a);">پیشرفت تک‌تک پروژه‌های ناتمام و زمان باقیمانده</span>
                 </div>
-                <span style="padding: 4px 10px; font-size: 11px; font-weight: 700; color: #4f46e5; background: #eef2ff; border: 1px solid #c7d2fe; border-radius: 9999px;">
-                    {{ count($this->getProjectsData()) }} پروژه در حال اجرا
-                </span>
+
+                <!-- دکمه‌های فیلتر سریع -->
+                <div style="display: flex; align-items: center; gap: 6px; background: #f1f5f9; padding: 4px; border-radius: 10px;">
+                    <button wire:click="setTab('all')" 
+                            style="padding: 4px 10px; font-size: 11px; font-weight: 700; border-radius: 7px; border: none; cursor: pointer; transition: all 0.2s; {{ $activeTab === 'all' ? 'background: #ffffff; color: #4f46e5; box-shadow: 0 1px 2px rgba(0,0,0,0.08);' : 'background: transparent; color: #64748b;' }}">
+                        همه پروژه‌ها
+                    </button>
+                    <button wire:click="setTab('overdue')" 
+                            style="padding: 4px 10px; font-size: 11px; font-weight: 700; border-radius: 7px; border: none; cursor: pointer; transition: all 0.2s; {{ $activeTab === 'overdue' ? 'background: #ffffff; color: #e11d48; box-shadow: 0 1px 2px rgba(0,0,0,0.08);' : 'background: transparent; color: #64748b;' }}">
+                        ⚠️ دارای تاخیر
+                    </button>
+                    <button wire:click="setTab('in_dev')" 
+                            style="padding: 4px 10px; font-size: 11px; font-weight: 700; border-radius: 7px; border: none; cursor: pointer; transition: all 0.2s; {{ $activeTab === 'in_dev' ? 'background: #ffffff; color: #0284c7; box-shadow: 0 1px 2px rgba(0,0,0,0.08);' : 'background: transparent; color: #64748b;' }}">
+                        🚀 در حال توسعه و بازنگری
+                    </button>
+                    <button wire:click="setTab('settled_pending')" 
+                            style="padding: 4px 10px; font-size: 11px; font-weight: 700; border-radius: 7px; border: none; cursor: pointer; transition: all 0.2s; {{ $activeTab === 'settled_pending' ? 'background: #ffffff; color: #d97706; box-shadow: 0 1px 2px rgba(0,0,0,0.08);' : 'background: transparent; color: #64748b;' }}">
+                        💳 تسویه‌نشده
+                    </button>
+                </div>
             </div>
         </x-slot>
 
@@ -89,9 +106,9 @@
                             </div>
 
                             <a href="{{ route('filament.admin.resources.projects.brief', ['record' => $p['id']]) }}" 
-                               style="display: inline-flex; align-items: center; gap: 4px; font-weight: 800; color: #4f46e5; text-decoration: none;">
-                                <span>مدیریت</span>
-                                <svg style="width: 14px; height: 14px; flex-shrink: 0;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                               style="display: inline-flex; align-items: center; gap: 4px; font-weight: 800; color: #4f46e5; text-decoration: none; padding: 4px 8px; border-radius: 6px; background: #eef2ff; border: 1px solid #c7d2fe; transition: all 0.2s;">
+                                <span>مدیریت پروژه</span>
+                                <svg style="width: 13px; height: 13px; flex-shrink: 0;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
                                 </svg>
                             </a>

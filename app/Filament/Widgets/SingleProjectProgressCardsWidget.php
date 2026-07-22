@@ -12,14 +12,22 @@ class SingleProjectProgressCardsWidget extends Widget
     protected int | string | array $columnSpan = 'full';
     protected string $view = 'filament.widgets.single-project-progress-cards';
 
+    public string $activeTab = 'all'; // all, overdue, in_dev, settled_pending
+
+    public function setTab(string $tab): void
+    {
+        $this->activeTab = $tab;
+    }
+
     public function getProjectsData(): array
     {
-        $projects = Project::with(['client'])
+        $query = Project::with(['client'])
             ->where('status', '!=', 'completed')
-            ->latest()
-            ->get();
+            ->latest();
 
-        return $projects->map(function (Project $project) {
+        $projects = $query->get();
+
+        $filtered = $projects->map(function (Project $project) {
             $progressPercent = $project->getProgressPercent();
             $remainingPercent = 100 - $progressPercent;
 
@@ -56,6 +64,17 @@ class SingleProjectProgressCardsWidget extends Widget
                 'days_remaining' => $daysRemaining,
                 'is_overdue' => $isOverdue,
             ];
-        })->toArray();
+        });
+
+        // اعمال فیلتر بر اساس تب فعال
+        if ($this->activeTab === 'overdue') {
+            $filtered = $filtered->filter(fn ($p) => $p['is_overdue'] === true);
+        } elseif ($this->activeTab === 'in_dev') {
+            $filtered = $filtered->filter(fn ($p) => in_array($p['status_key'], ['in_progress', 'review']));
+        } elseif ($this->activeTab === 'settled_pending') {
+            $filtered = $filtered->filter(fn ($p) => $p['is_settled'] === false);
+        }
+
+        return $filtered->values()->toArray();
     }
 }
