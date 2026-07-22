@@ -92,13 +92,19 @@ class AggregateProjectProgressWidget extends ChartWidget
                     'display' => true,
                     'position' => 'bottom',
                     'labels' => [
+                        'color' => '#1e293b',
                         'font' => [
                             'family' => 'PeydaWebVF, Vazirmatn, Tahoma',
                             'size' => 12,
+                            'weight' => '700',
                         ],
+                        'padding' => 12,
+                        'usePointStyle' => true,
+                        'pointStyleWidth' => 10,
                     ],
                 ],
             ],
+            'cutout' => '70%',
             'maintainAspectRatio' => false,
         ];
     }

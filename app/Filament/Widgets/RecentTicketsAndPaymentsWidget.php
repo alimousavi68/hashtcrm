@@ -50,6 +50,8 @@ class RecentTicketsAndPaymentsWidget extends Widget
                         'open' => 'باز',
                         'in_progress' => 'در حال بررسی',
                         'answered' => 'پاسخ داده‌شده',
+                        'replied' => 'پاسخ مشتری',
+                        'closed' => 'بسته‌شده',
                         default => $t->status,
                     },
                 ];

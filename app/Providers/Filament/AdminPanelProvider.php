@@ -29,9 +29,16 @@ class AdminPanelProvider extends PanelProvider
             ->login(\App\Filament\Pages\Auth\CustomLogin::class)
             ->brandName('سامانه مدیریت پروژه‌های هشت بهشت')
             ->brandLogo(fn () => new \Illuminate\Support\HtmlString('
-                <div class="flex flex-col">
-                    <span class="text-base font-black tracking-tight text-primary-600 dark:text-primary-400">هشت بهشت</span>
-                    <span class="text-[9px] font-normal text-gray-400 dark:text-gray-500 -mt-1 tracking-tighter">(سامانه مدیریت پروژه‌ها)</span>
+                <div style="display: flex; align-items: center; gap: 8px; font-family: PeydaWebVF, sans-serif;">
+                    <div style="width: 30px; height: 30px; border-radius: 8px; background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); display: flex; align-items: center; justify-content: center; color: #ffffff; box-shadow: 0 2px 4px rgba(79, 70, 229, 0.2); flex-shrink: 0;">
+                        <svg style="width: 17px; height: 17px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                        </svg>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 6px;">
+                        <span style="font-size: 15px; font-weight: 800; color: var(--gray-900, #0f172a); letter-spacing: -0.02em;">هشت بهشت</span>
+                        <span style="font-size: 9px; font-weight: 700; background: #eef2ff; color: #4f46e5; padding: 1px 6px; border-radius: 4px; border: 1px solid #c7d2fe;">CRM</span>
+                    </div>
                 </div>
             '))
             ->colors([
