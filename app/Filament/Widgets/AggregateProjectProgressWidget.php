@@ -73,8 +73,8 @@ class AggregateProjectProgressWidget extends ChartWidget
                 ],
             ],
             'labels' => [
-                "میزان پیشرفت میانگین کل (٪{$avgPersian})",
-                "میزان کار باقیمانده سیستم (٪{$remPersian})",
+                "پیشرفت کل: ٪{$avgPersian}",
+                "باقیمانده: ٪{$remPersian}",
             ],
         ];
     }

@@ -93,14 +93,13 @@
                 </div>
             </div>
             <div>
-                <div style="font-size: 18px; font-weight: 900; color: #047857;">
+                <div style="font-size: 18px; font-weight: 800; color: #047857;">
                     <span x-show="showAmounts">{{ $data['monthly_revenue'] }} تومان</span>
                     <span x-show="!showAmounts">••••••••</span>
                 </div>
-                <div style="display: flex; flex-direction: column; gap: 2px; margin-top: 6px; font-size: 10px; color: #64748b;">
-                    <div>سال جاری: <strong x-show="showAmounts">{{ $data['yearly_revenue'] }} تومان</strong><span x-show="!showAmounts">••••••••</span></div>
-                    <div>کل درآمد: <strong x-show="showAmounts">{{ $data['total_revenue'] }} تومان</strong><span x-show="!showAmounts">••••••••</span></div>
-                    <div style="color: #d97706; margin-top: 2px;">تایید نشده: <strong x-show="showAmounts">{{ $data['unverified_revenue'] }} تومان</strong><span x-show="!showAmounts">••••••••</span></div>
+                <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 4px; margin-top: 4px; font-size: 10px; color: #64748b;">
+                    <span>سال: <strong x-show="showAmounts" style="color: #334155;">{{ $data['yearly_revenue'] }}</strong><span x-show="!showAmounts">•••</span></span>
+                    <span style="color: #d97706;">تاییدنشده: <strong x-show="showAmounts">{{ $data['unverified_revenue'] }}</strong><span x-show="!showAmounts">•••</span></span>
                 </div>
             </div>
         </div>

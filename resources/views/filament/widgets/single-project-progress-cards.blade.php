@@ -52,7 +52,7 @@
                 🎉 تمامی پروژه‌ها به اتمام رسیده و پروژه غیرفعال یا ناتمامی وجود ندارد.
             </div>
         @else
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; margin-top: 6px;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin-top: 6px;">
                 @foreach($projects as $p)
                     <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px; display: flex; flex-direction: column; justify-content: space-between; gap: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
                         
