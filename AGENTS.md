@@ -151,9 +151,10 @@ hasht_crm/
 │   │   │   ├── TicketResource.php              # مدیریت تیکت‌های پشتیبانی
 │   │   │   └── UserResource.php                # مدیریت کاربران و مشتریان
 │   │   └── Widgets/                            # ویجت‌های داشبورد ادمین
-│   │       ├── ActiveProjectsProgressWidget.php# پیشرفت پروژه‌های فعال
-│   │       ├── DeadlineReminderWidget.php      # یادآور ددلاین‌ها و هشدارهای زمانی
-│   │       └── StatsOverview.php               # آمار کارت‌های بالای داشبورد
+│   │       ├── AggregateProjectProgressWidget.php # چارت دونات فشرده پیشرفت کل سیستم
+│   │       ├── RecentTicketsAndPaymentsWidget.php # مرکز اقدام سریع فیش‌های منتظر بررسی و تیکت‌ها
+│   │       ├── RevenueAndStatsWidget.php       # کارت‌های ۲ سطحی آمارها، درآمد و اکشن‌های سریع
+│   │       └── SingleProjectProgressCardsWidget.php # کارت‌های پیشرفت تک‌تک پروژه‌های فعال با فیلتر سریع
 │   ├── Http/
 │   │   └── Controllers/
 │   │       └── Auth/
@@ -185,8 +186,12 @@ hasht_crm/
 ├── resources/
 │   └── views/                                  # کدهای Blade و قالب‌های رندر
 │       └── filament/
-│           └── admin/
-│               └── brief-template-preview.blade.php # کامپوننت پیش‌نمایش تعاملی فرم کارفرما
+│           ├── admin/
+│           │   └── brief-template-preview.blade.php # کامپوننت پیش‌نمایش تعاملی فرم کارفرما
+│           └── widgets/
+│               ├── recent-tickets-and-payments-widget.blade.php # ویو سفارشی فیش‌ها و تیکت‌های اخیر
+│               ├── revenue-and-stats-widget.blade.php # ویو سفارشی کارت‌های ۲ سطحی آمار و اکشن‌ها
+│               └── single-project-progress-cards.blade.php # ویو سفارشی کارت‌های پیشرفت پروژه‌ها با نوار پاستیلی
 ├── routes/
 │   ├── console.php                             # دستورات کنسول
 │   └── web.php                                 # روت‌های وب (از جمله لینک جادویی)
@@ -246,6 +251,14 @@ hasht_crm/
   - **پیش‌نمایش تعاملی و زنده:** استفاده از نمای اختصاصی [brief-template-preview.blade.php](file:///Users/user/Sites/localhost/hasht_crm/resources/views/filament/admin/brief-template-preview.blade.php) جهت مشاهده دقیق فرم و بج‌های گام‌ها از دید کارفرما مستقیم در پنل ادمین.
   - **پرسشنامه جامع ۲۰ سوالی ۶ گانه (Master Questionnaire):** ایجاد الگوی پیش‌فرض ۲۰ سوالی در [BriefTemplateSeeder.php](file:///Users/user/Sites/localhost/hasht_crm/database/seeders/BriefTemplateSeeder.php) شامل ۶ گام کامل (از دامنه پروژه تا استراتژی، هویت بصری، امکانات فنی، محتوا و جمع‌بندی).
   - **آمار پویا و واقعی:** محاسبه زنده تعداد سوالات (`questions_count`)، تعداد پاسخ‌ها (`dynamic_responses_count`) و ثبت خودکار افزایش بازدیدها (`views_count`) با باز کردن پیش‌نمایش.
+
+* **معماری جدید داشبورد ادمین (Dashboard Architecture & 3-Tier Layout):**
+  - **صفحه سفارشی داشبورد (`App\Filament\Pages\Dashboard`):** مدیریت ترتیب دقیق ویجت‌ها و اعمال گرید ۳ ستونه متوازن در دسکتاپ (`getColumns(): int|array`).
+  - **سطر اول (کارت‌های ۲ سطری + چارت دونات فشرده چپ‌چین):** 
+    - *سمت راست (عرض ۲ ستون):* ویجت `RevenueAndStatsWidget` شامل ۴ کارت اصلی (پروژه‌های فعال، فیش‌های منتظر بررسی، تیکت‌ها، درآمد تاییدشده با دکمه ماسک `localStorage`) و سطر دوم اکشن‌های سریع ادمین (تعریف پروژه جدید، لینک جادویی، مدیریت پرسشنامه‌ها، بریف‌های معطل).
+    - *سمت چپ (عرض ۱ ستون):* ویجت `AggregateProjectProgressWidget` شامل چارت دونات با پالت هارمونیک نیلی (`#4f46e5`) و رز پاستیلی (`#fb7185`) بدون هدر متنی جهت حذف فضاهای خالی.
+  - **سطر دوم (کارت‌های پیشرفت پروژه‌های در حال اجرا - `SingleProjectProgressCardsWidget`):** نمایش گرید کارت‌های پروژه با نوار پیشرفت دو رنگ (سبز انجام‌شده + قرمز کم‌رنگ پاستیلی `#fecdd3` باقیمانده)، ارقام فارسی و تب‌های فیلتر سریع.
+  - **سطر سوم (مرکز اقدام فیش‌ها و تیکت‌های اخیر - `RecentTicketsAndPaymentsWidget`):** مرکز اقدام سریع برای تایید فیش‌های بانکی و پاسخگویی به تیکت‌های پشتیبانی.
 * **ساختار JSON Schema:** فیلد `brief_schema` روی پروژه مجموعه‌ای از بلوک‌ها را ذخیره می‌کند:
   ```json
   [
@@ -395,9 +408,11 @@ sequenceDiagram
 * [TelegramChannel.php](file:///Users/user/Sites/localhost/hasht_crm/app/Channels/TelegramChannel.php)
 
 #### ۶. ویجت‌های داشبورد
-* [StatsOverview.php](file:///Users/user/Sites/localhost/hasht_crm/app/Filament/Widgets/StatsOverview.php)
-* [ActiveProjectsProgressWidget.php](file:///Users/user/Sites/localhost/hasht_crm/app/Filament/Widgets/ActiveProjectsProgressWidget.php)
-* [DeadlineReminderWidget.php](file:///Users/user/Sites/localhost/hasht_crm/app/Filament/Widgets/DeadlineReminderWidget.php)
+* [Dashboard.php](file:///Users/user/Sites/localhost/hasht_crm/app/Filament/Pages/Dashboard.php)
+* [RevenueAndStatsWidget.php](file:///Users/user/Sites/localhost/hasht_crm/app/Filament/Widgets/RevenueAndStatsWidget.php)
+* [AggregateProjectProgressWidget.php](file:///Users/user/Sites/localhost/hasht_crm/app/Filament/Widgets/AggregateProjectProgressWidget.php)
+* [SingleProjectProgressCardsWidget.php](file:///Users/user/Sites/localhost/hasht_crm/app/Filament/Widgets/SingleProjectProgressCardsWidget.php)
+* [RecentTicketsAndPaymentsWidget.php](file:///Users/user/Sites/localhost/hasht_crm/app/Filament/Widgets/RecentTicketsAndPaymentsWidget.php)
 
 #### ۷. سیدرهای دیتابیس
 * [DatabaseSeeder.php](file:///Users/user/Sites/localhost/hasht_crm/database/seeders/DatabaseSeeder.php)
@@ -443,6 +458,7 @@ sequenceDiagram
 5. **استایل‌دهی خودمختار در کامپوننت‌های سفارشی Blade:** کلیه ویوهای Blade سفارشی (مانند مودال‌های پیش‌نمایش در ادمین) باید دارای استایل‌های ایزوله و مستقل CSS بومی باشند تا از عدم رندر یا Purge شدن کلاس‌های کامپایل‌نشده Tailwind در پنل فیلامنت جلوگیری شود.
 6. **نام‌گذاری آیکون‌های Heroicons 2 در فیلامنت:** هنگام تعریف آیکون‌ها در Schema یا Builder، صرفاً از اسامی معتبر و وجود داشته در پکیج Heroicons 2 (مانند `heroicon-o-queue-list`, `heroicon-o-rectangle-stack`, `heroicon-o-list-bullet`) استفاده شود تا از بروز خطای `SvgNotFound` جلوگیری گردد.
 7. **قفل ابعاد آیکون‌های اکشن در گرید کارت‌ها:** کلیه آیکون‌های SVG درون منوهای اکشن بومی (مانند `.q-action-item-btn svg`) باید دارای ابعاد صریح CSS مانند `width: 14px !important; height: 14px !important; flex-shrink: 0;` باشند تا از بهم‌ریختگی چیدمان کارت‌ها جلوگیری شود.
+8. **استانداردهای بصری و بومی‌سازی داشبورد:** کلیه اعداد و مبالغ در ویجت‌های داشبورد ادمین باید از طریق `JalaliHelper::toPersianDigits` به ارقام فارسی تبدیل شوند. همچنین از کلاس‌ها و رنگ‌های تند اجتناب شده و پالت رنگی باید بر پایه نیلی، رز خنثی و خاکستری متوازن فیلامنت (`indigo-slate`) تنظیم گردد.
 
 ---
 
