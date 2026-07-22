@@ -73,11 +73,13 @@ class ManageProjectTickets extends ManageRelatedRecords
     {
         return $table
             ->recordTitleAttribute('subject')
+            ->defaultSort('updated_at', 'desc')
             ->columns([
                 Tables\Columns\TextColumn::make('subject')
                     ->label('موضوع تیکت')
                     ->searchable()
-                    ->weight('bold'),
+                    ->weight(fn ($record) => $record->is_read_by_admin ? 'normal' : 'bold')
+                    ->description(fn ($record) => $record->is_read_by_admin ? null : '● پیام جدید (خوانده نشده)'),
                 Tables\Columns\TextColumn::make('status')
                     ->label('وضعیت')
                     ->badge()
@@ -88,14 +90,14 @@ class ManageProjectTickets extends ManageRelatedRecords
                         default => 'primary',
                     })
                     ->formatStateUsing(fn (string $state): string => match ($state) {
-                        'open' => 'باز',
+                        'open' => 'باز (جدید)',
                         'replied' => 'پاسخ داده شده',
                         'closed' => 'بسته شده',
                         default => $state,
                     }),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->label('تاریخ ثبت')
-                    ->dateTime('Y/m/d H:i')
+                Tables\Columns\TextColumn::make('updated_at')
+                    ->label('آخرین تغییر')
+                    ->formatStateUsing(fn ($state) => \App\Helpers\JalaliHelper::toJalali($state, 'Y/m/d H:i'))
                     ->sortable(),
             ])
             ->headerActions([
@@ -103,6 +105,8 @@ class ManageProjectTickets extends ManageRelatedRecords
                     ->label('ایجاد تیکت جدید')
                     ->mutateFormDataUsing(fn (array $data) => array_merge($data, [
                         'client_id' => $this->getOwnerRecord()->client_id,
+                        'is_read_by_admin' => true,
+                        'is_read_by_client' => false,
                     ]))
                     ->after(fn ($record) => $record->messages()->create([
                         'sender_id' => auth()->id(),
@@ -112,13 +116,33 @@ class ManageProjectTickets extends ManageRelatedRecords
             ->actions([
                 Actions\EditAction::make()
                     ->label('مشاهده و پاسخ')
+                    ->before(function ($record) {
+                        if (!$record->is_read_by_admin) {
+                            $record->update(['is_read_by_admin' => true]);
+                        }
+                    })
                     ->after(function ($record, array $data) {
                         if (!empty($data['new_reply'])) {
                             $record->messages()->create([
                                 'sender_id' => auth()->id(),
                                 'message' => $data['new_reply'],
                             ]);
-                            $record->update(['status' => 'replied']);
+                            $record->update([
+                                'status' => 'replied',
+                                'is_read_by_admin' => true,
+                                'is_read_by_client' => false,
+                                'updated_at' => now(),
+                            ]);
+
+                            // Send notification to client
+                            if ($record->client) {
+                                $record->client->notify(new \App\Notifications\ProjectNotification(
+                                    $record->project,
+                                    'پاسخ جدید به تیکت پشتیبانی',
+                                    "پشتیبان به تیکت «{$record->subject}» پاسخ داد.",
+                                    'tickets'
+                                ));
+                            }
                         }
                     }),
                 Actions\DeleteAction::make(),

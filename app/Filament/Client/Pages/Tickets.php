@@ -15,6 +15,21 @@ class Tickets extends Page
     protected static ?string $title = 'پشتیبانی و تیکت‌ها';
     protected string $view = 'filament.client.pages.tickets';
 
+    public static function getNavigationBadge(): ?string
+    {
+        $clientId = Auth::guard('client')->id();
+        if (!$clientId) return null;
+        $count = Ticket::where('client_id', $clientId)
+            ->where('is_read_by_client', false)
+            ->count();
+        return $count > 0 ? (string) $count : null;
+    }
+
+    public static function getNavigationBadgeColor(): string|array|null
+    {
+        return 'danger';
+    }
+
     public $tickets = [];
     public $myProjects = [];
     
@@ -41,7 +56,7 @@ class Tickets extends Page
         
         $this->tickets = Ticket::where('client_id', $clientId)
             ->with(['messages.sender', 'project'])
-            ->latest()
+            ->orderBy('updated_at', 'desc')
             ->get();
             
         if ($this->activeTicketId) {
@@ -56,6 +71,11 @@ class Tickets extends Page
     public function selectTicket(int $ticketId): void
     {
         $this->activeTicketId = $ticketId;
+        $clientId = Auth::guard('client')->id();
+        $ticket = Ticket::where('client_id', $clientId)->find($ticketId);
+        if ($ticket && !$ticket->is_read_by_client) {
+            $ticket->update(['is_read_by_client' => true]);
+        }
         $this->loadData();
     }
 
@@ -79,6 +99,8 @@ class Tickets extends Page
             'client_id' => Auth::guard('client')->id(),
             'subject' => $this->newTicketSubject,
             'status' => 'open',
+            'is_read_by_admin' => false,
+            'is_read_by_client' => true,
         ]);
 
         $ticket->messages()->create([
@@ -127,7 +149,12 @@ class Tickets extends Page
             'message' => $this->newChatMessage,
         ]);
 
-        $ticket->update(['status' => 'open']);
+        $ticket->update([
+            'status' => 'open',
+            'is_read_by_admin' => false,
+            'is_read_by_client' => true,
+            'updated_at' => now(),
+        ]);
 
         // Send admin notification
         $admins = \App\Models\User::where('role', 'admin')->get();

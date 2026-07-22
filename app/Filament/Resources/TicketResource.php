@@ -21,15 +21,29 @@ class TicketResource extends Resource
     protected static ?string $navigationLabel = 'تیکت‌های پشتیبانی';
     protected static ?string $pluralModelLabel = 'تیکت‌های پشتیبانی';
     protected static ?string $modelLabel = 'تیکت پشتیبانی';
-    protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-chat-bubble-left-right';
     protected static ?int $navigationSort = 2;
+
+    public static function getNavigationBadge(): ?string
+    {
+        $count = static::getModel()::where('is_read_by_admin', false)->count();
+        return $count > 0 ? (string) $count : null;
+    }
+
+    public static function getNavigationBadgeColor(): string|array|null
+    {
+        return 'danger';
+    }
 
     public static function getNavigationItems(): array
     {
+        $unreadCount = static::getModel()::where('is_read_by_admin', false)->count();
+        $badge = $unreadCount > 0 ? (string) $unreadCount : null;
+
         return [
             \Filament\Navigation\NavigationItem::make('صندوق پیام‌ها')
                 ->url(static::getUrl('index'))
                 ->icon('heroicon-o-inbox')
+                ->badge($badge, 'danger')
                 ->group('پشتیبانی و تیکت‌ها')
                 ->sort(1),
             \Filament\Navigation\NavigationItem::make('تیکت جدید')
@@ -37,7 +51,7 @@ class TicketResource extends Resource
                 ->icon('heroicon-o-plus-circle')
                 ->group('پشتیبانی و تیکت‌ها')
                 ->sort(2),
-            \Filament\Navigation\NavigationItem::make('پیام‌های ارسالی')
+            \Filament\Navigation\NavigationItem::make('پاسخ داده شده')
                 ->url(static::getUrl('index', ['tableFilters' => ['status' => ['value' => 'replied']]]))
                 ->icon('heroicon-o-paper-airplane')
                 ->group('پشتیبانی و تیکت‌ها')
@@ -101,11 +115,14 @@ class TicketResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->defaultSort('updated_at', 'desc')
             ->columns([
                 Tables\Columns\TextColumn::make('subject')
                     ->label('موضوع تیکت')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->weight(fn ($record) => $record->is_read_by_admin ? 'normal' : 'bold')
+                    ->description(fn ($record) => $record->is_read_by_admin ? null : '● پیام جدید (خوانده نشده)'),
                 Tables\Columns\TextColumn::make('client.name')
                     ->label('مشتری')
                     ->searchable()
@@ -121,14 +138,16 @@ class TicketResource extends Resource
                         'open' => 'danger',
                         'replied' => 'success',
                         'closed' => 'gray',
+                        default => 'primary',
                     })
                     ->formatStateUsing(fn (string $state): string => match ($state) {
-                        'open' => 'باز',
+                        'open' => 'باز (جدید)',
                         'replied' => 'پاسخ داده شده',
                         'closed' => 'بسته شده',
+                        default => $state,
                     }),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->label('تاریخ ثبت')
+                Tables\Columns\TextColumn::make('updated_at')
+                    ->label('آخرین تغییر')
                     ->formatStateUsing(fn ($state) => \App\Helpers\JalaliHelper::toJalali($state, 'Y/m/d H:i'))
                     ->sortable(),
             ])
@@ -143,13 +162,34 @@ class TicketResource extends Resource
             ])
             ->actions([
                 Actions\EditAction::make()
+                    ->label('مشاهده و پاسخ')
+                    ->before(function ($record) {
+                        if (!$record->is_read_by_admin) {
+                            $record->update(['is_read_by_admin' => true]);
+                        }
+                    })
                     ->after(function ($record, array $data) {
                         if (!empty($data['new_reply'])) {
                             $record->messages()->create([
                                 'sender_id' => auth()->id(),
                                 'message' => $data['new_reply'],
                             ]);
-                            $record->update(['status' => 'replied']);
+                            $record->update([
+                                'status' => 'replied',
+                                'is_read_by_admin' => true,
+                                'is_read_by_client' => false,
+                                'updated_at' => now(),
+                            ]);
+
+                            // Send notification to client
+                            if ($record->client) {
+                                $record->client->notify(new \App\Notifications\ProjectNotification(
+                                    $record->project,
+                                    'پاسخ جدید به تیکت پشتیبانی',
+                                    "پشتیبان به تیکت «{$record->subject}» پاسخ داد.",
+                                    'tickets'
+                                ));
+                            }
                         }
                     }),
                 Actions\DeleteAction::make(),

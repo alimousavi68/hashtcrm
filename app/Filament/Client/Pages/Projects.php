@@ -58,7 +58,7 @@ class Projects extends Page implements HasForms
 
     public array $statuses = [
         'draft' => ['label' => 'پیش‌نویس اولیه', 'percent' => 10],
-        'brief' => ['label' => 'تکمیل بریف نیازمندی‌ها', 'percent' => 25],
+        'brief' => ['label' => 'تکمیل پرسشنامه نیازمندی‌ها', 'percent' => 25],
         'contract' => ['label' => 'امضای قرارداد و امور مالی', 'percent' => 45],
         'in_progress' => ['label' => 'در حال طراحی و توسعه', 'percent' => 65],
         'review' => ['label' => 'بازنگری و ثبت نظرات (دمو)', 'percent' => 80],
