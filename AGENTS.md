@@ -152,6 +152,8 @@ hasht_crm/
 │   │   │   └── UserResource.php                # مدیریت کاربران و مشتریان
 │   │   └── Widgets/                            # ویجت‌های داشبورد ادمین
 │   │       ├── AggregateProjectProgressWidget.php # چارت دونات فشرده پیشرفت کل سیستم
+│   │       ├── BriefTemplatesOverviewStatsWidget.php # کارت‌های آماری فوقانی صفحه مدیریت پرسشنامه‌ها
+│   │       ├── ProjectsOverviewStatsWidget.php # کارت‌های آماری فوقانی صفحه مدیریت پروژه‌ها
 │   │       ├── RecentTicketsAndPaymentsWidget.php # مرکز اقدام سریع فیش‌های منتظر بررسی و تیکت‌ها
 │   │       ├── RevenueAndStatsWidget.php       # کارت‌های ۲ سطحی آمارها، درآمد و اکشن‌های سریع
 │   │       └── SingleProjectProgressCardsWidget.php # کارت‌های پیشرفت تک‌تک پروژه‌های فعال با فیلتر سریع
@@ -188,7 +190,11 @@ hasht_crm/
 │       └── filament/
 │           ├── admin/
 │           │   └── brief-template-preview.blade.php # کامپوننت پیش‌نمایش تعاملی فرم کارفرما
+│           ├── resources/
+│           │   └── project-resource/pages/list-projects.blade.php # نمای کارتی مستقل صفحه پروژه‌ها
 │           └── widgets/
+│               ├── brief-templates-overview-stats-widget.blade.php # ویو آماری فوقانی پرسشنامه‌ها
+│               ├── projects-overview-stats-widget.blade.php # ویو آماری فوقانی پروژه‌ها
 │               ├── recent-tickets-and-payments-widget.blade.php # ویو سفارشی فیش‌ها و تیکت‌های اخیر
 │               ├── revenue-and-stats-widget.blade.php # ویو سفارشی کارت‌های ۲ سطحی آمار و اکشن‌ها
 │               └── single-project-progress-cards.blade.php # ویو سفارشی کارت‌های پیشرفت پروژه‌ها با نوار پاستیلی
