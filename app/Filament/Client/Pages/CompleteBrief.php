@@ -9,7 +9,8 @@ use Illuminate\Support\Facades\Auth;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Schemas\Schema;
-use Filament\Forms\Components\Wizard;
+use Filament\Schemas\Components\Wizard;
+use Filament\Schemas\Components\Wizard\Step;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Select;
@@ -32,11 +33,6 @@ class CompleteBrief extends Page implements HasForms
 
     public ?array $data = [];
     public ?Project $project = null;
-
-    public function getLayout(): string
-    {
-        return 'filament-panels::components.layout.base';
-    }
 
     public function mount(): void
     {
@@ -136,7 +132,7 @@ class CompleteBrief extends Page implements HasForms
             };
 
             if ($field) {
-                if (!empty($data['required'])) {
+                if (!empty($data['required']) && method_exists($field, 'required')) {
                     $field->required();
                 }
 
@@ -148,7 +144,7 @@ class CompleteBrief extends Page implements HasForms
 
         if ($isWizardMode && count($categorizedFields) > 0) {
             foreach ($categorizedFields as $stepTitle => $fields) {
-                $steps[] = Wizard\Step::make($stepTitle)
+                $steps[] = Step::make($stepTitle)
                     ->label($stepTitle)
                     ->schema($fields)
                     ->icon('heroicon-o-clipboard-document-check');
@@ -158,7 +154,7 @@ class CompleteBrief extends Page implements HasForms
             foreach ($categorizedFields as $fields) {
                 $allFields = array_merge($allFields, $fields);
             }
-            $steps[] = Wizard\Step::make('تکمیل پرسشنامه نیازمندی‌ها')
+            $steps[] = Step::make('تکمیل پرسشنامه نیازمندی‌ها')
                 ->schema($allFields)
                 ->icon('heroicon-o-document-text');
         }

@@ -78,6 +78,10 @@ class Projects extends Page implements HasForms
             ->latest()
             ->get();
 
+        if (!$this->selectedProjectId && $this->projects->count() === 1) {
+            $this->selectedProjectId = $this->projects->first()->id;
+        }
+
         if ($this->selectedProjectId) {
             $this->loadProject($this->selectedProjectId);
         } else {
@@ -140,6 +144,118 @@ class Projects extends Page implements HasForms
             }
         }
     }
+
+    public function getNextActionProperty(): ?array
+    {
+        if (!$this->project) return null;
+
+        $status = $this->project->status;
+        $contract = $this->project->contract;
+
+        switch ($status) {
+            case 'draft':
+                return [
+                    'title' => 'پروژه در حال آماده‌سازی اولیه',
+                    'description' => 'تیم ما در حال تنظیم اولیه مشخصات پروژه شماست. به محض فعال‌سازی فاز بریف، به شما اطلاع داده خواهد شد.',
+                    'buttonText' => null,
+                    'actionType' => 'none',
+                    'badge' => 'در حال تنظیم',
+                    'color' => 'gray',
+                ];
+
+            case 'brief':
+                return [
+                    'title' => 'تکمیل فرم بریف نیازمندی‌های پروژه',
+                    'description' => 'برای شروع فرآیند کدنویسی و تحلیل، لطفاً مشخصات برند و نیازمندی‌های سیستم را در فرم بریف اختصاصی وارد کنید.',
+                    'buttonText' => 'تکمیل پرسشنامه بریف',
+                    'actionType' => 'url',
+                    'url' => \App\Filament\Client\Pages\CompleteBrief::getUrl(),
+                    'badge' => 'اقدام فوری کارفرما',
+                    'color' => 'amber',
+                ];
+
+            case 'contract':
+                if (!$contract || !$contract->signed_at) {
+                    return [
+                        'title' => 'امضا و پذیرش آنلاین قرارداد همکاری',
+                        'description' => 'متن قرارداد پروژه تنظیم گردیده است. لطفاً جهت رسمی شدن فاز اجرا، قرارداد را بررسی و امضای الکترونیک نمایید.',
+                        'buttonText' => 'مشاهده و امضای قرارداد',
+                        'actionType' => 'tab',
+                        'tab' => 'finance',
+                        'badge' => 'نیازمند امضا',
+                        'color' => 'indigo',
+                    ];
+                }
+                return [
+                    'title' => 'ثبت فیش پرداخت پیش‌پرداخت',
+                    'description' => 'قرارداد با موفقیت امضا شد. لطفاً تصویر فیش واریز پیش‌پرداخت را جهت تایید مالی بارگذاری کنید.',
+                    'buttonText' => 'بارگذاری فیش بانکی',
+                    'actionType' => 'tab',
+                    'tab' => 'finance',
+                    'badge' => 'اقدام مالی',
+                    'color' => 'blue',
+                ];
+
+            case 'in_progress':
+                return [
+                    'title' => 'پروژه در حال طراحی و توسعه فنی است',
+                    'description' => 'کدنویسی و پیاده‌سازی پروژه بر اساس بریف در حال انجام است. می‌توانید پیشرفت فازها را از نقشه راه دنبال کنید.',
+                    'buttonText' => 'مشاهده نقشه راه',
+                    'actionType' => 'tab',
+                    'tab' => 'roadmap',
+                    'badge' => 'در حال انجام',
+                    'color' => 'sky',
+                ];
+
+            case 'review':
+                return [
+                    'title' => 'بررسی و تایید دموی زنده پروژه',
+                    'description' => 'نسخه آزمایشی (دمو) پروژه شما منتشر شده است. لطفاً آن را تست کرده و نظرات اصلاحی یا تایید نهایی را ثبت نمایید.',
+                    'buttonText' => 'بررسی دمو و ثبت نظرات',
+                    'actionType' => 'tab',
+                    'tab' => 'demo',
+                    'badge' => 'بازنگری کارفرما',
+                    'color' => 'purple',
+                ];
+
+            case 'ready_handover':
+                if (!$this->project->is_settled) {
+                    return [
+                        'title' => 'تسویه حساب مالی جهت دریافت بسته تحویل',
+                        'description' => 'توسعه پروژه پایان یافته است. جهت آزادسازی دسترسی‌های امن و فایل‌های تحویل، نسبت به تسویه حساب اقدام کنید.',
+                        'buttonText' => 'مشاهده سوابق و پرداخت',
+                        'actionType' => 'tab',
+                        'tab' => 'finance',
+                        'badge' => 'نیازمند تسویه',
+                        'color' => 'amber',
+                    ];
+                }
+                return [
+                    'title' => 'دریافت بسته تحویل نهایی و آموزش‌ها',
+                    'description' => 'پروژه شما کاملاً آماده است! دسترسی‌های هاست، دامنه و فایل‌های آموزشی در این بخش در دسترس شما قرار دارد.',
+                    'buttonText' => 'مشاهده بسته تحویل',
+                    'actionType' => 'tab',
+                    'tab' => 'handover',
+                    'badge' => 'تحویل پروژه',
+                    'color' => 'emerald',
+                ];
+
+            case 'completed':
+                return [
+                    'title' => 'پروژه با موفقیت تکمیل و تحویل داده شد',
+                    'description' => 'از اعتماد شما سپاسگزاریم. کلیه اطلاعات و ویدیوهای آموزشی در بسته تحویل نهایی دائم حفظ می‌شود.',
+                    'buttonText' => 'مشاهده بسته تحویل',
+                    'actionType' => 'tab',
+                    'tab' => 'handover',
+                    'badge' => 'خاتمه‌یافته',
+                    'color' => 'emerald',
+                ];
+
+            default:
+                return null;
+        }
+    }
+
 
     public function signContract(): void
     {

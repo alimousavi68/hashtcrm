@@ -1,41 +1,88 @@
 <x-filament-widgets::widget>
     @php $data = $this->getWidgetData(); @endphp
 
+    <style>
+        .hasht-stat-card {
+            background: var(--card-bg, #ffffff);
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 12px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+            min-height: 112px;
+            transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.25s ease;
+        }
+        .hasht-stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 16px -4px rgba(0,0,0,0.06);
+            border-color: #cbd5e1;
+        }
+
+        .hasht-action-card {
+            text-decoration: none;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 12px 14px;
+            min-height: 52px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+        }
+        .hasht-action-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px -2px rgba(0,0,0,0.05);
+            border-color: #cbd5e1;
+            background-color: #f8fafc;
+        }
+        .hasht-action-card:hover .hasht-action-icon {
+            transform: scale(1.08);
+        }
+        .hasht-action-icon {
+            transition: transform 0.2s ease;
+        }
+    </style>
+
     <div x-data="{
         showAmounts: localStorage.getItem('hasht_show_revenue') === 'true',
         toggleShow() {
             this.showAmounts = !this.showAmounts;
             localStorage.setItem('hasht_show_revenue', this.showAmounts);
         }
-    }" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px;">
+    }" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; height: 100%;">
 
         <!-- کارت ۱: پروژه‌های فعال و ثبت‌شده -->
-        <div style="background: var(--card-bg, #ffffff); border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px; display: flex; flex-direction: column; justify-content: space-between; gap: 10px; box-shadow: 0 1px 2px rgba(0,0,0,0.03); min-height: 100px;">
+        <div class="hasht-stat-card">
             <div style="display: flex; align-items: center; justify-content: space-between;">
                 <span style="font-size: 12px; font-weight: 700; color: #334155;">پروژه‌های فعال</span>
-                <div style="width: 28px; height: 28px; border-radius: 8px; background: #eef2ff; display: flex; align-items: center; justify-content: center; color: #4338ca;">
-                    <svg style="width: 16px; height: 16px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <div style="width: 32px; height: 32px; border-radius: 8px; background: #eef2ff; display: flex; align-items: center; justify-content: center; color: #4338ca;">
+                    <svg style="width: 17px; height: 17px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12.75M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
                     </svg>
                 </div>
             </div>
             <div>
-                <div style="font-size: 20px; font-weight: 900; color: #0f172a;">
+                <div style="font-size: 22px; font-weight: 900; color: #0f172a; line-height: 1.2;">
                     {{ $data['active_projects'] }} <span style="font-size: 12px; font-weight: 700; color: #475569;">پروژه فعال</span>
                 </div>
-                <div style="font-size: 11px; color: #475569; margin-top: 4px;">
+                <div style="font-size: 11px; color: #475569; margin-top: 6px;">
                     از مجموع <strong style="color: #0f172a;">{{ $data['total_projects'] }}</strong> پروژه ثبت‌شده
                 </div>
             </div>
         </div>
 
         <!-- کارت ۲: فیش‌های در انتظار بررسی -->
-        <div style="background: var(--card-bg, #ffffff); border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px; display: flex; flex-direction: column; justify-content: space-between; gap: 10px; box-shadow: 0 1px 2px rgba(0,0,0,0.03); min-height: 100px;">
+        <div class="hasht-stat-card">
             <div style="display: flex; align-items: center; justify-content: space-between;">
                 <span style="font-size: 12px; font-weight: 700; color: #334155;">فیش‌های در انتظار تایید</span>
                 <div style="position: relative;">
-                    <div style="width: 28px; height: 28px; border-radius: 8px; background: #fffbeb; display: flex; align-items: center; justify-content: center; color: #b45309;">
-                        <svg style="width: 16px; height: 16px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <div style="width: 32px; height: 32px; border-radius: 8px; background: #fffbeb; display: flex; align-items: center; justify-content: center; color: #b45309;">
+                        <svg style="width: 17px; height: 17px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0zm-9 3.75h.008v.008H12v-.008z" />
                         </svg>
                     </div>
@@ -45,22 +92,22 @@
                 </div>
             </div>
             <div>
-                <div style="font-size: 20px; font-weight: 900; color: #b45309;">
+                <div style="font-size: 22px; font-weight: 900; color: #b45309; line-height: 1.2;">
                     {{ $data['pending_payments_count'] }} <span style="font-size: 12px; font-weight: 700; color: #b45309;">فیش</span>
                 </div>
-                <div style="font-size: 11px; color: #475569; margin-top: 4px;">
+                <div style="font-size: 11px; color: #475569; margin-top: 6px;">
                     مجموع: <span x-show="showAmounts" style="font-weight: 800; color: #0f172a;">{{ $data['pending_payments_sum'] }} تومان</span><span x-show="!showAmounts">••••••••</span>
                 </div>
             </div>
         </div>
 
         <!-- کارت ۳: تیکت‌های پشتیبانی -->
-        <div style="background: var(--card-bg, #ffffff); border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px; display: flex; flex-direction: column; justify-content: space-between; gap: 10px; box-shadow: 0 1px 2px rgba(0,0,0,0.03); min-height: 100px;">
+        <div class="hasht-stat-card">
             <div style="display: flex; align-items: center; justify-content: space-between;">
                 <span style="font-size: 12px; font-weight: 700; color: #334155;">تیکت‌های در انتظار پاسخ</span>
                 <div style="position: relative;">
-                    <div style="width: 28px; height: 28px; border-radius: 8px; background: #ffe4e6; display: flex; align-items: center; justify-content: center; color: #be123c;">
-                        <svg style="width: 16px; height: 16px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <div style="width: 32px; height: 32px; border-radius: 8px; background: #ffe4e6; display: flex; align-items: center; justify-content: center; color: #be123c;">
+                        <svg style="width: 17px; height: 17px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 0 1-2.555-.337A5.972 5.972 0 0 1 5.41 20.97a.75.75 0 0 1-.816-.816 5.97 5.97 0 0 1 1.057-2.038A8.25 8.25 0 0 1 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25Z" />
                         </svg>
                     </div>
@@ -70,23 +117,23 @@
                 </div>
             </div>
             <div>
-                <div style="font-size: 20px; font-weight: 900; color: #be123c;">
+                <div style="font-size: 22px; font-weight: 900; color: #be123c; line-height: 1.2;">
                     {{ $data['open_tickets'] }} <span style="font-size: 12px; font-weight: 700; color: #be123c;">تیکت باز</span>
                 </div>
-                <div style="font-size: 11px; color: #475569; margin-top: 4px;">
+                <div style="font-size: 11px; color: #475569; margin-top: 6px;">
                     نیازمند پاسخگویی ادمین
                 </div>
             </div>
         </div>
 
         <!-- کارت ۴: درآمدهای مالی با قابلیت ماسک / نمایش حریم خصوصی -->
-        <div style="background: var(--card-bg, #ffffff); border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px; display: flex; flex-direction: column; justify-content: space-between; gap: 10px; box-shadow: 0 1px 2px rgba(0,0,0,0.03); min-height: 100px;">
+        <div class="hasht-stat-card">
             <div style="display: flex; align-items: center; justify-content: space-between;">
                 <span style="font-size: 12px; font-weight: 700; color: #334155;">درآمد تاییدشده</span>
                 <div style="display: flex; align-items: center; gap: 6px;">
                     <!-- دکمه مخفی/نمایش مبالغ -->
                     <button @click="toggleShow()" type="button" title="نمایش/مخفی کردن مبالغ" aria-label="نمایش یا مخفی کردن مبالغ مالی"
-                            style="background: #f1f5f9; border: none; padding: 6px 8px; min-height: 36px; min-width: 36px; border-radius: 6px; cursor: pointer; color: #334155; display: flex; align-items: center; justify-content: center;">
+                            style="background: #f1f5f9; border: none; padding: 6px 8px; min-height: 36px; min-width: 36px; border-radius: 6px; cursor: pointer; color: #334155; display: flex; align-items: center; justify-content: center; transition: background-color 0.2s ease;">
                         <svg x-show="!showAmounts" style="width: 16px; height: 16px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
                             <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
@@ -95,19 +142,19 @@
                             <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88" />
                         </svg>
                     </button>
-                    <div style="width: 28px; height: 28px; border-radius: 8px; background: #dcfce7; display: flex; align-items: center; justify-content: center; color: #166534;">
-                        <svg style="width: 16px; height: 16px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <div style="width: 32px; height: 32px; border-radius: 8px; background: #dcfce7; display: flex; align-items: center; justify-content: center; color: #166534;">
+                        <svg style="width: 17px; height: 17px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                         </svg>
                     </div>
                 </div>
             </div>
             <div>
-                <div style="font-size: 18px; font-weight: 900; color: #166534;">
+                <div style="font-size: 19px; font-weight: 900; color: #166534; line-height: 1.2;">
                     <span x-show="showAmounts">{{ $data['monthly_revenue'] }} تومان</span>
                     <span x-show="!showAmounts">••••••••</span>
                 </div>
-                <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 4px; margin-top: 4px; font-size: 11px; color: #475569;">
+                <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 4px; margin-top: 6px; font-size: 11px; color: #475569;">
                     <span>سال: <strong x-show="showAmounts" style="color: #0f172a;">{{ $data['yearly_revenue'] }}</strong><span x-show="!showAmounts">•••</span></span>
                     <span style="color: #b45309; font-weight: 600;">تاییدنشده: <strong x-show="showAmounts">{{ $data['unverified_revenue'] }}</strong><span x-show="!showAmounts">•••</span></span>
                 </div>
@@ -117,9 +164,9 @@
         <!-- ========================= سطر دوم کارت‌های عملیاتی و اکشن‌های سریع ادمین ========================= -->
 
         <!-- کارت ۵: اکشن سریع تعریف پروژه جدید -->
-        <a href="{{ route('filament.admin.resources.projects.create') }}" aria-label="تعریف پروژه جدید" style="text-decoration: none; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; min-height: 48px; display: flex; align-items: center; gap: 10px; transition: all 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.02);">
-            <div style="width: 32px; height: 32px; border-radius: 8px; background: #eef2ff; color: #4338ca; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                <svg style="width: 16px; height: 16px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+        <a href="{{ route('filament.admin.resources.projects.create') }}" aria-label="تعریف پروژه جدید" class="hasht-action-card">
+            <div class="hasht-action-icon" style="width: 34px; height: 34px; border-radius: 8px; background: #eef2ff; color: #4338ca; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <svg style="width: 17px; height: 17px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                 </svg>
             </div>
@@ -130,9 +177,9 @@
         </a>
 
         <!-- کارت ۶: اکشن سریع ورود با لینک جادویی -->
-        <a href="{{ route('filament.admin.resources.users.index') }}" aria-label="ورود با لینک جادویی" style="text-decoration: none; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; min-height: 48px; display: flex; align-items: center; gap: 10px; transition: all 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.02);">
-            <div style="width: 32px; height: 32px; border-radius: 8px; background: #f0fdf4; color: #15803d; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                <svg style="width: 16px; height: 16px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+        <a href="{{ route('filament.admin.resources.users.index') }}" aria-label="ورود با لینک جادویی" class="hasht-action-card">
+            <div class="hasht-action-icon" style="width: 34px; height: 34px; border-radius: 8px; background: #f0fdf4; color: #15803d; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <svg style="width: 17px; height: 17px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244" />
                 </svg>
             </div>
@@ -143,9 +190,9 @@
         </a>
 
         <!-- کارت ۷: اکشن سریع مدیریت پرسشنامه‌ها -->
-        <a href="{{ route('filament.admin.resources.brief-templates.index') }}" aria-label="مدیریت پرسشنامه‌ها" style="text-decoration: none; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; min-height: 48px; display: flex; align-items: center; gap: 10px; transition: all 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.02);">
-            <div style="width: 32px; height: 32px; border-radius: 8px; background: #f0f9ff; color: #0369a1; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                <svg style="width: 16px; height: 16px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+        <a href="{{ route('filament.admin.resources.brief-templates.index') }}" aria-label="مدیریت پرسشنامه‌ها" class="hasht-action-card">
+            <div class="hasht-action-icon" style="width: 34px; height: 34px; border-radius: 8px; background: #f0f9ff; color: #0369a1; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <svg style="width: 17px; height: 17px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
                 </svg>
             </div>
@@ -156,17 +203,17 @@
         </a>
 
         <!-- کارت ۸: شاخص گلوگاه بریف‌های معطل -->
-        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; min-height: 48px; display: flex; align-items: center; justify-content: space-between; gap: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.02);">
+        <div class="hasht-action-card">
+            <div class="hasht-action-icon" style="width: 34px; height: 34px; border-radius: 8px; background: #fffbeb; display: flex; align-items: center; justify-content: center; color: #b45309; flex-shrink: 0;">
+                <svg style="width: 17px; height: 17px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" />
+                </svg>
+            </div>
             <div>
                 <div style="font-size: 11px; font-weight: 700; color: #334155;">بریف‌های در انتظار پاسخ</div>
                 <div style="font-size: 15px; font-weight: 800; color: #b45309; margin-top: 2px;">
                     {{ $data['pending_briefs'] }} <span style="font-size: 11px; font-weight: 600; color: #475569;">مورد</span>
                 </div>
-            </div>
-            <div style="width: 28px; height: 28px; border-radius: 8px; background: #fffbeb; display: flex; align-items: center; justify-content: center; color: #b45309; flex-shrink: 0;">
-                <svg style="width: 15px; height: 15px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" />
-                </svg>
             </div>
         </div>
 

@@ -29,9 +29,16 @@ class ClientPanelProvider extends PanelProvider
             ->login(\App\Filament\Pages\Auth\CustomLogin::class)
             ->brandName('سامانه مدیریت پروژه‌های هشت بهشت')
             ->brandLogo(fn () => new \Illuminate\Support\HtmlString('
-                <div class="flex flex-col">
-                    <span class="text-base font-black tracking-tight text-primary-600 dark:text-primary-400">هشت بهشت</span>
-                    <span class="text-[9px] font-normal text-gray-400 dark:text-gray-500 -mt-1 tracking-tighter">(سامانه مدیریت پروژه‌ها)</span>
+                <div style="display: flex; align-items: center; gap: 8px; font-family: PeydaWebVF, sans-serif;">
+                    <div style="width: 30px; height: 30px; border-radius: 8px; background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); display: flex; align-items: center; justify-content: center; color: #ffffff; box-shadow: 0 2px 4px rgba(79, 70, 229, 0.2); flex-shrink: 0;">
+                        <svg style="width: 17px; height: 17px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                        </svg>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 6px;">
+                        <span style="font-size: 15px; font-weight: 800; color: var(--gray-900, #0f172a); letter-spacing: -0.02em;">هشت بهشت</span>
+                        <span style="font-size: 9px; font-weight: 700; background: #eef2ff; color: #4f46e5; padding: 1px 6px; border-radius: 4px; border: 1px solid #c7d2fe;">کارفرما</span>
+                    </div>
                 </div>
             '))
             ->colors([
@@ -42,50 +49,10 @@ class ClientPanelProvider extends PanelProvider
                 url: asset('fonts/peyda/fontiran.css'),
                 provider: \Filament\FontProviders\LocalFontProvider::class,
             )
+            ->maxContentWidth(\Filament\Support\Enums\Width::Full)
+            ->sidebarWidth('14rem')
             ->databaseNotifications()
             ->plugins([
-                \Filament\Launchpad\LaunchpadPlugin::make()
-                    ->spaces([
-                        \Filament\Launchpad\Launchpad\LaunchpadSpace::make('داشبورد')
-                            ->icon('heroicon-o-home')
-                            ->pages([
-                                \Filament\Launchpad\Launchpad\LaunchpadPage::make('خلاصه وضعیت')
-                                    ->icon('heroicon-o-home')
-                                    ->sections([
-                                        \Filament\Launchpad\Launchpad\TileGroup::make('آمار پروژه‌ها و تیکت‌ها')
-                                            ->tiles([
-                                                \Filament\Launchpad\Launchpad\Tile::make('پروژه‌های فعال')
-                                                    ->kpi(fn () => \App\Models\Project::where('client_id', auth('client')->id())->where('status', '!=', 'completed')->count())
-                                                    ->icon('heroicon-o-folder-open')
-                                                    ->subtitle('تعداد کل: ' . (auth('client')->check() ? \App\Models\Project::where('client_id', auth('client')->id())->count() : 0))
-                                                    ->page(\App\Filament\Client\Pages\Projects::class),
-                                                \Filament\Launchpad\Launchpad\Tile::make('پروژه‌های پایان‌یافته')
-                                                    ->kpi(fn () => \App\Models\Project::where('client_id', auth('client')->id())->where('status', 'completed')->count())
-                                                    ->icon('heroicon-o-folder')
-                                                    ->page(\App\Filament\Client\Pages\Projects::class),
-                                                \Filament\Launchpad\Launchpad\Tile::make('تیکت‌های باز پشتیبانی')
-                                                    ->kpi(fn () => \App\Models\Ticket::where('client_id', auth('client')->id())->where('status', 'open')->count())
-                                                    ->icon('heroicon-o-chat-bubble-left-right')
-                                                    ->trend(
-                                                        (auth('client')->check() && \App\Models\Ticket::where('client_id', auth('client')->id())->where('status', 'open')->count() > 0) ? 'نیاز به پیگیری' : 'همه پاسخ داده شده',
-                                                        (auth('client')->check() && \App\Models\Ticket::where('client_id', auth('client')->id())->where('status', 'open')->count() > 0) ? 'warning' : 'success'
-                                                    )
-                                                    ->page(\App\Filament\Client\Pages\Tickets::class),
-                                            ]),
-                                        \Filament\Launchpad\Launchpad\TileGroup::make('دسترسی سریع')
-                                            ->tiles([
-                                                \Filament\Launchpad\Launchpad\Tile::make('پروژه‌های من')
-                                                    ->subtitle('پیگیری و مدیریت فازهای پروژه')
-                                                    ->icon('heroicon-o-folder')
-                                                    ->page(\App\Filament\Client\Pages\Projects::class),
-                                                \Filament\Launchpad\Launchpad\Tile::make('پشتیبانی و تیکت‌ها')
-                                                    ->subtitle('ارتباط مستقیم با کارشناسان فنی')
-                                                    ->icon('heroicon-o-chat-bubble-left-right')
-                                                    ->page(\App\Filament\Client\Pages\Tickets::class),
-                                            ]),
-                                    ]),
-                            ]),
-                    ]),
                 \Prodstarter\FilamentNotificationCenter\FilamentNotificationCenterPlugin::make()
                     ->categories([
                         \Prodstarter\FilamentNotificationCenter\NotificationCenterCategory::make('projects')

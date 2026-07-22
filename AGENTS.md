@@ -292,6 +292,11 @@ hasht_crm/
 ### ۵.۷ بسته تحویل نهایی (Handover Package)
 * نمایش ویدیوهای آموزشی، پیام تبریک و دسترسی‌های نهایی به شرط **تسویه حساب کامل مالی** (`is_settled = true`).
 
+### ۵.۸ بهینه‌سازی بصری و UX پنل کلاینت (Client Panel UI/UX Engine)
+* **بنر هوشمند «اقدام بعدی کارفرما» (`getNextActionProperty`):** محاسبه زنده و هوشمند اقدام فوری مورد نیاز مشتری بر اساس وضعیت پروژه، وضعیت امضای قرارداد و تسویه مالی در کامپوننت [Projects.php](file:///Users/user/Sites/localhost/hasht_crm/app/Filament/Client/Pages/Projects.php) جهت حذف کامل اصطکاک و سردرگمی مشتری.
+* **کارت پیشرفت پاستیلی و استپر ۷ فاز:** نمایش پیشرفت پروژه با تم پاستیلی و بج متحرک وضعیت فازها به همراه دات‌های تعاملی ۷ فاز در قالب نقشه راه بصری سریع در نمای [projects.blade.php](file:///Users/user/Sites/localhost/hasht_crm/resources/views/filament/client/pages/projects.blade.php).
+* **گاوصندوق دسترسی‌ها با کپی ۱ کلیکی:** امکان کپی سریع آدرس پنل هاست و دسترسی‌ها با بازخورد Alpine.js و حفظ کامل امنیت رمزنگاری کلمات عبور.
+
 ---
 
 ## ۶. جریان‌های کاری و ماشین حالت (Workflows & State Machine)

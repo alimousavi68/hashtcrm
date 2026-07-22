@@ -1,4 +1,48 @@
 <x-filament-widgets::widget>
+    <style>
+        .hasht-proj-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 12px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+            transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.25s ease;
+        }
+        .hasht-proj-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 16px -4px rgba(0,0,0,0.06);
+            border-color: #cbd5e1;
+        }
+        .hasht-manage-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-weight: 700;
+            color: #4338ca;
+            text-decoration: none;
+            padding: 5px 12px;
+            border-radius: 6px;
+            background: #eef2ff;
+            border: 1px solid #c7d2fe;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .hasht-manage-btn:hover {
+            background: #e0e7ff;
+            border-color: #a5b4fc;
+            box-shadow: 0 2px 6px rgba(67,56,202,0.15);
+        }
+        .hasht-manage-btn:hover svg {
+            transform: translateX(-3px);
+        }
+        .hasht-manage-btn svg {
+            transition: transform 0.2s ease;
+        }
+    </style>
+
     <x-filament::section>
         <x-slot name="heading">
             <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap;">
@@ -54,7 +98,7 @@
         @else
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 12px; margin-top: 6px;">
                 @foreach($projects as $p)
-                    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px; display: flex; flex-direction: column; justify-content: space-between; gap: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
+                    <div class="hasht-proj-card">
                         
                         <!-- هدر کارت -->
                         <div>
@@ -119,7 +163,7 @@
 
                             <a href="{{ route('filament.admin.resources.projects.brief', ['record' => $p['id']]) }}" 
                                aria-label="مدیریت پروژه {{ $p['title'] }}"
-                               style="display: inline-flex; align-items: center; gap: 4px; font-weight: 700; color: #4338ca; text-decoration: none; padding: 4px 10px; border-radius: 6px; background: #eef2ff; border: 1px solid #c7d2fe; transition: all 0.2s;">
+                               class="hasht-manage-btn">
                                 <span>مدیریت پروژه</span>
                                 <svg style="width: 13px; height: 13px; flex-shrink: 0;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
