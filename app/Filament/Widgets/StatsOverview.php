@@ -11,10 +11,11 @@ use Illuminate\Support\Carbon;
 
 class StatsOverview extends BaseWidget
 {
-    protected static ?int $sort = 1;
+    protected static ?int $sort = 2;
     protected int | string | array $columnSpan = [
         'default' => 'full',
-        'lg' => 2,
+        'md' => 1,
+        'xl' => 2,
     ];
 
     protected function getStats(): array
