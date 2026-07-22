@@ -65,6 +65,9 @@ class RevenueAndStatsWidget extends Widget
             'unverified_revenue' => \App\Helpers\JalaliHelper::toPersianDigits(number_format($unverifiedRevenue)),
             'pending_briefs' => \App\Helpers\JalaliHelper::toPersianDigits((string) $pendingBriefsCount),
             'jalali_month' => \App\Helpers\JalaliHelper::toJalali($now, 'F Y'),
+            'raw_pending_payments' => $pendingPaymentsCount,
+            'raw_open_tickets' => $openTicketsCount,
+            'raw_pending_briefs' => $pendingBriefsCount,
         ];
     }
 }

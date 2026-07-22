@@ -127,61 +127,34 @@ class ProjectResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->contentGrid([
+                'default' => 1,
+                'md' => 2,
+                'xl' => 3,
+            ])
             ->columns([
-                Tables\Columns\TextColumn::make('title')
-                    ->label('عنوان پروژه')
-                    ->searchable()
-                    ->sortable()
-                    ->weight('bold')
-                    ->icon('heroicon-o-briefcase')
-                    ->iconColor('primary')
-                    ->description(fn (Project $record): ?string => $record->demo_url ? 'دارای لینک دمو' : null),
-
-                Tables\Columns\TextColumn::make('client.name')
-                    ->label('مشتری')
-                    ->searchable()
-                    ->sortable()
-                    ->icon('heroicon-o-user')
-                    ->iconColor('gray'),
-
-                Tables\Columns\ViewColumn::make('progress')
-                    ->label('پیشرفت و وضعیت پروژه')
-                    ->view('filament.tables.columns.project-progress'),
-
-                Tables\Columns\IconColumn::make('is_settled')
-                    ->label('تسویه مالی')
-                    ->boolean()
-                    ->trueIcon('heroicon-o-check-circle')
-                    ->falseIcon('heroicon-o-x-circle')
-                    ->trueColor('success')
-                    ->falseColor('danger')
-                    ->sortable(),
-
-                Tables\Columns\TextColumn::make('feedback_deadline')
-                    ->label('مهلت فیدبک')
-                    ->formatStateUsing(fn ($state) => \App\Helpers\JalaliHelper::toJalali($state, 'Y/m/d H:i'))
-                    ->sortable()
-                    ->icon('heroicon-o-clock')
-                    ->iconColor('warning')
-                    ->toggleable(isToggledHiddenByDefault: false),
-
-                Tables\Columns\TextColumn::make('created_at')
-                    ->label('تاریخ ثبت')
-                    ->formatStateUsing(fn ($state) => \App\Helpers\JalaliHelper::toJalali($state, 'Y/m/d'))
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\ViewColumn::make('card')
+                    ->label('پروژه‌ها')
+                    ->view('filament.tables.columns.project-card-view')
+                    ->searchable(query: function (Builder $query, string $search): Builder {
+                        return $query->where('title', 'like', "%{$search}%")
+                            ->orWhereHas('client', function (Builder $q) use ($search) {
+                                $q->where('name', 'like', "%{$search}%")
+                                  ->orWhere('phone', 'like', "%{$search}%");
+                            });
+                    }),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('status')
-                    ->label('وضعیت پروژه')
+                    ->label('فاز و وضعیت پروژه')
                     ->options([
-                        'draft' => 'پیش‌نویس اولیه',
-                        'brief' => 'تکمیل بریف نیازمندی‌ها',
-                        'contract' => 'امضای قرارداد و امور مالی',
-                        'in_progress' => 'در حال طراحی و توسعه',
-                        'review' => 'بازنگری و ثبت نظرات (دمو)',
-                        'ready_handover' => 'آماده‌سازی بسته تحویل',
-                        'completed' => 'تحویل نهایی و خاتمه',
+                        'draft' => '۱. پیش‌نویس اولیه (۱۰٪)',
+                        'brief' => '۲. تکمیل بریف نیازمندی‌ها (۲۵٪)',
+                        'contract' => '۳. امضای قرارداد و امور مالی (۴۵٪)',
+                        'in_progress' => '۴. در حال طراحی و توسعه (۶۵٪)',
+                        'review' => '۵. بازنگری و ثبت نظرات dmo (۸۰٪)',
+                        'ready_handover' => '۶. آماده‌سازی بسته تحویل (۹۰٪)',
+                        'completed' => '۷. تحویل نهایی و خاتمه (۱۰۰٪)',
                     ]),
 
                 Tables\Filters\TernaryFilter::make('is_settled')

@@ -2,6 +2,7 @@
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px;">
         
         <!-- ستون ۱: آخرین فیش‌های بانکی منتظر تایید -->
+        @php $payments = $this->getPendingPayments(); @endphp
         <x-filament::section>
             <x-slot name="heading">
                 <div style="display: flex; align-items: center; justify-content: space-between;">
@@ -9,12 +10,15 @@
                         <svg style="width: 18px; height: 18px; flex-shrink: 0; color: #d97706;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5h16.5A1.5 1.5 0 0 1 21 6v9a1.5 1.5 0 0 1-1.5 1.5H3.75A1.5 1.5 0 0 1 2.25 15V6a1.5 1.5 0 0 1 1.5-1.5Zm13.5 6a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0ZM6.75 12h.008v.008H6.75V12Zm0 3h.008v.008H6.75V15Z" />
                         </svg>
-                        <span style="font-size: 14px; font-weight: 700;">فیش‌های بانکی منتظر بررسی و تایید</span>
+                        <span style="font-size: 14px; font-weight: 700; color: #0f172a;">فیش‌های بانکی منتظر بررسی و تایید</span>
                     </div>
+                    @if(!empty($payments))
+                        <span style="font-size: 11px; font-weight: 700; background: #fef3c7; color: #92400e; padding: 2px 8px; border-radius: 9999px; border: 1px solid #fde68a;">
+                            {{ count($payments) }} نیازمند تایید
+                        </span>
+                    @endif
                 </div>
             </x-slot>
-
-            @php $payments = $this->getPendingPayments(); @endphp
 
             @if(empty($payments))
                 <div style="padding: 16px; text-align: center; color: #475569; font-size: 12px; background: #f8fafc; border-radius: 8px;">
@@ -23,14 +27,14 @@
             @else
                 <div style="display: flex; flex-direction: column; gap: 8px;">
                     @foreach($payments as $p)
-                        <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; background: #fff; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 12px;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 12px;">
                             <div>
                                 <div style="font-weight: 700; color: #0f172a;">{{ $p['project_title'] }}</div>
                                 <div style="font-size: 11px; color: #475569; margin-top: 2px;">{{ $p['client_name'] }} | {{ $p['created_jalali'] }}</div>
                             </div>
                             <div style="display: flex; align-items: center; gap: 10px;">
-                                <span style="font-weight: 800; color: #b45309; background: #fef3c7; border: 1px solid #fde68a; padding: 3px 8px; border-radius: 6px;">{{ $p['amount'] }} تومان</span>
-                                <a href="{{ route('filament.admin.resources.projects.payments', ['record' => $p['project_id']]) }}" aria-label="بررسی فیش {{ $p['project_title'] }}" style="color: #4338ca; font-weight: 700; text-decoration: none; padding: 4px 8px; background: #eef2ff; border-radius: 6px; border: 1px solid #c7d2fe;">بررسی ←</a>
+                                <span style="font-weight: 800; color: #b45309; background: #fffbeb; padding: 3px 8px; border-radius: 6px;">{{ $p['amount'] }} تومان</span>
+                                <a href="{{ route('filament.admin.resources.projects.payments', ['record' => $p['project_id']]) }}" aria-label="بررسی فیش {{ $p['project_title'] }}" style="color: #4338ca; font-weight: 700; text-decoration: none; padding: 6px 12px; min-height: 36px; display: inline-flex; align-items: center; background: #eef2ff; border-radius: 6px; border: 1px solid #c7d2fe;">بررسی ←</a>
                             </div>
                         </div>
                     @endforeach
@@ -39,6 +43,7 @@
         </x-filament::section>
 
         <!-- ستون ۲: آخرین تیکت‌های پشتیبانی باز -->
+        @php $tickets = $this->getOpenTickets(); @endphp
         <x-filament::section>
             <x-slot name="heading">
                 <div style="display: flex; align-items: center; justify-content: space-between;">
@@ -48,10 +53,13 @@
                         </svg>
                         <span style="font-size: 14px; font-weight: 700; color: #0f172a;">تیکت‌های باز و نیازمند پاسخ</span>
                     </div>
+                    @if(!empty($tickets))
+                        <span style="font-size: 11px; font-weight: 700; background: #ffe4e6; color: #9f1239; padding: 2px 8px; border-radius: 9999px; border: 1px solid #fecdd3;">
+                            {{ count($tickets) }} تیکت باز
+                        </span>
+                    @endif
                 </div>
             </x-slot>
-
-            @php $tickets = $this->getOpenTickets(); @endphp
 
             @if(empty($tickets))
                 <div style="padding: 16px; text-align: center; color: #475569; font-size: 12px; background: #f8fafc; border-radius: 8px;">
@@ -81,7 +89,7 @@
                                     };
                                 @endphp
                                 <span style="font-size: 11px; font-weight: 700; background: {{ $badgeBg }}; color: {{ $badgeText }}; padding: 3px 8px; border-radius: 6px; border: 1px solid rgba(0,0,0,0.05);">{{ $t['status_label'] }}</span>
-                                <a href="{{ route('filament.admin.resources.tickets.index') }}" aria-label="پاسخ به تیکت {{ $t['subject'] }}" style="color: #4338ca; font-weight: 700; text-decoration: none; padding: 4px 8px; background: #eef2ff; border-radius: 6px; border: 1px solid #c7d2fe;">پاسخ ←</a>
+                                <a href="{{ route('filament.admin.resources.tickets.index') }}" aria-label="پاسخ به تیکت {{ $t['subject'] }}" style="color: #4338ca; font-weight: 700; text-decoration: none; padding: 6px 12px; min-height: 36px; display: inline-flex; align-items: center; background: #eef2ff; border-radius: 6px; border: 1px solid #c7d2fe;">پاسخ ←</a>
                             </div>
                         </div>
                     @endforeach

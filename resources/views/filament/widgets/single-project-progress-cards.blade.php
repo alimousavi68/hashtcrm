@@ -48,13 +48,13 @@
         @endphp
 
         @if(empty($projects))
-            <div style="padding: 20px; text-align: center; color: #475569; font-size: 12px; background: #f8fafc; border-radius: 10px; border: 1px dashed #cbd5e1;">
+            <div style="padding: 20px; text-align: center; color: #475569; font-size: 12px; background: #f8fafc; border-radius: 10px; border: 1px dashed #e2e8f0;">
                 🎉 تمامی پروژه‌ها به اتمام رسیده و پروژه غیرفعال یا ناتمامی وجود ندارد.
             </div>
         @else
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 12px; margin-top: 6px;">
                 @foreach($projects as $p)
-                    <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 12px; padding: 14px; display: flex; flex-direction: column; justify-content: space-between; gap: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+                    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px; display: flex; flex-direction: column; justify-content: space-between; gap: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
                         
                         <!-- هدر کارت -->
                         <div>
@@ -62,7 +62,7 @@
                                 <h3 style="font-size: 13px; font-weight: 700; color: #0f172a; margin: 0;">
                                     {{ $p['title'] }}
                                 </h3>
-                                <span style="padding: 3px 8px; font-size: 10px; font-weight: 700; border-radius: 6px; background: #e2e8f0; color: #1e293b; white-space: nowrap; border: 1px solid #cbd5e1;">
+                                <span style="padding: 3px 8px; font-size: 10px; font-weight: 700; border-radius: 6px; background: #f1f5f9; color: #334155; white-space: nowrap;">
                                     {{ $p['status_label'] }}
                                 </span>
                             </div>
@@ -75,7 +75,7 @@
                         </div>
 
                         <!-- نوار پیشرفت و درصد باقیمانده -->
-                        <div style="background: #f8fafc; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; display: flex; flex-direction: column; gap: 6px;">
+                        <div style="background: #f8fafc; padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0; display: flex; flex-direction: column; gap: 6px;">
                             <div style="display: flex; align-items: center; justify-content: space-between; font-size: 11px; font-weight: 500;">
                                 <span style="color: #047857; display: flex; align-items: center; gap: 4px;">
                                     <span style="width: 7px; height: 7px; border-radius: 9999px; background: #10b981;"></span>
@@ -88,24 +88,24 @@
                             </div>
 
                             <!-- نوار گرافیکی (سبز انجام شده + طوسی باقیمانده) -->
-                            <div style="width: 100%; height: 8px; background: #cbd5e1; border-radius: 9999px; overflow: hidden; display: flex;">
+                            <div style="width: 100%; height: 8px; background: #e2e8f0; border-radius: 9999px; overflow: hidden; display: flex;">
                                 <div style="width: {{ $p['progress_percent'] }}%; height: 100%; background: #10b981; transition: width 0.4s ease; border-radius: 9999px;"></div>
                             </div>
                         </div>
 
                         <!-- فوتر کارت: وضعیت ددلاین و کلید اقدام -->
-                        <div style="display: flex; align-items: center; justify-content: space-between; padding-top: 8px; border-top: 1px solid #e2e8f0; font-size: 11px;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; padding-top: 8px; border-top: 1px solid #f1f5f9; font-size: 11px;">
                             <div>
                                 @if($p['days_remaining'] !== null)
                                     @if($p['is_overdue'])
-                                        <span style="display: inline-flex; align-items: center; gap: 4px; color: #9f1239; font-weight: 700; background: #ffe4e6; border: 1px solid #fecdd3; padding: 3px 8px; border-radius: 6px;">
+                                        <span style="display: inline-flex; align-items: center; gap: 4px; color: #be123c; font-weight: 700; background: #ffe4e6; padding: 3px 8px; border-radius: 6px;">
                                             <svg style="width: 13px; height: 13px; flex-shrink: 0;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0zm-9 3.75h.008v.008H12v-.008z" />
                                             </svg>
                                             {{ $p['days_remaining'] }} روز تاخیر
                                         </span>
                                     @else
-                                        <span style="display: inline-flex; align-items: center; gap: 4px; color: #92400e; font-weight: 700; background: #fef3c7; border: 1px solid #fde68a; padding: 3px 8px; border-radius: 6px;">
+                                        <span style="display: inline-flex; align-items: center; gap: 4px; color: #b45309; font-weight: 700; background: #fef3c7; padding: 3px 8px; border-radius: 6px;">
                                             <svg style="width: 13px; height: 13px; flex-shrink: 0;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" />
                                             </svg>
@@ -113,7 +113,7 @@
                                         </span>
                                     @endif
                                 @else
-                                    <span style="color: #64748b; font-weight: 500; background: #f1f5f9; padding: 3px 8px; border-radius: 6px; border: 1px solid #e2e8f0;">ددلاین ثبت‌نشده</span>
+                                    <span style="color: #64748b; font-weight: 500; background: #f8fafc; padding: 3px 8px; border-radius: 6px;">ددلاین ثبت‌نشده</span>
                                 @endif
                             </div>
 
