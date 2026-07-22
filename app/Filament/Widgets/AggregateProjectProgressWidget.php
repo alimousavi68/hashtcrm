@@ -65,8 +65,8 @@ class AggregateProjectProgressWidget extends ChartWidget
                         $remainingWork,
                     ],
                     'backgroundColor' => [
-                        '#4f46e5', // پیشرفت انجام شده (نیلی مدرن / Indigo 600)
-                        '#fb7185', // کار باقیمانده (پاستیلی خنثی / Rose 400)
+                        '#10b981', // پیشرفت انجام شده (سبز زمردی هارمونیک / Emerald 500)
+                        '#cbd5e1', // کار باقیمانده (طوسی‌آبی خاکستری ملایم / Slate 300)
                     ],
                     'borderWidth' => 2,
                     'borderColor' => '#ffffff',

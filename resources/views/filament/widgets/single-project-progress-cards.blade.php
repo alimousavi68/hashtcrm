@@ -81,14 +81,14 @@
                                     <span style="width: 6px; height: 6px; border-radius: 9999px; background: #10b981;"></span>
                                     پیشرفت: ٪<strong style="font-weight: 600;">{{ $p['progress_percent'] }}</strong>
                                 </span>
-                                <span style="color: #e11d48; display: flex; align-items: center; gap: 4px;">
-                                    <span style="width: 6px; height: 6px; border-radius: 9999px; background: #f43f5e;"></span>
+                                <span style="color: #64748b; display: flex; align-items: center; gap: 4px;">
+                                    <span style="width: 6px; height: 6px; border-radius: 9999px; background: #94a3b8;"></span>
                                     کار باقیمانده: ٪<strong style="font-weight: 600;">{{ $p['remaining_percent'] }}</strong>
                                 </span>
                             </div>
 
-                            <!-- نوار گرافیکی (سبز انجام شده + قرمز کم‌رنگ پاستیلی باقیمانده) -->
-                            <div style="width: 100%; height: 8px; background: #fecdd3; border-radius: 9999px; overflow: hidden; display: flex;">
+                            <!-- نوار گرافیکی (سبز انجام شده + طوسی-آبی خاکستری باقیمانده) -->
+                            <div style="width: 100%; height: 8px; background: #e2e8f0; border-radius: 9999px; overflow: hidden; display: flex;">
                                 <div style="width: {{ $p['progress_percent'] }}%; height: 100%; background: #10b981; transition: width 0.4s ease; border-radius: 9999px;"></div>
                             </div>
                         </div>
