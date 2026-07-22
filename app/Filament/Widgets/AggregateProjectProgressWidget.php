@@ -8,7 +8,7 @@ use Filament\Widgets\ChartWidget;
 class AggregateProjectProgressWidget extends ChartWidget
 {
     protected static ?int $sort = 2;
-    protected ?string $heading = 'تحلیل تجمعی پیشرفت و کار باقیمانده';
+    protected ?string $heading = 'تحلیل تجمعی پیشرفت سیستم';
     protected int | string | array $columnSpan = [
         'default' => 'full',
         'lg' => 1,
@@ -52,6 +52,9 @@ class AggregateProjectProgressWidget extends ChartWidget
         $averageProgress = (int) round($sumPercent / $totalProjects);
         $remainingWork = 100 - $averageProgress;
 
+        $avgPersian = \App\Helpers\JalaliHelper::toPersianDigits((string) $averageProgress);
+        $remPersian = \App\Helpers\JalaliHelper::toPersianDigits((string) $remainingWork);
+
         return [
             'datasets' => [
                 [
@@ -61,16 +64,16 @@ class AggregateProjectProgressWidget extends ChartWidget
                         $remainingWork,
                     ],
                     'backgroundColor' => [
-                        '#4f46e5', // پیشرفت انجام شده (بنفش/نیلی)
-                        '#f43f5e', // کار باقیمانده (رز/قرمز)
+                        '#10b981', // پیشرفت انجام شده (سبز زمردی)
+                        '#ef4444', // کار باقیمانده (قرمز)
                     ],
                     'borderWidth' => 2,
                     'borderColor' => '#ffffff',
                 ],
             ],
             'labels' => [
-                "میزان پیشرفت میانگین کل (٪{$averageProgress})",
-                "میزان کار باقیمانده سیستم (٪{$remainingWork})",
+                "میزان پیشرفت میانگین کل (٪{$avgPersian})",
+                "میزان کار باقیمانده سیستم (٪{$remPersian})",
             ],
         ];
     }
@@ -89,7 +92,7 @@ class AggregateProjectProgressWidget extends ChartWidget
                     'position' => 'bottom',
                     'labels' => [
                         'font' => [
-                            'family' => 'Vazirmatn, Tahoma',
+                            'family' => 'PeydaWebVF, Vazirmatn, Tahoma',
                             'size' => 12,
                         ],
                     ],

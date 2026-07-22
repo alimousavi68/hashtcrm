@@ -12,20 +12,32 @@
                 <!-- دکمه‌های فیلتر سریع -->
                 <div style="display: flex; align-items: center; gap: 6px; background: #f1f5f9; padding: 4px; border-radius: 10px;">
                     <button wire:click="setTab('all')" 
-                            style="padding: 4px 10px; font-size: 11px; font-weight: 700; border-radius: 7px; border: none; cursor: pointer; transition: all 0.2s; {{ $activeTab === 'all' ? 'background: #ffffff; color: #4f46e5; box-shadow: 0 1px 2px rgba(0,0,0,0.08);' : 'background: transparent; color: #64748b;' }}">
-                        همه پروژه‌ها
+                            style="display: inline-flex; align-items: center; gap: 4px; padding: 5px 12px; font-size: 11px; font-weight: 700; border-radius: 7px; border: none; cursor: pointer; transition: all 0.2s; {{ $activeTab === 'all' ? 'background: #ffffff; color: #4f46e5; box-shadow: 0 1px 2px rgba(0,0,0,0.08);' : 'background: transparent; color: #64748b;' }}">
+                        <svg style="width: 13px; height: 13px; flex-shrink: 0;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z" />
+                        </svg>
+                        <span>همه پروژه‌ها</span>
                     </button>
                     <button wire:click="setTab('overdue')" 
-                            style="padding: 4px 10px; font-size: 11px; font-weight: 700; border-radius: 7px; border: none; cursor: pointer; transition: all 0.2s; {{ $activeTab === 'overdue' ? 'background: #ffffff; color: #e11d48; box-shadow: 0 1px 2px rgba(0,0,0,0.08);' : 'background: transparent; color: #64748b;' }}">
-                        ⚠️ دارای تاخیر
+                            style="display: inline-flex; align-items: center; gap: 4px; padding: 5px 12px; font-size: 11px; font-weight: 700; border-radius: 7px; border: none; cursor: pointer; transition: all 0.2s; {{ $activeTab === 'overdue' ? 'background: #ffffff; color: #e11d48; box-shadow: 0 1px 2px rgba(0,0,0,0.08);' : 'background: transparent; color: #64748b;' }}">
+                        <svg style="width: 13px; height: 13px; flex-shrink: 0;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+                        </svg>
+                        <span>دارای تاخیر</span>
                     </button>
                     <button wire:click="setTab('in_dev')" 
-                            style="padding: 4px 10px; font-size: 11px; font-weight: 700; border-radius: 7px; border: none; cursor: pointer; transition: all 0.2s; {{ $activeTab === 'in_dev' ? 'background: #ffffff; color: #0284c7; box-shadow: 0 1px 2px rgba(0,0,0,0.08);' : 'background: transparent; color: #64748b;' }}">
-                        🚀 در حال توسعه و بازنگری
+                            style="display: inline-flex; align-items: center; gap: 4px; padding: 5px 12px; font-size: 11px; font-weight: 700; border-radius: 7px; border: none; cursor: pointer; transition: all 0.2s; {{ $activeTab === 'in_dev' ? 'background: #ffffff; color: #0284c7; box-shadow: 0 1px 2px rgba(0,0,0,0.08);' : 'background: transparent; color: #64748b;' }}">
+                        <svg style="width: 13px; height: 13px; flex-shrink: 0;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.59 14.37a6 6 0 0 1-5.84 7.38v-4.8m5.84-2.58a14.98 14.98 0 0 0 6.16-12.12A14.98 14.98 0 0 0 9.631 8.41m5.96 5.96a14.926 14.926 0 0 1-5.841 2.58m-.119-8.54a6 6 0 0 0-7.381 5.84h4.8m2.581-5.84a14.927 14.927 0 0 0-2.58 5.84m2.699 2.7c-.103.021-.207.041-.311.06a15.09 15.09 0 0 1-2.448-2.448 14.9 14.9 0 0 1 .06-.312m-2.24 2.24A4.5 4.5 0 0 0 3 19.5v.75c0 .414.336.75.75.75h.75a4.5 4.5 0 0 0 4.5-4.5v-.75a.75.75 0 0 0-.75-.75h-.75Z" />
+                        </svg>
+                        <span>در حال توسعه و بازنگری</span>
                     </button>
                     <button wire:click="setTab('settled_pending')" 
-                            style="padding: 4px 10px; font-size: 11px; font-weight: 700; border-radius: 7px; border: none; cursor: pointer; transition: all 0.2s; {{ $activeTab === 'settled_pending' ? 'background: #ffffff; color: #d97706; box-shadow: 0 1px 2px rgba(0,0,0,0.08);' : 'background: transparent; color: #64748b;' }}">
-                        💳 تسویه‌نشده
+                            style="display: inline-flex; align-items: center; gap: 4px; padding: 5px 12px; font-size: 11px; font-weight: 700; border-radius: 7px; border: none; cursor: pointer; transition: all 0.2s; {{ $activeTab === 'settled_pending' ? 'background: #ffffff; color: #d97706; box-shadow: 0 1px 2px rgba(0,0,0,0.08);' : 'background: transparent; color: #64748b;' }}">
+                        <svg style="width: 13px; height: 13px; flex-shrink: 0;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.753 3h15.75c.621 0 1.125-.504 1.125-1.125V18a2.25 2.25 0 0 0-2.25-2.25h-15A2.25 2.25 0 0 0 2.25 18v1.5c0 .621.504 1.125 1.125 1.125Z" />
+                        </svg>
+                        <span>تسویه‌نشده</span>
                     </button>
                 </div>
             </div>

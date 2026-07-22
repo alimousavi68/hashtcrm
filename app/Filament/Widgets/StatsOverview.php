@@ -46,23 +46,23 @@ class StatsOverview extends BaseWidget
             ->sum('amount');
 
         return [
-            Stat::make('پروژه‌های در حال اجرا', number_format($activeProjectsCount) . ' پروژه')
-                ->description('پروژه‌های فعال در حال توسعه یا بازنگری')
+            Stat::make('پروژه‌های فعال', number_format($activeProjectsCount) . ' مورد')
+                ->description('در حال توسعه یا بازنگری')
                 ->descriptionIcon('heroicon-m-arrow-trending-up')
                 ->color('primary'),
 
-            Stat::make('فیش‌های مالی منتظر تایید', number_format($pendingPaymentsCount) . ' فیش')
+            Stat::make('فیش‌های در انتظار بررسی', number_format($pendingPaymentsCount) . ' مورد')
                 ->description('مجموع: ' . number_format($pendingPaymentsSum) . ' تومان')
                 ->descriptionIcon($pendingPaymentsCount > 0 ? 'heroicon-m-exclamation-triangle' : 'heroicon-m-check-circle')
                 ->color($pendingPaymentsCount > 0 ? 'warning' : 'success'),
 
-            Stat::make('تیکت‌های باز و پشتیبانی', number_format($openTicketsCount) . ' تیکت')
-                ->description('تیکت‌های در انتظار پاسخ یا پیگیری')
+            Stat::make('تیکت‌های در انتظار پاسخ', number_format($openTicketsCount) . ' تیکت')
+                ->description('نیازمند پاسخگویی پشتیبانی')
                 ->descriptionIcon('heroicon-m-chat-bubble-left-right')
                 ->color($openTicketsCount > 0 ? 'danger' : 'gray'),
 
-            Stat::make('درآمد تاییدشده (ماه جاری)', number_format($monthlyRevenue) . ' تومان')
-                ->description('واریزی‌های تاییدشده در ' . \App\Helpers\JalaliHelper::toJalali(Carbon::now(), 'F Y'))
+            Stat::make('درآمد ماه جاری', number_format($monthlyRevenue) . ' تومان')
+                ->description('تاییدشده در ' . \App\Helpers\JalaliHelper::toJalali(Carbon::now(), 'F Y'))
                 ->descriptionIcon('heroicon-m-banknotes')
                 ->color('success'),
         ];

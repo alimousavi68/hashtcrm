@@ -6,8 +6,8 @@
             <x-slot name="heading">
                 <div style="display: flex; align-items: center; justify-content: space-between;">
                     <div style="display: flex; align-items: center; gap: 6px;">
-                        <svg style="width: 18px; height: 18px; color: #d97706;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.753 3h15.75c.621 0 1.125-.504 1.125-1.125V18a2.25 2.25 0 0 0-2.25-2.25h-15A2.25 2.25 0 0 0 2.25 18v1.5c0 .621.504 1.125 1.125 1.125Z" />
+                        <svg style="width: 18px; height: 18px; flex-shrink: 0; color: #d97706;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5h16.5A1.5 1.5 0 0 1 21 6v9a1.5 1.5 0 0 1-1.5 1.5H3.75A1.5 1.5 0 0 1 2.25 15V6a1.5 1.5 0 0 1 1.5-1.5Zm13.5 6a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0ZM6.75 12h.008v.008H6.75V12Zm0 3h.008v.008H6.75V15Z" />
                         </svg>
                         <span style="font-size: 14px; font-weight: 700;">فیش‌های بانکی منتظر بررسی و تایید</span>
                     </div>
