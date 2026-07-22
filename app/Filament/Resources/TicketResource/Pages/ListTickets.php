@@ -63,12 +63,13 @@ class ListTickets extends ListRecords
         ]);
 
         if ($ticket->client) {
-            $ticket->client->notify(new \App\Notifications\ProjectNotification(
+            \App\Services\NotificationService::sendToUser(
+                $ticket->client,
                 $ticket->project,
                 'پاسخ جدید به تیکت پشتیبانی',
                 "پشتیبان به تیکت «{$ticket->subject}» پاسخ داد.",
                 'tickets'
-            ));
+            );
         }
 
         $this->newChatMessage = '';

@@ -286,6 +286,14 @@ class Projects extends Page implements HasForms
             ->success()
             ->send();
 
+        // Send admin notification
+        \App\Services\NotificationService::sendToAdmins(
+            $this->project,
+            'امضای قرارداد همکاری توسط مشتری',
+            "مشتری با نام «{$this->sigName}» قرارداد پروژه «{$this->project->title}» را امضا کرد.",
+            'financial'
+        );
+
         $this->loadProjectsList();
     }
 
@@ -310,15 +318,12 @@ class Projects extends Page implements HasForms
         ]);
 
         // Send admin notification
-        $admins = \App\Models\User::where('role', 'admin')->get();
-        foreach ($admins as $admin) {
-            $admin->notify(new \App\Notifications\ProjectNotification(
-                $this->project,
-                'ثبت فیش واریز جدید',
-                "مشتری برای پروژه «{$this->project->title}» فیش واریزی جدیدی به مبلغ " . number_format($payment->amount) . " تومان بارگذاری کرد.",
-                'financial'
-            ));
-        }
+        \App\Services\NotificationService::sendToAdmins(
+            $this->project,
+            'ثبت فیش واریز جدید',
+            "مشتری برای پروژه «{$this->project->title}» فیش واریزی جدیدی به مبلغ " . number_format($payment->amount) . " تومان بارگذاری کرد.",
+            'financial'
+        );
 
         $this->paymentAmount = null;
         $this->bankSlipFile = null;
@@ -349,17 +354,14 @@ class Projects extends Page implements HasForms
         ]);
 
         // Send admin notification
-        $admins = \App\Models\User::where('role', 'admin')->get();
-        foreach ($admins as $admin) {
-            $admin->notify(new \App\Notifications\ProjectNotification(
-                $this->project,
-                $status === 'approved' ? 'تایید دمو توسط مشتری' : 'ثبت فیدبک اصلاحی دمو',
-                $status === 'approved' 
-                    ? "مشتری دموی پروژه «{$this->project->title}» را بدون اصلاحات تایید کرد."
-                    : "مشتری نظرات اصلاحی جدیدی برای دموی پروژه «{$this->project->title}» ثبت نمود.",
-                'projects'
-            ));
-        }
+        \App\Services\NotificationService::sendToAdmins(
+            $this->project,
+            $status === 'approved' ? 'تایید دمو توسط مشتری' : 'ثبت فیدبک اصلاحی دمو',
+            $status === 'approved' 
+                ? "مشتری دموی پروژه «{$this->project->title}» را بدون اصلاحات تایید کرد."
+                : "مشتری نظرات اصلاحی جدیدی برای دموی پروژه «{$this->project->title}» ثبت نمود.",
+            'projects'
+        );
 
         if ($status === 'approved') {
             $this->project->update([

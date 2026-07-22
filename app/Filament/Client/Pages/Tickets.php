@@ -109,15 +109,12 @@ class Tickets extends Page
         ]);
 
         // Send admin notification
-        $admins = \App\Models\User::where('role', 'admin')->get();
-        foreach ($admins as $admin) {
-            $admin->notify(new \App\Notifications\ProjectNotification(
-                $ticket->project,
-                'تیکت جدید از مشتری',
-                "مشتری برای پروژه «{$ticket->project->title}» تیکت جدیدی با موضوع «{$ticket->subject}» ثبت کرد.",
-                'tickets'
-            ));
-        }
+        \App\Services\NotificationService::sendToAdmins(
+            $ticket->project,
+            'تیکت جدید از مشتری',
+            "مشتری برای پروژه «{$ticket->project->title}» تیکت جدیدی با موضوع «{$ticket->subject}» ثبت کرد.",
+            'tickets'
+        );
 
         $this->newTicketSubject = '';
         $this->newTicketProjectId = null;
@@ -157,15 +154,12 @@ class Tickets extends Page
         ]);
 
         // Send admin notification
-        $admins = \App\Models\User::where('role', 'admin')->get();
-        foreach ($admins as $admin) {
-            $admin->notify(new \App\Notifications\ProjectNotification(
-                $ticket->project,
-                'پیام جدید در تیکت پشتیبانی',
-                "مشتری پیام جدیدی برای تیکت «{$ticket->subject}» ارسال کرد.",
-                'tickets'
-            ));
-        }
+        \App\Services\NotificationService::sendToAdmins(
+            $ticket->project,
+            'پیام جدید در تیکت پشتیبانی',
+            "مشتری پیام جدیدی برای تیکت «{$ticket->subject}» ارسال کرد.",
+            'tickets'
+        );
 
         $this->newChatMessage = '';
         $this->loadData();

@@ -136,12 +136,13 @@ class ManageProjectTickets extends ManageRelatedRecords
 
                             // Send notification to client
                             if ($record->client) {
-                                $record->client->notify(new \App\Notifications\ProjectNotification(
+                                \App\Services\NotificationService::sendToUser(
+                                    $record->client,
                                     $record->project,
                                     'پاسخ جدید به تیکت پشتیبانی',
                                     "پشتیبان به تیکت «{$record->subject}» پاسخ داد.",
                                     'tickets'
-                                ));
+                                );
                             }
                         }
                     }),

@@ -6,11 +6,10 @@ use App\Models\Project;
 use App\Channels\SmsChannel;
 use App\Channels\TelegramChannel;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class ProjectNotification extends Notification implements ShouldQueue
+class ProjectNotification extends Notification
 {
     use Queueable;
 
@@ -55,18 +54,33 @@ class ProjectNotification extends Notification implements ShouldQueue
     }
 
     /**
-     * Get the array representation of the notification for database.
+     * Get the array representation of the notification for database (Filament compatible).
      *
      * @return array<string, mixed>
      */
     public function toArray(object $notifiable): array
     {
+        $icon = match ($this->category) {
+            'financial' => 'heroicon-o-credit-card',
+            'tickets' => 'heroicon-o-chat-bubble-left-right',
+            'system' => 'heroicon-o-cpu-chip',
+            default => 'heroicon-o-folder',
+        };
+
         return [
-            'project_id' => $this->project->id,
+            'format' => 'filament',
+            'duration' => 'persistent',
             'title' => $this->title,
             'body' => $this->message,
-            'status' => $this->project->status,
+            'icon' => $icon,
+            'iconColor' => 'primary',
+            'status' => 'info',
             'category' => $this->category,
+            'viewData' => [
+                'category' => $this->category,
+                'project_id' => $this->project->id,
+            ],
+            'actions' => [],
         ];
     }
 
