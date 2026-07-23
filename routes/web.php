@@ -6,6 +6,8 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/start', \App\Livewire\StartOnboarding::class)->name('start');
+
 Route::get('/login/magic/{token}', [App\Http\Controllers\Auth\MagicLinkController::class, 'verify'])->name('magic.verify');
 
 Route::middleware(['auth'])->group(function () {

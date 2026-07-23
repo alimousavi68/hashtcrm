@@ -1,4 +1,5 @@
 <x-filament-panels::page>
+
     <!-- 1. کادر فیلترها و جستجوی سریع -->
     <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px 16px; margin-bottom: 16px; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
         <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;">
@@ -6,6 +7,14 @@
             <!-- تب‌های فیلتر -->
             <div style="display: flex; align-items: center; gap: 4px; background: #f1f5f9; padding: 4px; border-radius: 8px; flex-wrap: wrap;">
                 
+                <button wire:click="setTab('leads')" 
+                        style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; font-size: 11px; border-radius: 6px; border: none; cursor: pointer; transition: all 0.2s; {{ $activeTab === 'leads' ? 'background: #f59e0b; color: #ffffff; font-weight: 700; box-shadow: 0 2px 4px rgba(245,158,11,0.25);' : 'background: transparent; color: #334155; font-weight: 600;' }}">
+                    <svg style="width: 14px; height: 14px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 0 0 8.716-6.747M12 21a9.004 9.004 0 0 1-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 0 1 7.843 4.582M12 3a8.997 8.997 0 0 0-7.843 4.582m15.686 0A11.953 11.953 0 0 1 12 10.5c-2.974 0-5.699-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0 1 21 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0 1 12 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 0 1 3 12c0-1.605.42-3.113 1.157-4.418" />
+                    </svg>
+                    <span>سرنخ‌های جدید</span>
+                </button>
+
                 <button wire:click="setTab('all')" 
                         style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; font-size: 11px; border-radius: 6px; border: none; cursor: pointer; transition: all 0.2s; {{ $activeTab === 'all' ? 'background: #4f46e5; color: #ffffff; font-weight: 700; box-shadow: 0 2px 4px rgba(79,70,229,0.25);' : 'background: transparent; color: #334155; font-weight: 600;' }}">
                     <svg style="width: 14px; height: 14px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
@@ -52,6 +61,14 @@
                         <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                     </svg>
                     <span>تکمیل‌شده</span>
+                </button>
+
+                <button wire:click="setTab('archived')" 
+                        style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; font-size: 11px; border-radius: 6px; border: none; cursor: pointer; transition: all 0.2s; {{ $activeTab === 'archived' ? 'background: #64748b; color: #ffffff; font-weight: 700; box-shadow: 0 2px 4px rgba(100,116,139,0.25);' : 'background: transparent; color: #334155; font-weight: 600;' }}">
+                    <svg style="width: 14px; height: 14px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 0 1-2.247 2.118H6.622a2.25 2.25 0 0 1-2.247-2.118L3.75 7.5m6 4.5h3m-6 3h6m-9-7.5h16.5m-16.5 0A2.25 2.25 0 0 1 6 3.75h12A2.25 2.25 0 0 1 20.25 6v1.5" />
+                    </svg>
+                    <span>بایگانی / لغوشده</span>
                 </button>
             </div>
 
@@ -259,4 +276,6 @@
             @endforeach
         </div>
     @endif
+
+    <x-filament-actions::modals />
 </x-filament-panels::page>

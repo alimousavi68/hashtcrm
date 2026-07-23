@@ -10,6 +10,7 @@ class BriefTemplate extends Model
         'name',
         'schema',
         'is_active',
+        'is_default',
         'wizard_mode',
         'guide_notice',
         'views_count',
@@ -19,10 +20,20 @@ class BriefTemplate extends Model
     protected $casts = [
         'schema'          => 'array',
         'is_active'       => 'boolean',
+        'is_default'      => 'boolean',
         'wizard_mode'     => 'boolean',
         'views_count'     => 'integer',
         'responses_count' => 'integer',
     ];
+
+    protected static function booted(): void
+    {
+        static::saving(function (BriefTemplate $template) {
+            if ($template->is_default) {
+                static::where('id', '!=', $template->id)->update(['is_default' => false]);
+            }
+        });
+    }
 
     public function getQuestionsCountAttribute(): int
     {

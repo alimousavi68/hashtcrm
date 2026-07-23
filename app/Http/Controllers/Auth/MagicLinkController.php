@@ -35,6 +35,16 @@ class MagicLinkController extends Controller
 
         Auth::guard('client')->login($user);
         $request->session()->regenerate();
-        return redirect('/client');
+
+        $redirectUrl = '/client';
+        if ($request->has('redirect_to')) {
+            $path = $request->query('redirect_to');
+            // Basic security check to ensure it's a relative path starting with /client/
+            if (str_starts_with($path, '/client/')) {
+                $redirectUrl = $path;
+            }
+        }
+
+        return redirect($redirectUrl);
     }
 }

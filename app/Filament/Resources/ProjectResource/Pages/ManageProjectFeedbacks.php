@@ -94,7 +94,7 @@ class ManageProjectFeedbacks extends ManageRelatedRecords
                     ->color('info')
                     ->form([
                         Forms\Components\TextInput::make('demo_url')
-                            ->label('لینک پیش‌نمایش دمو')
+                            ->label('لینک پیش‌نمایش دمو / Embed فیگما')
                             ->url()
                             ->default(fn () => $this->getOwnerRecord()->demo_url),
                         Forms\Components\DateTimePicker::make('feedback_deadline')

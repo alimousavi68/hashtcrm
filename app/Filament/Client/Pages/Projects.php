@@ -57,12 +57,14 @@ class Projects extends Page implements HasForms
     public ?string $feedbackNotes = '';
 
     public array $statuses = [
-        'draft' => ['label' => 'پیش‌نویس اولیه', 'percent' => 10],
-        'brief' => ['label' => 'تکمیل پرسشنامه نیازمندی‌ها', 'percent' => 25],
-        'contract' => ['label' => 'امضای قرارداد و امور مالی', 'percent' => 45],
-        'in_progress' => ['label' => 'در حال طراحی و توسعه', 'percent' => 65],
-        'review' => ['label' => 'بازنگری و ثبت نظرات (دمو)', 'percent' => 80],
-        'ready_handover' => ['label' => 'آماده‌سازی بسته تحویل', 'percent' => 90],
+        'draft' => ['label' => 'پیش‌نویس اولیه', 'percent' => 5],
+        'brief' => ['label' => 'تکمیل پرسشنامه نیازمندی‌ها', 'percent' => 15],
+        'proforma' => ['label' => 'صدور پیش‌فاکتور', 'percent' => 25],
+        'contract' => ['label' => 'امضای قرارداد و پیش‌پرداخت', 'percent' => 35],
+        'ui_design' => ['label' => 'طراحی رابط کاربری (UI)', 'percent' => 50],
+        'development' => ['label' => 'توسعه و برنامه‌نویسی', 'percent' => 70],
+        'review' => ['label' => 'بازنگری و دمو نهایی', 'percent' => 85],
+        'ready_handover' => ['label' => 'آماده‌سازی بسته تحویل', 'percent' => 95],
         'completed' => ['label' => 'تحویل نهایی و خاتمه پروژه', 'percent' => 100],
     ];
 
@@ -105,7 +107,7 @@ class Projects extends Page implements HasForms
 
         $this->project = Project::where('client_id', Auth::guard('client')->id())
             ->where('id', $projectId)
-            ->with(['contract', 'payments', 'feedbacks', 'handover'])
+            ->with(['proforma', 'contract', 'payments', 'feedbacks', 'handover'])
             ->first();
 
         if ($this->project) {
@@ -174,6 +176,21 @@ class Projects extends Page implements HasForms
                     'color' => 'amber',
                 ];
 
+            case 'proforma':
+                $proforma = $this->project->proforma;
+                if (!$proforma || !$proforma->is_approved_by_client) {
+                    return [
+                        'title' => 'بررسی و تایید پیش‌فاکتور',
+                        'description' => 'پیش‌فاکتور پروژه بر اساس بریف صادر شده است. لطفاً آن را بررسی و در صورت تایید روی دکمه مربوطه کلیک کنید.',
+                        'buttonText' => 'مشاهده پیش‌فاکتور',
+                        'actionType' => 'tab',
+                        'tab' => 'finance', // We will show it in finance tab
+                        'badge' => 'اقدام مالی',
+                        'color' => 'indigo',
+                    ];
+                }
+                return null;
+
             case 'contract':
                 if (!$contract || !$contract->signed_at) {
                     return [
@@ -196,14 +213,25 @@ class Projects extends Page implements HasForms
                     'color' => 'blue',
                 ];
 
-            case 'in_progress':
+            case 'ui_design':
                 return [
-                    'title' => 'پروژه در حال طراحی و توسعه فنی است',
-                    'description' => 'کدنویسی و پیاده‌سازی پروژه بر اساس بریف در حال انجام است. می‌توانید پیشرفت فازها را از نقشه راه دنبال کنید.',
-                    'buttonText' => 'مشاهده نقشه راه',
+                    'title' => 'پروژه در مرحله طراحی رابط کاربری (UI) است',
+                    'description' => 'طراحان ما در حال آماده‌سازی طرح‌های بصری سیستم شما هستند. به محض آماده شدن در بخش دمو قابل مشاهده خواهد بود.',
+                    'buttonText' => 'مشاهده پیشرفت',
                     'actionType' => 'tab',
                     'tab' => 'roadmap',
-                    'badge' => 'در حال انجام',
+                    'badge' => 'طراحی',
+                    'color' => 'sky',
+                ];
+
+            case 'development':
+                return [
+                    'title' => 'پروژه در مرحله توسعه و برنامه‌نویسی است',
+                    'description' => 'کدنویسی و پیاده‌سازی پروژه بر اساس طرح تایید شده در حال انجام است.',
+                    'buttonText' => 'مشاهده پیشرفت',
+                    'actionType' => 'tab',
+                    'tab' => 'roadmap',
+                    'badge' => 'توسعه',
                     'color' => 'sky',
                 ];
 
@@ -256,6 +284,36 @@ class Projects extends Page implements HasForms
         }
     }
 
+
+    public function approveProforma(): void
+    {
+        if (!$this->project || !$this->project->proforma) return;
+
+        $this->project->proforma->update([
+            'is_approved_by_client' => true,
+            'approved_at' => Carbon::now(),
+        ]);
+
+        $this->project->update([
+            'status' => 'contract',
+        ]);
+
+        Notification::make()
+            ->title('پیش‌فاکتور تایید شد')
+            ->body('پیش‌فاکتور با موفقیت تایید شد. پروژه وارد مرحله قرارداد و امور مالی گردید.')
+            ->success()
+            ->send();
+
+        // Send admin notification
+        \App\Services\NotificationService::sendToAdmins(
+            $this->project,
+            'تایید پیش‌فاکتور توسط مشتری',
+            "مشتری پیش‌فاکتور پروژه «{$this->project->title}» را تایید کرد.",
+            'financial'
+        );
+
+        $this->loadProjectsList();
+    }
 
     public function signContract(): void
     {
@@ -364,14 +422,25 @@ class Projects extends Page implements HasForms
         );
 
         if ($status === 'approved') {
-            $this->project->update([
-                'status' => 'ready_handover',
-            ]);
-            Notification::make()
-                ->title('دموی پروژه تایید شد')
-                ->body('پروژه شما وارد مرحله آماده‌سازی بسته تحویل گردید.')
-                ->success()
-                ->send();
+            if ($this->project->status === 'ui_design') {
+                $this->project->update([
+                    'status' => 'development',
+                ]);
+                Notification::make()
+                    ->title('طراحی رابط کاربری تایید شد')
+                    ->body('پروژه شما وارد مرحله توسعه و برنامه‌نویسی گردید.')
+                    ->success()
+                    ->send();
+            } else {
+                $this->project->update([
+                    'status' => 'ready_handover',
+                ]);
+                Notification::make()
+                    ->title('دموی پروژه تایید شد')
+                    ->body('پروژه شما وارد مرحله آماده‌سازی بسته تحویل گردید.')
+                    ->success()
+                    ->send();
+            }
         } else {
             Notification::make()
                 ->title('نظرات شما ثبت شد')

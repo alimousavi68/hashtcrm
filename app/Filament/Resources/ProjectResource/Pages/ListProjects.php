@@ -29,16 +29,23 @@ class ListProjects extends ListRecords
         $query = Project::with(['client'])->latest();
 
         // 1. فیلتر تب‌ها
-        if ($this->activeTab === 'overdue') {
-            $query->where('status', '!=', 'completed')
+        if ($this->activeTab === 'all') {
+            // Exclude drafts and cancelled from 'all active'
+            $query->whereNotIn('status', ['draft', 'rejected', 'cancelled']);
+        } elseif ($this->activeTab === 'leads') {
+            $query->where('status', 'draft');
+        } elseif ($this->activeTab === 'archived') {
+            $query->whereIn('status', ['rejected', 'cancelled']);
+        } elseif ($this->activeTab === 'overdue') {
+            $query->whereNotIn('status', ['completed', 'rejected', 'cancelled'])
                 ->whereNotNull('feedback_deadline')
                 ->where('feedback_deadline', '<', now());
         } elseif ($this->activeTab === 'in_progress') {
-            $query->whereIn('status', ['in_progress', 'review']);
+            $query->whereIn('status', ['in_progress', 'ui_design', 'development', 'review']);
         } elseif ($this->activeTab === 'brief_contract') {
-            $query->whereIn('status', ['brief', 'contract']);
+            $query->whereIn('status', ['brief', 'proforma', 'contract']);
         } elseif ($this->activeTab === 'unsettled') {
-            $query->where('is_settled', false);
+            $query->where('is_settled', false)->whereNotIn('status', ['rejected', 'cancelled']);
         } elseif ($this->activeTab === 'completed') {
             $query->where('status', 'completed');
         }
@@ -98,6 +105,61 @@ class ListProjects extends ListRecords
             Actions\CreateAction::make()
                 ->label('تعریف پروژه جدید')
                 ->icon('heroicon-o-plus'),
+            Actions\Action::make('send_magic_link')
+                ->label('تعریف لید جدید / ارسال لینک بریف')
+                ->icon('heroicon-o-sparkles')
+                ->color('success')
+                ->form([
+                    \Filament\Forms\Components\Select::make('brief_template_id')
+                        ->label('الگوی پرسشنامه بریف')
+                        ->options(\App\Models\BriefTemplate::where('is_active', true)->pluck('name', 'id'))
+                        ->default(fn () => \App\Models\BriefTemplate::where('is_default', true)->first()?->id ?? \App\Models\BriefTemplate::where('is_active', true)->first()?->id)
+                        ->required(),
+                    \Filament\Forms\Components\TextInput::make('client_phone')
+                        ->label('شماره موبایل مشتری')
+                        ->required(),
+                    \Filament\Forms\Components\TextInput::make('client_name')
+                        ->label('نام مشتری (اختیاری)')
+                        ->helperText('فقط در صورت جدید بودن مشتری استفاده می‌شود'),
+                    \Filament\Forms\Components\TextInput::make('project_title')
+                        ->label('عنوان پروژه')
+                        ->required(),
+                ])
+                ->action(function (array $data) {
+                    $user = \App\Models\User::firstOrCreate(
+                        ['phone' => $data['client_phone']],
+                        [
+                            'name' => $data['client_name'] ?? 'مشتری',
+                            'role' => 'client',
+                            'password' => bcrypt(str()->random(10)),
+                        ]
+                    );
+
+                    $template = \App\Models\BriefTemplate::find($data['brief_template_id']);
+
+                    $project = \App\Models\Project::create([
+                        'client_id' => $user->id,
+                        'title' => $data['project_title'],
+                        'status' => 'draft',
+                        'brief_schema' => $template?->schema ?? [],
+                    ]);
+
+                    $token = str()->random(40);
+                    $user->update([
+                        'magic_link_token' => $token,
+                        'magic_link_expires_at' => now()->addDays(2),
+                    ]);
+
+                    $link = url("/login/magic/{$token}?redirect_to=/client/complete-brief");
+                    $message = "جهت ورود مستقیم به فرم پرسشنامه نیازمندی‌ها، روی لینک زیر کلیک کنید:\n\n{$link}";
+
+                    $user->notify(new \App\Notifications\ProjectNotification($project, 'لینک اختصاصی بریف', $message, 'system'));
+
+                    \Filament\Notifications\Notification::make()
+                        ->title('لینک جادویی بریف ارسال شد')
+                        ->success()
+                        ->send();
+                }),
         ];
     }
 

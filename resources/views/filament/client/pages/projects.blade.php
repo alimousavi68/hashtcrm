@@ -299,6 +299,59 @@
                 @elseif($activeTab === 'finance')
                     <!-- FINANCE TAB -->
                     <div class="hasht-grid-2">
+                        <!-- Proforma Card -->
+                        @if($project->proforma)
+                            <div class="hasht-card" style="display: flex; flex-direction: column; gap: 16px;">
+                                <h3 style="font-size: 15px; font-weight: 800; color: #0f172a; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #e2e8f0; padding-bottom: 12px; margin: 0;">
+                                    <div style="display: flex; align-items: center; gap: 8px;">
+                                        <svg style="width: 18px; height: 18px; color: #4f46e5;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 01-2-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                                        <span>پیش‌فاکتور خدمات</span>
+                                    </div>
+                                    @if($project->proforma->is_approved_by_client)
+                                        <span class="hasht-badge hasht-badge-green">تایید شده</span>
+                                    @else
+                                        <span class="hasht-badge hasht-badge-amber">در انتظار تایید</span>
+                                    @endif
+                                </h3>
+
+                                <div style="display: flex; flex-direction: column; gap: 8px;">
+                                    @if($project->proforma->items && count($project->proforma->items) > 0)
+                                        @foreach($project->proforma->items as $item)
+                                            <div style="display: flex; justify-content: space-between; font-size: 13px; padding: 8px 12px; background: #f8fafc; border-radius: 6px;">
+                                                <span style="color: #334155; font-weight: 700;">{{ $item['description'] ?? 'آیتم' }} ({{ $item['quantity'] ?? 1 }} عدد)</span>
+                                                <span style="color: #0f172a; font-weight: 800;">{{ number_format(($item['unit_price'] ?? 0) * ($item['quantity'] ?? 1)) }} تومان</span>
+                                            </div>
+                                        @endforeach
+                                    @endif
+                                </div>
+
+                                <div style="margin-top: auto; padding-top: 12px; border-top: 1px dashed #cbd5e1; display: flex; flex-direction: column; gap: 8px;">
+                                    <div style="display: flex; justify-content: space-between; font-size: 13px;">
+                                        <span style="color: #64748b;">مبلغ کل:</span>
+                                        <span style="color: #334155; font-weight: 700;">{{ number_format($project->proforma->total_amount) }} تومان</span>
+                                    </div>
+                                    @if($project->proforma->discount > 0)
+                                        <div style="display: flex; justify-content: space-between; font-size: 13px;">
+                                            <span style="color: #ef4444;">تخفیف اعمال شده:</span>
+                                            <span style="color: #ef4444; font-weight: 700;">{{ number_format($project->proforma->discount) }} تومان</span>
+                                        </div>
+                                    @endif
+                                    <div style="display: flex; justify-content: space-between; font-size: 15px; font-weight: 900;">
+                                        <span style="color: #0f172a;">مبلغ نهایی پرداخت:</span>
+                                        <span style="color: #4f46e5;">{{ number_format($project->proforma->final_amount) }} تومان</span>
+                                    </div>
+                                </div>
+
+                                @if(!$project->proforma->is_approved_by_client)
+                                    <div style="margin-top: 12px;">
+                                        <button wire:click="approveProforma" class="hasht-manage-btn" style="width: 100%; justify-content: center; padding: 10px; font-size: 14px; background: #10b981; color: white; border-color: #059669;">
+                                            <span>تایید پیش‌فاکتور و شروع مرحله قرارداد</span>
+                                        </button>
+                                    </div>
+                                @endif
+                            </div>
+                        @endif
+
                         <!-- Contract Card -->
                         <div class="hasht-card" style="display: flex; flex-direction: column; gap: 16px;">
                             <h3 style="font-size: 15px; font-weight: 800; color: #0f172a; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #e2e8f0; padding-bottom: 12px; margin: 0;">
@@ -362,25 +415,36 @@
                                 <p style="opacity: 0.85; font-size: 11px; margin-top: 4px;">پس از واریز مبلغ، تصویر فیش واریزی را جهت تایید و فعال‌سازی مراحل پروژه در فرم زیر ثبت کنید.</p>
                             </div>
 
+                            @php
+                                $hasPendingPayment = $project->payments->where('status', 'pending')->count() > 0;
+                            @endphp
+
                             @if($project->status === 'contract')
-                                <form wire:submit.prevent="uploadSlip" style="display: flex; flex-direction: column; gap: 14px; padding-top: 6px;">
-                                    <h4 style="font-size: 13px; font-weight: 800; color: #0f172a; margin: 0;">ثبت فیش واریز جدید</h4>
-                                    <div class="hasht-grid-2">
-                                        <div>
-                                            <label style="display: block; font-size: 12px; color: #64748b; margin-bottom: 4px;">مبلغ واریزی (تومان)</label>
-                                            <input type="number" wire:model="paymentAmount" placeholder="مثال: 5000000" class="custom-input" required>
-                                            @error('paymentAmount') <span style="font-size: 11px; color: #ef4444;">{{ $message }}</span> @enderror
-                                        </div>
-                                        <div>
-                                            <label style="display: block; font-size: 12px; color: #64748b; margin-bottom: 4px;">تصویر فیش بانکی</label>
-                                            <input type="file" wire:model="bankSlipFile" style="font-size: 12px; color: #64748b;" required>
-                                            @error('bankSlipFile') <span style="font-size: 11px; color: #ef4444;">{{ $message }}</span> @enderror
-                                        </div>
+                                @if($hasPendingPayment)
+                                    <div style="padding: 14px; background: #fffbeb; border: 1px solid #fde68a; border-radius: 10px; color: #92400e; font-size: 13px; display: flex; align-items: center; gap: 8px;">
+                                        <svg style="width: 20px; height: 20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                        <span>فیش واریزی شما با موفقیت دریافت شد و هم‌اکنون در انتظار بررسی و تایید واحد حسابداری است. نیازی به ارسال مجدد نیست.</span>
                                     </div>
-                                    <button type="submit" class="hasht-manage-btn" style="width: 100%; justify-content: center; padding: 10px; font-size: 14px;">
-                                        <span>ارسال و ثبت فیش پرداخت</span>
-                                    </button>
-                                </form>
+                                @else
+                                    <form wire:submit.prevent="uploadSlip" style="display: flex; flex-direction: column; gap: 14px; padding-top: 6px;">
+                                        <h4 style="font-size: 13px; font-weight: 800; color: #0f172a; margin: 0;">ثبت فیش واریز جدید</h4>
+                                        <div class="hasht-grid-2">
+                                            <div>
+                                                <label style="display: block; font-size: 12px; color: #64748b; margin-bottom: 4px;">مبلغ واریزی (تومان)</label>
+                                                <input type="number" wire:model="paymentAmount" placeholder="مثال: 5000000" class="custom-input" required>
+                                                @error('paymentAmount') <span style="font-size: 11px; color: #ef4444;">{{ $message }}</span> @enderror
+                                            </div>
+                                            <div>
+                                                <label style="display: block; font-size: 12px; color: #64748b; margin-bottom: 4px;">تصویر فیش بانکی</label>
+                                                <input type="file" wire:model="bankSlipFile" style="font-size: 12px; color: #64748b;" required>
+                                                @error('bankSlipFile') <span style="font-size: 11px; color: #ef4444;">{{ $message }}</span> @enderror
+                                            </div>
+                                        </div>
+                                        <button type="submit" class="hasht-manage-btn" style="width: 100%; justify-content: center; padding: 10px; font-size: 14px;">
+                                            <span>ارسال و ثبت فیش پرداخت</span>
+                                        </button>
+                                    </form>
+                                @endif
                             @endif
 
                             <div style="display: flex; flex-direction: column; gap: 10px; padding-top: 6px;">
@@ -566,25 +630,28 @@
                             </div>
                         </div>
 
-                        @if($project->status !== 'review' && $project->feedbacks->count() === 0)
+                        @if(!in_array($project->status, ['ui_design', 'review']) && $project->feedbacks->count() === 0)
                             <div style="padding: 28px; background: #f8fafc; border-radius: 10px; text-align: center; border: 1px dashed #cbd5e1;">
-                                <p style="font-size: 13px; color: #64748b; margin: 0;">پروژه در حال حاضر در فاز دمو و بازنگری نیست. به محض اتمام توسعه و انتشار دمو توسط تیم فنی، این بخش فعال خواهد شد.</p>
+                                <p style="font-size: 13px; color: #64748b; margin: 0;">پروژه در حال حاضر در فاز طراحی یا دمو نیست. به محض اتمام طراحی و انتشار طرح/دمو توسط تیم فنی، این بخش فعال خواهد شد.</p>
                             </div>
                         @else
                             @if(!$project->demo_url)
                                 <div style="padding: 24px; background: #f8fafc; border-radius: 10px; text-align: center; border: 1px dashed #cbd5e1;">
-                                    <p style="font-size: 13px; color: #64748b; margin: 0;">دموی اولیه پروژه در حال آماده‌سازی است. به محض قرار گرفتن لینک دمو، از طریق همین بخش می‌توانید آن را بررسی کنید.</p>
+                                    <p style="font-size: 13px; color: #64748b; margin: 0;">لینک طرح یا دموی پروژه در حال آماده‌سازی است. به محض قرار گرفتن لینک، از این بخش می‌توانید آن را بررسی کنید.</p>
                                 </div>
                             @else
-                                <!-- Demo URL Button -->
-                                <div style="display: flex; justify-content: center; padding: 14px; background: #f8fafc; border-radius: 10px; border: 1px solid #e2e8f0;">
-                                    <a href="{{ $project->demo_url }}" target="_blank" class="hasht-manage-btn" style="padding: 10px 22px; font-size: 14px;">
+                                <!-- Demo Iframe / Button -->
+                                <div style="display: flex; flex-direction: column; gap: 12px; padding: 14px; background: #f8fafc; border-radius: 10px; border: 1px solid #e2e8f0;">
+                                    @if(str_contains($project->demo_url, 'figma.com'))
+                                        <iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="100%" height="450" src="{{ str_contains($project->demo_url, 'embed') ? $project->demo_url : 'https://www.figma.com/embed?embed_host=share&url=' . urlencode($project->demo_url) }}" allowfullscreen></iframe>
+                                    @endif
+                                    <a href="{{ $project->demo_url }}" target="_blank" class="hasht-manage-btn" style="padding: 10px 22px; font-size: 14px; justify-content: center;">
                                         <svg style="width: 18px; height: 18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
-                                        <span>مشاهده دمو و پیش‌نمایش زنده سایت</span>
+                                        <span>مشاهده لینک در تب جدید (تمام‌صفحه)</span>
                                     </a>
                                 </div>
 
-                                @if($project->status === 'review')
+                                @if(in_array($project->status, ['ui_design', 'review']))
                                     <!-- Feedback Form -->
                                     <div style="display: flex; flex-direction: column; gap: 12px;">
                                         <h4 style="font-size: 14px; font-weight: 800; color: #0f172a; margin: 0;">ثبت نظر یا اعلام مغایرت‌ها:</h4>
@@ -596,7 +663,7 @@
                                                 <span>ثبت نیاز به اصلاحات و تغییرات</span>
                                             </button>
                                             <button wire:click="submitFeedback('approved')" class="hasht-manage-btn" style="background: #16a34a; border-color: #15803d; color: #ffffff !important; justify-content: center; padding: 10px; font-size: 13px;">
-                                                <span>تایید نهایی دمو و ارسال به مرحله بعد</span>
+                                                <span>تایید نهایی و ارسال به مرحله بعد</span>
                                             </button>
                                         </div>
                                     </div>

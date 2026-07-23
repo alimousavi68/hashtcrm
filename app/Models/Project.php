@@ -14,16 +14,39 @@ class Project extends Model
         'brief_schema',
         'demo_url',
         'feedback_deadline',
+        'reminder_count',
+        'last_reminded_at',
     ];
 
+    protected $casts = [
+        'is_settled' => 'boolean',
+        'brief_schema' => 'array',
+        'feedback_deadline' => 'datetime',
+        'last_reminded_at' => 'datetime',
+    ];
+
+    protected static function booted()
+    {
+        static::updating(function ($project) {
+            if ($project->isDirty('status')) {
+                $project->reminder_count = 0;
+                $project->last_reminded_at = null;
+            }
+        });
+    }
+
     public static array $statuses = [
-        'draft' => ['label' => 'پیش‌نویس اولیه', 'percent' => 10],
-        'brief' => ['label' => 'تکمیل بریف نیازمندی‌ها', 'percent' => 25],
-        'contract' => ['label' => 'امضای قرارداد و امور مالی', 'percent' => 45],
-        'in_progress' => ['label' => 'در حال طراحی و توسعه', 'percent' => 65],
-        'review' => ['label' => 'بازنگری و ثبت نظرات (دمو)', 'percent' => 80],
-        'ready_handover' => ['label' => 'آماده‌سازی بسته تحویل', 'percent' => 90],
+        'draft' => ['label' => 'پیش‌نویس / سرنخ جدید', 'percent' => 5],
+        'brief' => ['label' => 'تکمیل بریف نیازمندی‌ها', 'percent' => 15],
+        'proforma' => ['label' => 'صدور پیش‌فاکتور', 'percent' => 25],
+        'contract' => ['label' => 'امضای قرارداد و پیش‌پرداخت', 'percent' => 35],
+        'ui_design' => ['label' => 'طراحی رابط کاربری (UI)', 'percent' => 50],
+        'development' => ['label' => 'توسعه و برنامه‌نویسی', 'percent' => 70],
+        'review' => ['label' => 'بازنگری و دمو نهایی', 'percent' => 85],
+        'ready_handover' => ['label' => 'آماده‌سازی بسته تحویل', 'percent' => 95],
         'completed' => ['label' => 'تحویل نهایی و خاتمه پروژه', 'percent' => 100],
+        'rejected' => ['label' => 'رد شده توسط ادمین', 'percent' => 0],
+        'cancelled' => ['label' => 'انصراف مشتری', 'percent' => 0],
     ];
 
     public function getProgressPercent(): int
@@ -108,6 +131,11 @@ class Project extends Model
     public function tickets()
     {
         return $this->hasMany(Ticket::class);
+    }
+
+    public function proforma()
+    {
+        return $this->hasOne(Proforma::class);
     }
 
     public function handover()

@@ -2,13 +2,21 @@
 
 namespace App\Channels;
 
+use App\Services\Sms\SmsManager;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Log;
 
 class SmsChannel
 {
+    protected SmsManager $smsManager;
+
+    public function __construct(SmsManager $smsManager)
+    {
+        $this->smsManager = $smsManager;
+    }
+
     /**
-     * Send the given notification.
+     * Send the given notification via SMS.
      *
      * @param  mixed  $notifiable
      * @param  \Illuminate\Notifications\Notification  $notification
@@ -20,14 +28,22 @@ class SmsChannel
             return;
         }
 
-        $message = $notification->toSms($notifiable);
-        $phone = $notifiable->phone;
+        $smsData = $notification->toSms($notifiable);
+        $phone = $notifiable->phone ?? null;
 
         if (!$phone) {
             return;
         }
 
-        // Mock SMS provider sending (e.g., Kavenegar or Melipayamak API call)
-        Log::info("SMS Notification sent to {$phone}: {$message}");
+        // Support both string messages and array with pattern payload
+        if (is_array($smsData) && isset($smsData['pattern_code'])) {
+            $this->smsManager->sendPattern(
+                $phone,
+                $smsData['pattern_code'],
+                $smsData['values'] ?? []
+            );
+        } elseif (is_string($smsData)) {
+            $this->smsManager->sendSMS($phone, $smsData);
+        }
     }
 }

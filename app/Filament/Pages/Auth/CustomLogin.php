@@ -9,14 +9,17 @@ use Filament\Schemas\Components\Component;
 use Filament\Auth\Http\Responses\Contracts\LoginResponse;
 use Filament\Notifications\Notification;
 use App\Models\User;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Carbon;
+use App\Services\Auth\OtpService;
+use App\Traits\NormalizesPhoneNumber;
 
 class CustomLogin extends BaseLogin
 {
+    use NormalizesPhoneNumber;
+
     public ?string $phone = '';
     public ?string $otp = '';
     public bool $otpSent = false;
+    public int $countdownSeconds = 120;
 
     public function getTitle(): string|\Illuminate\Contracts\Support\Htmlable
     {
@@ -60,7 +63,7 @@ class CustomLogin extends BaseLogin
             ->tel()
             ->placeholder('۰۹۱۲۳۴۵۶۷۸۹')
             ->readOnly(fn () => $this->otpSent)
-            ->extraInputAttributes(['style' => 'direction: ltr; text-align: left;']);
+            ->extraInputAttributes(['style' => 'direction: ltr; text-align: left; font-size: 1.1rem; font-weight: 600;']);
     }
 
     protected function getOtpFormComponent(): Component
@@ -70,17 +73,38 @@ class CustomLogin extends BaseLogin
             ->required($this->otpSent)
             ->visible(fn () => $this->otpSent)
             ->placeholder('12345')
-            ->extraInputAttributes(['style' => 'direction: ltr; text-align: center; font-weight: bold; letter-spacing: 0.5em;']);
+            ->extraInputAttributes([
+                'style' => 'direction: ltr; text-align: center; font-weight: 800; letter-spacing: 0.6em; font-size: 1.4rem;',
+                'maxlength' => 6,
+                'autocomplete' => 'one-time-code',
+            ]);
+    }
+
+    public function resetPhone(): void
+    {
+        $this->otpSent = false;
+        $this->otp = '';
     }
 
     public function authenticate(): ?LoginResponse
     {
         $data = $this->form->getState();
         $panelId = filament()->getCurrentPanel()->getId();
+        $otpService = app(OtpService::class);
+        $ip = request()->ip();
 
         if (!$this->otpSent) {
-            // Step 1: Send OTP
-            $phone = $data['phone'];
+            // Step 1: Normalize phone and validate user
+            $phone = $this->normalizePhoneNumber($data['phone'] ?? '');
+
+            if (empty($phone) || strlen($phone) < 10) {
+                Notification::make()
+                    ->title('خطا در شماره موبایل')
+                    ->body('لطفاً یک شماره موبایل معتبر ۱۱ رقمی وارد نمایید.')
+                    ->danger()
+                    ->send();
+                return null;
+            }
 
             // Find user
             $user = User::where('phone', $phone)->first();
@@ -114,35 +138,39 @@ class CustomLogin extends BaseLogin
                 }
             }
 
-            // Generate OTP (5 digit simple code)
-            $otpCode = rand(10000, 99999);
-            $user->otp_code = $otpCode;
-            $user->otp_expires_at = Carbon::now()->addMinutes(5);
-            $user->save();
+            // Send OTP via service
+            $result = $otpService->sendOtp($user, $ip);
 
-            // Simulate sending SMS (log it)
-            logger()->info("OTP Code for user {$phone} is: {$otpCode}");
+            if (!$result['success']) {
+                Notification::make()
+                    ->title('محدودیت ارسال')
+                    ->body($result['message'])
+                    ->warning()
+                    ->send();
+                return null;
+            }
 
             // Notify user in UI
             Notification::make()
                 ->title('کد تایید ارسال شد')
-                ->body("کد تایید آزمایشی (فقط جهت تست): {$otpCode}")
+                ->body("کد تایید به شماره {$phone} ارسال گردید.")
                 ->success()
                 ->send();
 
             $this->otpSent = true;
-            $this->form->fill(['phone' => $phone]); // keep phone value
+            $this->countdownSeconds = $result['seconds'] ?? 120;
+            $this->form->fill(['phone' => $phone]);
 
             return null;
         }
 
         // Step 2: Verify OTP
-        $phone = $data['phone'];
-        $otp = $data['otp'];
+        $phone = $this->normalizePhoneNumber($data['phone'] ?? '');
+        $otp = $this->convertDigitsToEnglish($data['otp'] ?? '');
 
         $user = User::where('phone', $phone)->first();
 
-        if (!$user || $user->otp_code !== $otp || Carbon::parse($user->otp_expires_at)->isPast()) {
+        if (!$user || !$otpService->verifyOtp($user, $otp)) {
             Notification::make()
                 ->title('خطا در احراز هویت')
                 ->body('کد وارد شده نامعتبر یا منقضی شده است.')
@@ -152,7 +180,7 @@ class CustomLogin extends BaseLogin
             return null;
         }
 
-        // Double check role on verification
+        // Role verification
         if ($panelId === 'admin' && $user->role !== 'admin') {
             Notification::make()->title('خطا در ورود')->body('دسترسی مدیریت ندارید.')->danger()->send();
             return null;
@@ -162,14 +190,8 @@ class CustomLogin extends BaseLogin
             return null;
         }
 
-        // Reset OTP code
-        $user->otp_code = null;
-        $user->otp_expires_at = null;
-        $user->save();
-
         // Login user
         filament()->auth()->login($user);
-
         session()->regenerate();
 
         return app(LoginResponse::class);

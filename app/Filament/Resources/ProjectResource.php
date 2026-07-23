@@ -33,6 +33,7 @@ class ProjectResource extends Resource
         return $page->generateNavigationItems([
             Pages\EditProject::class,
             Pages\ManageProjectBrief::class,
+            Pages\ManageProjectProforma::class,
             Pages\ManageProjectContract::class,
             Pages\ManageProjectPayments::class,
             Pages\ManageProjectFeedbacks::class,
@@ -91,13 +92,15 @@ class ProjectResource extends Resource
                             Forms\Components\Select::make('status')
                                 ->label('فاز و وضعیت پروژه')
                                 ->options([
-                                    'draft' => '۱. پیش‌نویس اولیه (۱۰٪)',
-                                    'brief' => '۲. تکمیل بریف نیازمندی‌ها (۲۵٪)',
-                                    'contract' => '۳. امضای قرارداد و امور مالی (۴۵٪)',
-                                    'in_progress' => '۴. در حال طراحی و توسعه (۶۵٪)',
-                                    'review' => '۵. بازنگری و ثبت نظرات dmo (۸۰٪)',
-                                    'ready_handover' => '۶. آماده‌سازی بسته تحویل (۹۰٪)',
-                                    'completed' => '۷. تحویل نهایی و خاتمه (۱۰۰٪)',
+                                    'draft' => '۱. پیش‌نویس اولیه',
+                                    'brief' => '۲. تکمیل بریف نیازمندی‌ها',
+                                    'proforma' => '۳. صدور پیش‌فاکتور',
+                                    'contract' => '۴. امضای قرارداد و پیش‌پرداخت',
+                                    'ui_design' => '۵. طراحی رابط کاربری (UI)',
+                                    'development' => '۶. توسعه و برنامه‌نویسی',
+                                    'review' => '۷. بازنگری و دمو نهایی',
+                                    'ready_handover' => '۸. آماده‌سازی بسته تحویل',
+                                    'completed' => '۹. تحویل نهایی و خاتمه',
                                 ])
                                 ->default('draft')
                                 ->required(),
@@ -148,13 +151,15 @@ class ProjectResource extends Resource
                 Tables\Filters\SelectFilter::make('status')
                     ->label('فاز و وضعیت پروژه')
                     ->options([
-                        'draft' => '۱. پیش‌نویس اولیه (۱۰٪)',
-                        'brief' => '۲. تکمیل بریف نیازمندی‌ها (۲۵٪)',
-                        'contract' => '۳. امضای قرارداد و امور مالی (۴۵٪)',
-                        'in_progress' => '۴. در حال طراحی و توسعه (۶۵٪)',
-                        'review' => '۵. بازنگری و ثبت نظرات dmo (۸۰٪)',
-                        'ready_handover' => '۶. آماده‌سازی بسته تحویل (۹۰٪)',
-                        'completed' => '۷. تحویل نهایی و خاتمه (۱۰۰٪)',
+                        'draft' => 'پیش‌نویس اولیه',
+                        'brief' => 'تکمیل بریف نیازمندی‌ها',
+                        'proforma' => 'صدور پیش‌فاکتور',
+                        'contract' => 'امضای قرارداد و پیش‌پرداخت',
+                        'ui_design' => 'طراحی رابط کاربری (UI)',
+                        'development' => 'توسعه و برنامه‌نویسی',
+                        'review' => 'بازنگری و دمو نهایی',
+                        'ready_handover' => 'آماده‌سازی بسته تحویل',
+                        'completed' => 'تحویل نهایی و خاتمه',
                     ]),
 
                 Tables\Filters\TernaryFilter::make('is_settled')
@@ -222,6 +227,7 @@ class ProjectResource extends Resource
             'create' => Pages\CreateProject::route('/create'),
             'edit' => Pages\EditProject::route('/{record}/edit'),
             'brief' => Pages\ManageProjectBrief::route('/{record}/brief'),
+            'proforma' => Pages\ManageProjectProforma::route('/{record}/proforma'),
             'contract' => Pages\ManageProjectContract::route('/{record}/contract'),
             'payments' => Pages\ManageProjectPayments::route('/{record}/payments'),
             'feedbacks' => Pages\ManageProjectFeedbacks::route('/{record}/feedbacks'),
